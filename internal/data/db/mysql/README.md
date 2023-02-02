@@ -134,3 +134,23 @@ mysql> desc posts;
 +-------------+--------------+------+-----+-------------------+-----------------------------------------------+
 6 rows in set (0.00 sec)
 ```
+
+### PostVotes
+```
+mysql> CREATE TABLE IF NOT EXISTS post_votes (
+  id int(10) NOT NULL AUTO_INCREMENT,
+  post_id int(10),
+  vote_id int(10),
+  PRIMARY KEY (id)
+);
+
+mysql> desc post_votes;
++---------+------+------+-----+---------+----------------+
+| Field   | Type | Null | Key | Default | Extra          |
++---------+------+------+-----+---------+----------------+
+| id      | int  | NO   | PRI | NULL    | auto_increment |
+| post_id | int  | YES  |     | NULL    |                |
+| vote_id | int  | YES  |     | NULL    |                |
++---------+------+------+-----+---------+----------------+
+3 rows in set (0.00 sec)
+```
