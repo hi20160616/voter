@@ -14,7 +14,7 @@ option go_package = "github.com/hi20160616/voter/api/voter/v1;v1";
 service PostsAPI {
   rpc ListPosts(ListPostsRequest) returns (ListPostsResponse) {
     option (google.api.http) = {
-      get: "/v1/posts"
+      get: "/v1/{parent=/*}/posts"
     };
   }
   rpc GetPost(GetPostRequest) returns (Post) {

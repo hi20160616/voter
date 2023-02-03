@@ -23,7 +23,7 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 	g, ctx := errgroup.WithContext(ctx)
-	cfg := configs.NewConfig("hfcms")
+	cfg := configs.NewConfig("voter")
 
 	// Http server
 	g.Go(func() error {

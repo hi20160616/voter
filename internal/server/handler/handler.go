@@ -14,7 +14,7 @@ import (
 	tmpl "github.com/hi20160616/voter/templates"
 )
 
-var validPath = regexp.MustCompile("^/(articles|search)/(.*?)$")
+var validPath = regexp.MustCompile("^/(posts|votes|users|search)/(.*?)$")
 
 // makeHandler invoke fn after path valided, and arrange args from url to object: `&render.Page{}`
 func makeHandler(fn func(http.ResponseWriter, *http.Request, *render.Page), cfg *configs.Config) http.HandlerFunc {
@@ -40,9 +40,9 @@ func GetHandler(cfg *configs.Config) *http.ServeMux {
 		homeHandler(w, req)
 	})
 	mux.Handle("/s/", http.StripPrefix("/s/", http.FileServer(http.FS(tmpl.FS))))
-	mux.HandleFunc("/articles/", makeHandler(listArticlesHandler, cfg))
-	mux.HandleFunc("/articles/v", makeHandler(getArticleHandler, cfg))
-	mux.HandleFunc("/articles/s", makeHandler(searchArticlesHandler, cfg))
+	mux.HandleFunc("/posts/", makeHandler(listPostsHandler, cfg))
+	mux.HandleFunc("/posts/v", makeHandler(getPostHandler, cfg))
+	mux.HandleFunc("/posts/s", makeHandler(searchPostsHandler, cfg))
 	return mux
 }
 
@@ -50,32 +50,32 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	render.Derive(w, "home", &render.Page{Title: "Home", Data: "need to be done"})
 }
 
-func listArticlesHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
-	ds, err := service.ListArticles(context.Background(), &pb.ListArticlesRequest{}, p.Cfg)
+func listPostsHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+	ds, err := service.ListPosts(context.Background(), &pb.ListPostsRequest{}, p.Cfg)
 	if err != nil {
 		log.Println(err)
 	}
-	p.Data = ds.Articles
-	p.Title = "Articles"
-	render.Derive(w, "articles", p)
+	p.Data = ds.Posts
+	p.Title = "Posts"
+	render.Derive(w, "posts", p)
 }
 
-func getArticleHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+func getPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	id := r.URL.Query().Get("id")
-	a, err := service.GetArticle(context.Background(),
-		&pb.GetArticleRequest{Name: "articles/" + id}, p.Cfg)
+	a, err := service.GetPost(context.Background(),
+		&pb.GetPostRequest{Name: "posts/" + id}, p.Cfg)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	p.Data = a
 	p.Title = a.Title
-	render.Derive(w, "article", p) // template name: article
+	render.Derive(w, "post", p) // template name: post
 }
 
-func searchArticlesHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+func searchPostsHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	kws := r.URL.Query().Get("v")
 	kws = strings.ReplaceAll(kws, " ", ",")
-	as, err := service.SearchArticles(context.Background(), &pb.SearchArticlesRequest{Name: "articles/" + kws + "/search"}, p.Cfg)
+	as, err := service.SearchPosts(context.Background(), &pb.SearchPostsRequest{Name: "posts/" + kws + "/search"}, p.Cfg)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}

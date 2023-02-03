@@ -12,11 +12,11 @@ import (
 
 var cfg = configs.NewConfig("hfcms")
 
-func TestListArticlesHandler(t *testing.T) {
+func TestListPostsHandler(t *testing.T) {
 	req := httptest.NewRequest("GET", "http://localhost/list", nil)
 	w := httptest.NewRecorder()
 	p := &render.Page{Cfg: cfg, Title: "test list"}
-	listArticlesHandler(w, req, p)
+	listPostsHandler(w, req, p)
 	resp := w.Result()
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
