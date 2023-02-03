@@ -1,0 +1,103 @@
+syntax = "proto3";
+
+package voter.posts.v1;
+
+import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/empty.proto";
+// import "api/voter/v1/voter-votes.proto";
+// import "api/voter/v1/voter-users.proto";
+
+option go_package = "github.com/hi20160616/voter/api/voter/v1;v1";
+
+service PostsAPI {
+  rpc ListPosts(ListPostsRequest) returns (ListPostsResponse) {
+    option (google.api.http) = {
+      get: "/v1/posts"
+    };
+  }
+  rpc GetPost(GetPostRequest) returns (Post) {
+    option (google.api.http) = {
+      get: "/v1/{name=posts/*}"
+    };
+  }
+  rpc SearchPosts(SearchPostsRequest) returns (SearchPostsResponse) {
+    option (google.api.http) = {
+      get: "/v1/{name=posts/*/search}"
+    };
+  }
+  rpc CreatePost(CreatePostRequest) returns (Post) {
+    option (google.api.http) = {
+      post: "/v1/{parent=posts/*/create}"
+      body: "post"
+    };
+  }
+  rpc UpdatePost(UpdatePostRequest) returns (Post) {
+    option (google.api.http) = {
+      patch: "/v1/{post.name=posts/*/update}"
+      body: "post"
+    };
+  }
+  rpc DeletePost(DeletePostRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/{name=posts/*/delete}"
+    };
+  }
+}
+
+message ListPostsRequest{
+  // The parent resource name
+  string parent = 1;
+
+  // The maximum number of items to return.
+  int32 page_size = 2;
+
+  // The next_page_token value returned from a previous List request, if any.
+  string page_token = 3;
+}
+
+message ListPostsResponse{
+  repeated Post posts = 1;
+  string next_page_token = 2;
+}
+
+message GetPostRequest {
+  string name = 1;
+}
+
+message SearchPostsRequest{
+  string name = 1;
+}
+
+message SearchPostsResponse{
+  repeated Post posts = 1;
+  string next_page_token = 2;
+}
+
+message CreatePostRequest {
+  string parent = 1;
+  string post_id = 2;
+  Post post = 3;
+}
+
+message UpdatePostRequest {
+  Post post = 1;
+  // The update mask applies to the resource. For the `FieldMask` definition,
+  // see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message DeletePostRequest {
+  string name = 1;
+}
+
+message Post{
+  string name = 1;
+  string post_id = 2;
+  string title = 3;
+  int32 is_open = 4;
+  string detail = 5;
+  google.protobuf.Timestamp create_time = 6;
+  google.protobuf.Timestamp update_time = 7;
+}
