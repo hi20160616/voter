@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/golang/glog"
-	pb "github.com/hi20160616/voter/api/posts/v1"
+	pb "github.com/hi20160616/voter/api/voter/v1"
 	"github.com/hi20160616/voter/configs"
 	"google.golang.org/grpc"
 )
