@@ -5,6 +5,9 @@ import (
 	"net"
 
 	"github.com/golang/glog"
+	pb "github.com/hi20160616/voter/api/voter/v1"
+	"github.com/hi20160616/voter/internal/service"
+	"google.golang.org/grpc"
 )
 
 func Run(ctx context.Context, network, address string) error {
@@ -18,6 +21,17 @@ func Run(ctx context.Context, network, address string) error {
 		}
 	}()
 
-	// ps, err := service.NewPost
-	return nil
+	ps, err := service.NewPostService()
+	if err != nil {
+		return err
+	}
+	s := grpc.NewServer()
+	pb.RegisterPostsAPIServer(s, ps)
+	go func() {
+		defer s.GracefulStop()
+		<-ctx.Done()
+	}()
+
+	glog.Infof("gRPC starting listening at %s", address)
+	return s.Serve(l)
 }

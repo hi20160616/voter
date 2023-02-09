@@ -14,7 +14,7 @@ option go_package = "github.com/hi20160616/voter/api/voter/v1;v1";
 service PostsAPI {
   rpc ListPosts(ListPostsRequest) returns (ListPostsResponse) {
     option (google.api.http) = {
-      get: "/v1/{parent=/*}/posts"
+      get: "/v1/{parent=posts}"
     };
   }
   rpc GetPost(GetPostRequest) returns (Post) {
@@ -77,7 +77,7 @@ message SearchPostsResponse{
 
 message CreatePostRequest {
   string parent = 1;
-  string post_id = 2;
+  int32 post_id = 2;
   Post post = 3;
 }
 
@@ -94,7 +94,7 @@ message DeletePostRequest {
 
 message Post{
   string name = 1;
-  string post_id = 2;
+  int32 post_id = 2;
   string title = 3;
   int32 is_open = 4;
   string detail = 5;

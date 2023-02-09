@@ -14,6 +14,9 @@ import (
 	"github.com/golang/glog"
 	"github.com/hi20160616/voter/configs"
 	"github.com/hi20160616/voter/internal/server"
+
+	theGateway "github.com/hi20160616/voter/internal/server/gateway"
+	theGRPC "github.com/hi20160616/voter/internal/server/grpc"
 )
 
 func main() {
@@ -29,6 +32,19 @@ func main() {
 	g.Go(func() error {
 		return server.Run(ctx, cfg)
 	})
+
+	// gRPC
+	g.Go(func() error { return theGRPC.Run(ctx, "tcp", cfg.API.GRPC.Addr) })
+
+	// gRPC-gateway
+	opts := theGateway.Options{
+		Addr: cfg.API.HTTP.Addr,
+		GRPCServer: theGateway.Endpoint{
+			Network: cfg.API.GRPC.Network,
+			Addr:    cfg.API.GRPC.Addr,
+		},
+	}
+	g.Go(func() error { return theGateway.Run(ctx, opts) })
 
 	// Graceful stop
 	sigs := make(chan os.Signal, 1)

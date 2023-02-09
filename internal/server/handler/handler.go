@@ -1,16 +1,11 @@
 package handler
 
 import (
-	"context"
-	"log"
 	"net/http"
 	"regexp"
-	"strings"
 
-	pb "github.com/hi20160616/voter/api/voter/v1"
 	"github.com/hi20160616/voter/configs"
 	"github.com/hi20160616/voter/internal/server/render"
-	"github.com/hi20160616/voter/internal/service"
 	tmpl "github.com/hi20160616/voter/templates"
 )
 
@@ -40,9 +35,9 @@ func GetHandler(cfg *configs.Config) *http.ServeMux {
 		homeHandler(w, req)
 	})
 	mux.Handle("/s/", http.StripPrefix("/s/", http.FileServer(http.FS(tmpl.FS))))
-	mux.HandleFunc("/posts/", makeHandler(listPostsHandler, cfg))
-	mux.HandleFunc("/posts/v", makeHandler(getPostHandler, cfg))
-	mux.HandleFunc("/posts/s", makeHandler(searchPostsHandler, cfg))
+	// mux.HandleFunc("/posts/", makeHandler(listPostsHandler, cfg))
+	// mux.HandleFunc("/posts/v", makeHandler(getPostHandler, cfg))
+	// mux.HandleFunc("/posts/s", makeHandler(searchPostsHandler, cfg))
 	return mux
 }
 
@@ -50,35 +45,35 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	render.Derive(w, "home", &render.Page{Title: "Home", Data: "need to be done"})
 }
 
-func listPostsHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
-	ds, err := service.ListPosts(context.Background(), &pb.ListPostsRequest{}, p.Cfg)
-	if err != nil {
-		log.Println(err)
-	}
-	p.Data = ds.Posts
-	p.Title = "Posts"
-	render.Derive(w, "posts", p)
-}
-
-func getPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
-	id := r.URL.Query().Get("id")
-	a, err := service.GetPost(context.Background(),
-		&pb.GetPostRequest{Name: "posts/" + id}, p.Cfg)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-	p.Data = a
-	p.Title = a.Title
-	render.Derive(w, "post", p) // template name: post
-}
-
-func searchPostsHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
-	kws := r.URL.Query().Get("v")
-	kws = strings.ReplaceAll(kws, " ", ",")
-	as, err := service.SearchPosts(context.Background(), &pb.SearchPostsRequest{Name: "posts/" + kws + "/search"}, p.Cfg)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-	p.Data = as
-	render.Derive(w, "search", p)
-}
+// func listPostsHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+//         ds, err := service.ListPosts(context.Background(), &pb.ListPostsRequest{}, p.Cfg)
+//         if err != nil {
+//                 log.Println(err)
+//         }
+//         p.Data = ds.Posts
+//         p.Title = "Posts"
+//         render.Derive(w, "posts", p)
+// }
+//
+// func getPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+//         id := r.URL.Query().Get("id")
+//         a, err := service.GetPost(context.Background(),
+//                 &pb.GetPostRequest{Name: "posts/" + id}, p.Cfg)
+//         if err != nil {
+//                 http.Error(w, err.Error(), http.StatusInternalServerError)
+//         }
+//         p.Data = a
+//         p.Title = a.Title
+//         render.Derive(w, "post", p) // template name: post
+// }
+//
+// func searchPostsHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+//         kws := r.URL.Query().Get("v")
+//         kws = strings.ReplaceAll(kws, " ", ",")
+//         as, err := service.SearchPosts(context.Background(), &pb.SearchPostsRequest{Name: "posts/" + kws + "/search"}, p.Cfg)
+//         if err != nil {
+//                 http.Error(w, err.Error(), http.StatusInternalServerError)
+//         }
+//         p.Data = as
+//         render.Derive(w, "search", p)
+// }

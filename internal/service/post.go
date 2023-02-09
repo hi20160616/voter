@@ -3,13 +3,14 @@ package service
 import (
 	"context"
 	"fmt"
+	"log"
 
-	"github.com/golang/glog"
 	pb "github.com/hi20160616/voter/api/voter/v1"
-	"github.com/hi20160616/voter/configs"
 	"github.com/hi20160616/voter/internal/biz"
+	"github.com/hi20160616/voter/internal/data"
 	"github.com/hi20160616/voter/internal/data/db/mysql"
-	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/emptypb"
+	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
 type PostService struct {
@@ -18,61 +19,145 @@ type PostService struct {
 }
 
 func NewPostService() (*PostService, error) {
-	dbClient, err := mysql.NewClient()
+	dbc, err := mysql.NewClient()
 	if err != nil {
 		return nil, err
 	}
 
-	// db := &data.Data
+	db := &data.Data{DBClient: dbc}
+	repo := data.NewPostRepo(db, log.Default())
+	postUsecase := biz.NewPostUsecase(repo, *log.Default())
+	return &PostService{pc: postUsecase}, nil
 }
 
-func funHead(funName string, cfg *configs.Config) error {
+func (as *PostService) ListPosts(ctx context.Context, in *pb.ListPostsRequest) (*pb.ListPostsResponse, error) {
 	defer func() {
-		if err := recover(); err != nil {
-			glog.Errorf("Recoved from %s: \n%v\n", funName, err)
+		if r := recover(); r != nil {
+			fmt.Printf("Recovered in ListPosts: \n%v\n", r)
 		}
 	}()
-	if cfg == nil {
-		return fmt.Errorf("%s: cfg is nil.", funName)
-	}
-	return nil
-}
-
-func ListPosts(ctx context.Context, in *pb.ListPostsRequest, cfg *configs.Config) (*pb.ListPostsResponse, error) {
-	if err := funHead("ListPosts", cfg); err != nil {
-		return nil, err
-	}
-	conn, err := grpc.Dial(cfg.API.GRPC.Addr, grpc.WithInsecure(), grpc.WithBlock())
+	bizps, err := as.pc.ListPosts(ctx, in.Parent)
 	if err != nil {
 		return nil, err
 	}
-	defer conn.Close()
-	c := pb.NewPostsAPIClient(conn)
-	return c.ListPosts(ctx, in)
+	resp := []*pb.Post{}
+	for _, p := range bizps.Collection {
+		resp = append(resp, &pb.Post{
+			PostId:     int32(p.PostId),
+			Title:      p.Title,
+			IsOpen:     int32(p.IsOpen),
+			Detail:     p.Detail,
+			CreateTime: timestamppb.New(p.CreateTime),
+			UpdateTime: timestamppb.New(p.UpdateTime),
+		})
+	}
+	return &pb.ListPostsResponse{Posts: resp}, nil
 }
 
-func GetPost(ctx context.Context, in *pb.GetPostRequest, cfg *configs.Config) (*pb.Post, error) {
-	if err := funHead("GetPost", cfg); err != nil {
-		return nil, err
-	}
-	conn, err := grpc.Dial(cfg.API.GRPC.Addr, grpc.WithInsecure(), grpc.WithBlock())
+func (ps *PostService) GetPost(ctx context.Context, in *pb.GetPostRequest) (*pb.Post, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("Recovered in GetPost: %s\n%v\n", in.Name, r)
+		}
+	}()
+	bizp, err := ps.pc.GetPost(ctx, in.Name)
 	if err != nil {
 		return nil, err
 	}
-	defer conn.Close()
-	c := pb.NewPostsAPIClient(conn)
-	return c.GetPost(ctx, in)
+	return &pb.Post{
+		PostId:     int32(bizp.PostId),
+		Title:      bizp.Title,
+		IsOpen:     int32(bizp.IsOpen),
+		Detail:     bizp.Detail,
+		CreateTime: timestamppb.New(bizp.CreateTime),
+		UpdateTime: timestamppb.New(bizp.UpdateTime),
+	}, nil
 }
 
-func SearchPosts(ctx context.Context, in *pb.SearchPostsRequest, cfg *configs.Config) (*pb.SearchPostsResponse, error) {
-	if err := funHead("SearchPosts", cfg); err != nil {
-		return nil, err
-	}
-	conn, err := grpc.Dial(cfg.API.GRPC.Addr, grpc.WithInsecure(), grpc.WithBlock())
+func (ps *PostService) SearchPosts(ctx context.Context, in *pb.SearchPostsRequest) (*pb.SearchPostsResponse, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("Recovered in SearchPosts: \n%v\n", r)
+		}
+	}()
+	bizps, err := ps.pc.SearchPosts(ctx, in.Name)
 	if err != nil {
 		return nil, err
 	}
-	defer conn.Close()
-	c := pb.NewPostsAPIClient(conn)
-	return c.SearchPosts(ctx, in)
+	resp := &pb.SearchPostsResponse{}
+	for _, e := range bizps.Collection {
+		resp.Posts = append(resp.Posts, &pb.Post{
+			PostId:     int32(e.PostId),
+			Title:      e.Title,
+			IsOpen:     int32(e.IsOpen),
+			Detail:     e.Detail,
+			CreateTime: timestamppb.New(e.CreateTime),
+			UpdateTime: timestamppb.New(e.UpdateTime),
+		})
+	}
+	return resp, nil
+}
+
+func (as *PostService) UpdatePost(ctx context.Context, in *pb.UpdatePostRequest) (*pb.Post, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("Recovered in UpdatePosts: \n%v\n", r)
+		}
+	}()
+	return nil, nil
+	// a, err := as.ac.UpdatePost(ctx, &biz.Post{
+	//         PostId:  in.Post.PostId,
+	//         Title:      in.Post.Title,
+	//         Content:    in.Post.Content,
+	//         CategoryId: int(in.Post.CategoryId),
+	//         PostId:     int(in.Post.PostId),
+	// })
+	// if err != nil {
+	//         return nil, err
+	// }
+	// return &pb.Post{
+	//         PostId:  a.PostId,
+	//         Title:      a.Title,
+	//         Content:    a.Content,
+	//         CategoryId: int32(a.CategoryId),
+	//         PostId:     int32(a.PostId),
+	//         UpdateTime: a.UpdateTime,
+	// }, nil
+}
+
+func (as *PostService) DeletePost(ctx context.Context, in *pb.DeletePostRequest) (*emptypb.Empty, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("Recovered in UpdatePosts: \n%v\n", r)
+		}
+	}()
+	return nil, nil
+	// return as.ac.DeletePost(ctx, in.Name)
+}
+
+func (as *PostService) CreatePost(ctx context.Context, in *pb.CreatePostRequest) (*pb.Post, error) {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Printf("Recovered in UpdatePosts: \n%v\n", r)
+		}
+	}()
+	return nil, nil
+	// a, err := as.ac.CreatePost(ctx, &biz.Post{
+	//         PostId:  in.Post.PostId,
+	//         Title:      in.Post.Title,
+	//         Content:    in.Post.Content,
+	//         CategoryId: int(in.Post.CategoryId),
+	//         PostId:     int(in.Post.PostId),
+	// })
+	// if err != nil {
+	//         return nil, err
+	// }
+	// return &pb.Post{
+	//         PostId:  a.PostId,
+	//         Title:      a.Title,
+	//         Content:    a.Content,
+	//         CategoryId: int32(a.CategoryId),
+	//         PostId:     int32(a.PostId),
+	//         UpdateTime: a.UpdateTime,
+	// }, nil
 }

@@ -9,13 +9,13 @@ import (
 )
 
 type Post struct {
-	IsOpen                 int
+	PostId, IsOpen         int
 	Title, Detail          string
 	CreateTime, UpdateTime time.Time
 }
 
 type Posts struct {
-	Collention    []*Post
+	Collection    []*Post
 	NextPageToken string
 }
 

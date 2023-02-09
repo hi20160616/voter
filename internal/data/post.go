@@ -8,7 +8,7 @@ import (
 
 	"github.com/hi20160616/voter/internal/biz"
 	"github.com/hi20160616/voter/internal/data/db/mysql"
-	"google.golang.org/protobuf/types/known/timestamppb"
+	"google.golang.org/protobuf/types/known/emptypb"
 )
 
 var _ biz.PostRepo = new(postRepo)
@@ -36,7 +36,7 @@ func (pr *postRepo) ListPosts(ctx context.Context, parent string) (*biz.Posts, e
 	re := regexp.MustCompile(`^(categories|tags)/(.+)/posts$`)
 	x := re.FindStringSubmatch(parent)
 	if len(x) != 3 {
-		ps, err = pr.data.DBClient.DatabaseClient.QueryPosts().All(ctx)
+		ps, err = pr.data.DBClient.DatabaseClient.QueryPost().All(ctx)
 	} else {
 		clause := [4]string{}
 		if x[1] == "categories" {
@@ -45,7 +45,7 @@ func (pr *postRepo) ListPosts(ctx context.Context, parent string) (*biz.Posts, e
 		if x[1] == "users" {
 			clause = [4]string{"users_id", "=", x[2], "and"}
 		}
-		ps, err = ar.data.DBClient.DatabaseClient.QueryArticle().
+		ps, err = pr.data.DBClient.DatabaseClient.QueryPost().
 			Where(clause).All(ctx)
 	}
 	if err != nil {
@@ -53,16 +53,33 @@ func (pr *postRepo) ListPosts(ctx context.Context, parent string) (*biz.Posts, e
 	}
 
 	for _, p := range ps.Collection {
-		c := ar.getCate(ctx, p.CategoryId)
-		bizas.Collection = append(bizas.Collection, &biz.Article{
-			ArticleId:  a.Id,
-			Title:      a.Title,
-			Content:    a.Content,
-			CategoryId: a.CategoryId,
-			Category:   c,
-			UserId:     a.UserId,
-			UpdateTime: timestamppb.New(a.UpdateTime),
+		bizps.Collection = append(bizps.Collection, &biz.Post{
+			PostId:     p.Id,
+			Title:      p.Title,
+			Detail:     p.Detail,
+			CreateTime: p.CreateTime,
+			UpdateTime: p.UpdateTime,
 		})
 	}
-	return bizas, nil
+	return bizps, nil
+}
+
+func (pr *postRepo) GetPost(ctx context.Context, name string) (*biz.Post, error) {
+	return nil, nil
+}
+
+func (pr *postRepo) SearchPosts(ctx context.Context, name string) (*biz.Posts, error) {
+	return nil, nil
+}
+
+func (pr *postRepo) CreatePost(ctx context.Context, post *biz.Post) (*biz.Post, error) {
+	return nil, nil
+}
+
+func (pr *postRepo) UpdatePost(ctx context.Context, post *biz.Post) (*biz.Post, error) {
+	return nil, nil
+}
+
+func (pr *postRepo) DeletePost(ctx context.Context, name string) (*emptypb.Empty, error) {
+	return nil, nil
 }
