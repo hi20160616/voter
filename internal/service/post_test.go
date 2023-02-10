@@ -54,7 +54,7 @@ func TestGetPost(t *testing.T) {
 }
 
 func TestSearchPosts(t *testing.T) {
-	name := "posts/test3/search"
+	name := "posts/post1/search"
 	posts, err := ps.SearchPosts(context.Background(), &v1.SearchPostsRequest{Name: name})
 	if err != nil {
 		t.Fatal(err)
@@ -62,6 +62,20 @@ func TestSearchPosts(t *testing.T) {
 	for _, v := range posts.Posts {
 		fmt.Println(v)
 	}
+}
+
+func TestCreatePost(t *testing.T) {
+	p, err := ps.CreatePost(context.Background(), &v1.CreatePostRequest{
+		Post: &v1.Post{
+			Title:  "CreateViaPS1",
+			IsOpen: 1,
+			Detail: "CreateViaPS1",
+		},
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Println(p)
 }
 
 func TestUpdatePost(t *testing.T) {

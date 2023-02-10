@@ -30,7 +30,7 @@ mysql> CREATE TABLE IF NOT EXISTS users (
   user_ip INT(4) UNSIGNED UNIQUE,
   avatar_url VARCHAR(255),
   phone VARCHAR(11),
-  state TINYINT(1) DEFAULT 0 COMMENT 'user state: 0=normal, 1=disable',
+  state TINYINT(1) DEFAULT 1 COMMENT 'user state: 1=normal, 0=disable',
   deleted TINYINT(1) DEFAULT 0 COMMENT 'soft deleted: 0=undelete,1=deleted',
   create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -53,15 +53,15 @@ mysql> describe users;
 | password    | varchar(255) | YES  |     | NULL              |                                               |
 | realname    | varchar(255) | YES  |     | NULL              |                                               |
 | nickname    | varchar(255) | YES  |     | NULL              |                                               |
-| user_ip          | int unsigned | YES  | UNI | NULL              |                                               |
+| user_ip     | int unsigned | YES  | UNI | NULL              |                                               |
 | avatar_url  | varchar(255) | YES  |     | NULL              |                                               |
 | phone       | varchar(11)  | YES  |     | NULL              |                                               |
-| state       | tinyint(1)   | YES  |     | NULL              |                                               |
+| state       | tinyint(1)   | YES  |     | 1                 |                                               |
 | deleted     | tinyint(1)   | YES  |     | 0                 |                                               |
 | create_time | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
 | update_time | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
 +-------------+--------------+------+-----+-------------------+-----------------------------------------------+
-12 rows in set (0.00 sec)
+12 rows in set (0.01 sec)
 ```
 
 ### Votes
@@ -69,7 +69,7 @@ mysql> describe users;
 mysql> CREATE TABLE IF NOT EXISTS votes (
   id int(10) NOT NULL AUTO_INCREMENT,
   title VARCHAR(255),
-  is_radio TINYINT(1) COMMENT 'is radio: 0=no, 1=yes(default)' DEFAULT 1,
+  is_radio TINYINT(1) DEFAULT 1 COMMENT 'is radio: 0=no, 1=yes(default)',
   detail varchar(255),
   create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -91,8 +91,8 @@ mysql> desc votes;
 +-------------+--------------+------+-----+-------------------+-----------------------------------------------+
 | id          | int          | NO   | PRI | NULL              | auto_increment                                |
 | title       | varchar(255) | YES  |     | NULL              |                                               |
-| is_radio    | tinyint(1)   | YES  |     | NULL              |                                               |
-| detail      | mediumtext   | YES  |     | NULL              |                                               |
+| is_radio    | tinyint(1)   | YES  |     | 1                 |                                               |
+| detail      | varchar(255) | YES  |     | NULL              |                                               |
 | create_time | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
 | update_time | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
 +-------------+--------------+------+-----+-------------------+-----------------------------------------------+
@@ -104,7 +104,7 @@ mysql> desc votes;
 mysql> CREATE TABLE IF NOT EXISTS posts (
   id int(10) NOT NULL AUTO_INCREMENT,
   title VARCHAR(255),
-  is_open TINYINT(1) COMMENT 'is open: 0=no, 1=yes(default)' DEFAULT 1,
+  is_open TINYINT(1) DEFAULT 1 COMMENT 'is open: 0=no, 1=yes(default)',
   detail VARCHAR(255),
   create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -132,7 +132,7 @@ mysql> desc posts;
 | create_time | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
 | update_time | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
 +-------------+--------------+------+-----+-------------------+-----------------------------------------------+
-6 rows in set (0.00 sec)
+6 rows in set (0.01 sec)
 ```
 
 ### PostVotes
