@@ -30,7 +30,7 @@ mysql> CREATE TABLE IF NOT EXISTS users (
   user_ip INT(4) UNSIGNED UNIQUE,
   avatar_url VARCHAR(255),
   phone VARCHAR(11),
-  state TINYINT(1) DEFAULT 1 COMMENT 'user state: 1=normal, 0=disable',
+  state TINYINT(1) DEFAULT 0 COMMENT 'user state: 0=normal, 1=disable',
   deleted TINYINT(1) DEFAULT 0 COMMENT 'soft deleted: 0=undelete,1=deleted',
   create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -56,7 +56,7 @@ mysql> describe users;
 | user_ip     | int unsigned | YES  | UNI | NULL              |                                               |
 | avatar_url  | varchar(255) | YES  |     | NULL              |                                               |
 | phone       | varchar(11)  | YES  |     | NULL              |                                               |
-| state       | tinyint(1)   | YES  |     | 1                 |                                               |
+| state       | tinyint(1)   | YES  |     | 0                 |                                               |
 | deleted     | tinyint(1)   | YES  |     | 0                 |                                               |
 | create_time | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
 | update_time | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |

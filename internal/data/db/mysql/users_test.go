@@ -10,7 +10,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-var id = 5
+var id = 1
 
 func TestPrepareQuery(t *testing.T) {
 	qc := &UserQuery{query: "SELECT * FROM users"}
@@ -54,7 +54,7 @@ func TestInsertUser(t *testing.T) {
 			Nickname:  "donkey1",
 			AvatarUrl: "testInsert1.jpg",
 			Phone:     "13512345678",
-			UserIP:    "123.123.123.1",
+			UserIp:    "123.123.123.1",
 		},
 		{
 			Username:  "testInsert2",
@@ -63,7 +63,7 @@ func TestInsertUser(t *testing.T) {
 			Nickname:  "donkey2",
 			AvatarUrl: "testInsert2.jpg",
 			Phone:     "13512345678",
-			UserIP:    "123.123.123.2",
+			UserIp:    "123.123.123.2",
 		},
 		{
 			Username:  "testInsert3",
@@ -72,7 +72,7 @@ func TestInsertUser(t *testing.T) {
 			Nickname:  "donkey3",
 			AvatarUrl: "testInsert3.jpg",
 			Phone:     "13512345678",
-			UserIP:    "123.123.123.3",
+			UserIp:    "123.123.123.3",
 		},
 	}
 	for _, tc := range tcs {
@@ -98,7 +98,7 @@ func TestUpdateUser(t *testing.T) {
 		Nickname:  "nick test",
 		AvatarUrl: "avatar_url.test.jpg",
 		Phone:     "13512345678",
-		UserIP:    "111.111.111.111",
+		UserIp:    "111.111.111.111",
 		State:     1,
 	}
 	getUser := func() *User {
@@ -146,10 +146,10 @@ func TestUpdateUser(t *testing.T) {
 				user.Phone, after.Phone))
 		}
 	}
-	if before.UserIP != after.UserIP {
+	if before.UserIp != after.UserIp {
 		if err != nil {
 			t.Fatal(fmt.Errorf("want: %s, got: %s",
-				user.UserIP, after.UserIP))
+				user.UserIp, after.UserIp))
 		}
 	}
 	if before.State != after.State {

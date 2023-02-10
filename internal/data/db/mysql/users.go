@@ -14,7 +14,7 @@ import (
 
 type User struct {
 	Id, State, Deleted                                               int
-	Username, Password, Realname, Nickname, AvatarUrl, Phone, UserIP string
+	Username, Password, Realname, Nickname, AvatarUrl, Phone, UserIp string
 	CreateTime, UpdateTime                                           time.Time
 }
 
@@ -43,11 +43,11 @@ func (dc *DatabaseClient) InsertUser(ctx context.Context, user *User) error {
 	aq := &UserQuery{db: dc.db, query: q}
 	_, err := aq.db.Exec(aq.query,
 		user.Username, user.Password, user.Realname, user.Nickname,
-		user.AvatarUrl, user.Phone, user.UserIP,
+		user.AvatarUrl, user.Phone, user.UserIp,
 		user.Username, user.Password, user.Realname, user.Nickname,
-		user.AvatarUrl, user.Phone, user.UserIP,
+		user.AvatarUrl, user.Phone, user.UserIp,
 	)
-	return errors.WithMessage(err, "mariadb: users: Insert error")
+	return errors.WithMessage(err, "mysql: users: Insert error")
 }
 
 func (dc *DatabaseClient) UpdateUser(ctx context.Context, user *User) error {
@@ -58,7 +58,7 @@ func (dc *DatabaseClient) UpdateUser(ctx context.Context, user *User) error {
 	uq := &UserQuery{db: dc.db, query: q}
 	_, err := uq.db.Exec(uq.query,
 		user.Password, user.Realname, user.Nickname,
-		user.AvatarUrl, user.Phone, user.UserIP, user.State,
+		user.AvatarUrl, user.Phone, user.UserIp, user.State,
 		user.Id)
 	return err
 }
@@ -209,7 +209,7 @@ func mkUser(rows *sql.Rows) (*Users, error) {
 			Nickname:   nickname.String,
 			AvatarUrl:  avatar_url.String,
 			Phone:      phone.String,
-			UserIP:     user_ip.String,
+			UserIp:     user_ip.String,
 			State:      state,
 			Deleted:    deleted,
 			CreateTime: create_time.Time,
