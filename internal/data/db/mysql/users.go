@@ -63,17 +63,6 @@ func (dc *DatabaseClient) UpdateUser(ctx context.Context, user *User) error {
 	return err
 }
 
-// DeleteUser2 is true delete from database instead of DeleteUser just update the row
-func (dc *DatabaseClient) DeleteUser2(ctx context.Context, id int) error {
-	q := `DELETE FROM users WHERE id=?`
-	aq := &UserQuery{db: dc.db, query: q}
-	_, err := aq.db.Exec(aq.query, id)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 // DeleteUser is soft delete, not delete from database,
 // but update deleted field to 1
 // DeleteUser is cooperate with All(ctx), that just return
@@ -90,6 +79,17 @@ func (dc *DatabaseClient) UndeleteUser(ctx context.Context, id int) error {
 	aq := &UserQuery{db: dc.db, query: q}
 	_, err := aq.db.Exec(aq.query, 0, id)
 	return err
+}
+
+// PermanentlyDeleteUser is true delete from database instead of DeleteUser just update the row
+func (dc *DatabaseClient) PermanentlyDeleteUser(ctx context.Context, id int) error {
+	q := `DELETE FROM users WHERE id=?`
+	aq := &UserQuery{db: dc.db, query: q}
+	_, err := aq.db.Exec(aq.query, id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (dc *DatabaseClient) QueryUser() *UserQuery {

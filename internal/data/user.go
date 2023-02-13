@@ -259,30 +259,30 @@ func (ur *userRepo) UndeleteUser(ctx context.Context, name string) (*emptypb.Emp
 	x := re.FindStringSubmatch(name)
 	if len(x) != 2 {
 		return &emptypb.Empty{},
-			errors.New("userRepo: DeleteUser: name cannot match regex express")
+			errors.New("userRepo: UndeleteUser: name cannot match regex express")
 	}
 	id, err := strconv.Atoi(x[1])
 	if err != nil {
 		return nil,
-			errors.New("userRepo: DeleteUser: user id should be integer only")
+			errors.New("userRepo: UndeleteUser: user id should be integer only")
 	}
 	return &emptypb.Empty{}, ur.data.DBClient.DatabaseClient.UndeleteUser(ctx, id)
 }
 
-// DeleteUser2 is true delete row from database permanently, be careful
-func (ur *userRepo) DeleteUser2(ctx context.Context, name string) (*emptypb.Empty, error) {
+// PermanentlyDeleteUser is true delete row from database permanently, be careful
+func (ur *userRepo) PermanentlyDeleteUser(ctx context.Context, name string) (*emptypb.Empty, error) {
 	ctx, cancel := context.WithTimeout(ctx, 50*time.Second)
 	defer cancel()
-	re := regexp.MustCompile(`^users/([\d.]+)/delete$`)
+	re := regexp.MustCompile(`^users/([\d.]+)/permanently_delete$`)
 	x := re.FindStringSubmatch(name)
 	if len(x) != 2 {
 		return &emptypb.Empty{},
-			errors.New("userRepo: DeleteUser: name cannot match regex express")
+			errors.New("userRepo: PermanentlyDeleteUser: name cannot match regex express")
 	}
 	id, err := strconv.Atoi(x[1])
 	if err != nil {
 		return nil,
-			errors.New("userRepo: DeleteUser: user id should be integer only")
+			errors.New("userRepo: PermanentlyDeleteUser: user id should be integer only")
 	}
-	return &emptypb.Empty{}, ur.data.DBClient.DatabaseClient.DeleteUser2(ctx, id)
+	return &emptypb.Empty{}, ur.data.DBClient.DatabaseClient.PermanentlyDeleteUser(ctx, id)
 }

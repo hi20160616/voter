@@ -28,7 +28,7 @@ type UserRepo interface {
 	UpdateUser(ctx context.Context, user *User) (*User, error)
 	DeleteUser(ctx context.Context, name string) (*emptypb.Empty, error)
 	UndeleteUser(ctx context.Context, name string) (*emptypb.Empty, error)
-	DeleteUser2(ctx context.Context, name string) (*emptypb.Empty, error)
+	PermanentlyDeleteUser(ctx context.Context, name string) (*emptypb.Empty, error)
 }
 
 type UserUsecase struct {
@@ -67,6 +67,6 @@ func (uu *UserUsecase) UndeleteUser(ctx context.Context, name string) (*emptypb.
 	return uu.repo.UndeleteUser(ctx, name)
 }
 
-func (uu *UserUsecase) DeleteUser2(ctx context.Context, name string) (*emptypb.Empty, error) {
-	return uu.repo.DeleteUser2(ctx, name)
+func (uu *UserUsecase) PermanentlyDeleteUser(ctx context.Context, name string) (*emptypb.Empty, error) {
+	return uu.repo.PermanentlyDeleteUser(ctx, name)
 }

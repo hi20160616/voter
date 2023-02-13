@@ -42,6 +42,16 @@ service UsersAPI {
       delete: "/v1/{name=users/*/delete}"
     };
   }
+  rpc UndeleteUser(UndeleteUserRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/{name=users/*/undelete}"
+    };
+  }
+  rpc PermanentlyDeleteUser(PermanentlyDeleteUserRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/{name=users/*/permanently_delete}"
+    };
+  }
 }
 
 message ListUsersRequest{
@@ -92,6 +102,14 @@ message UpdateUserRequest {
 }
 
 message DeleteUserRequest {
+  string name = 1;
+}
+
+message UndeleteUserRequest {
+  string name = 1;
+}
+
+message PermanentlyDeleteUserRequest {
   string name = 1;
 }
 

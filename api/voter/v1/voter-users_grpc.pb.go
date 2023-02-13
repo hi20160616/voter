@@ -29,6 +29,8 @@ type UsersAPIClient interface {
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*User, error)
 	UpdateUser(ctx context.Context, in *UpdateUserRequest, opts ...grpc.CallOption) (*User, error)
 	DeleteUser(ctx context.Context, in *DeleteUserRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	UndeleteUser(ctx context.Context, in *UndeleteUserRequest, opts ...grpc.CallOption) (*empty.Empty, error)
+	PermanentlyDeleteUser(ctx context.Context, in *PermanentlyDeleteUserRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 }
 
 type usersAPIClient struct {
@@ -93,6 +95,24 @@ func (c *usersAPIClient) DeleteUser(ctx context.Context, in *DeleteUserRequest, 
 	return out, nil
 }
 
+func (c *usersAPIClient) UndeleteUser(ctx context.Context, in *UndeleteUserRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/voter.users.v1.UsersAPI/UndeleteUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *usersAPIClient) PermanentlyDeleteUser(ctx context.Context, in *PermanentlyDeleteUserRequest, opts ...grpc.CallOption) (*empty.Empty, error) {
+	out := new(empty.Empty)
+	err := c.cc.Invoke(ctx, "/voter.users.v1.UsersAPI/PermanentlyDeleteUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UsersAPIServer is the server API for UsersAPI service.
 // All implementations must embed UnimplementedUsersAPIServer
 // for forward compatibility
@@ -103,6 +123,8 @@ type UsersAPIServer interface {
 	CreateUser(context.Context, *CreateUserRequest) (*User, error)
 	UpdateUser(context.Context, *UpdateUserRequest) (*User, error)
 	DeleteUser(context.Context, *DeleteUserRequest) (*empty.Empty, error)
+	UndeleteUser(context.Context, *UndeleteUserRequest) (*empty.Empty, error)
+	PermanentlyDeleteUser(context.Context, *PermanentlyDeleteUserRequest) (*empty.Empty, error)
 	mustEmbedUnimplementedUsersAPIServer()
 }
 
@@ -127,6 +149,12 @@ func (UnimplementedUsersAPIServer) UpdateUser(context.Context, *UpdateUserReques
 }
 func (UnimplementedUsersAPIServer) DeleteUser(context.Context, *DeleteUserRequest) (*empty.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUser not implemented")
+}
+func (UnimplementedUsersAPIServer) UndeleteUser(context.Context, *UndeleteUserRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UndeleteUser not implemented")
+}
+func (UnimplementedUsersAPIServer) PermanentlyDeleteUser(context.Context, *PermanentlyDeleteUserRequest) (*empty.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PermanentlyDeleteUser not implemented")
 }
 func (UnimplementedUsersAPIServer) mustEmbedUnimplementedUsersAPIServer() {}
 
@@ -249,6 +277,42 @@ func _UsersAPI_DeleteUser_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UsersAPI_UndeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UndeleteUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsersAPIServer).UndeleteUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/voter.users.v1.UsersAPI/UndeleteUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsersAPIServer).UndeleteUser(ctx, req.(*UndeleteUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UsersAPI_PermanentlyDeleteUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PermanentlyDeleteUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsersAPIServer).PermanentlyDeleteUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/voter.users.v1.UsersAPI/PermanentlyDeleteUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsersAPIServer).PermanentlyDeleteUser(ctx, req.(*PermanentlyDeleteUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UsersAPI_ServiceDesc is the grpc.ServiceDesc for UsersAPI service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -279,6 +343,14 @@ var UsersAPI_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteUser",
 			Handler:    _UsersAPI_DeleteUser_Handler,
+		},
+		{
+			MethodName: "UndeleteUser",
+			Handler:    _UsersAPI_UndeleteUser_Handler,
+		},
+		{
+			MethodName: "PermanentlyDeleteUser",
+			Handler:    _UsersAPI_PermanentlyDeleteUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

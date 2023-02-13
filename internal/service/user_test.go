@@ -82,7 +82,41 @@ func TestUpdateUser(t *testing.T) {
 func TestDeleteUser(t *testing.T) {
 	id := "1"
 	name := "users/" + id + "/delete"
-	if _, err := us.DeleteUser(context.Background(), &v1.DeleteUserRequest{Name: name}); err != nil {
+	if _, err := us.DeleteUser(context.Background(),
+		&v1.DeleteUserRequest{Name: name}); err != nil {
+		t.Fatal(err)
+	}
+	_, err := us.GetUser(context.Background(), &v1.GetUserRequest{Name: "users/" + id})
+	if err != nil {
+		if strings.Contains(err.Error(), "Item not found in table") {
+			return
+		}
+	}
+}
+
+func TestUndeleteUser(t *testing.T) {
+	id := "1"
+	name := "users/" + id + "/undelete"
+	if _, err := us.UndeleteUser(context.Background(),
+		&v1.UndeleteUserRequest{Name: name}); err != nil {
+		t.Fatal(err)
+	}
+	u, err := us.GetUser(context.Background(), &v1.GetUserRequest{Name: "users/" + id})
+	if err != nil {
+		if strings.Contains(err.Error(), "Item not found in table") {
+			return
+		}
+	}
+	if u != nil {
+		fmt.Println(u)
+	}
+}
+
+func TestPerDelUser(t *testing.T) {
+	id := "1"
+	name := "users/" + id + "/permanently_delete"
+	if _, err := us.PermanentlyDeleteUser(context.Background(),
+		&v1.PermanentlyDeleteUserRequest{Name: name}); err != nil {
 		t.Fatal(err)
 	}
 	_, err := us.GetUser(context.Background(), &v1.GetUserRequest{Name: "users/" + id})

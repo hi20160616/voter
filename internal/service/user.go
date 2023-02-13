@@ -187,12 +187,30 @@ func (us *UserService) UpdateUser(ctx context.Context, in *pb.UpdateUserRequest)
 	}, nil
 }
 
-func (as *UserService) DeleteUser(ctx context.Context, in *pb.DeleteUserRequest) (*emptypb.Empty, error) {
+func (us *UserService) DeleteUser(ctx context.Context, in *pb.DeleteUserRequest) (*emptypb.Empty, error) {
 	defer func() {
 		if r := recover(); r != nil {
-			fmt.Printf("Recovered in UpdateUsers: \n%v\n", r)
+			fmt.Printf("Recovered in DeleteUsers: \n%v\n", r)
 		}
 	}()
-	return nil, nil
-	// return as.ac.DeleteUser(ctx, in.Name)
+	return us.uc.DeleteUser(ctx, in.Name)
+}
+
+func (us *UserService) UndeleteUser(ctx context.Context, in *pb.UndeleteUserRequest) (*emptypb.Empty, error) {
+	defer func() {
+		if err := recover(); err != nil {
+			fmt.Printf("Recovered in UnDeleteUser: \n%v\n", err)
+		}
+	}()
+	return us.uc.UndeleteUser(ctx, in.Name)
+}
+
+func (us *UserService) PermanentlyDeleteUser(ctx context.Context,
+	in *pb.PermanentlyDeleteUserRequest) (*emptypb.Empty, error) {
+	defer func() {
+		if err := recover(); err != nil {
+			fmt.Printf("Recovered in UnDeleteUser: \n%v\n", err)
+		}
+	}()
+	return us.uc.PermanentlyDeleteUser(ctx, in.Name)
 }
