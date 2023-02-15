@@ -69,7 +69,7 @@ mysql> describe users;
 mysql> CREATE TABLE IF NOT EXISTS votes (
   id int(10) NOT NULL AUTO_INCREMENT,
   title VARCHAR(255),
-  is_radio TINYINT(1) DEFAULT 1 COMMENT 'is radio: 0=no, 1=yes(default)',
+  is_radio TINYINT(1) DEFAULT 0 COMMENT 'is radio: 1=no, 0=yes(default)',
   detail varchar(255),
   create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -91,7 +91,7 @@ mysql> desc votes;
 +-------------+--------------+------+-----+-------------------+-----------------------------------------------+
 | id          | int          | NO   | PRI | NULL              | auto_increment                                |
 | title       | varchar(255) | YES  |     | NULL              |                                               |
-| is_radio    | tinyint(1)   | YES  |     | 1                 |                                               |
+| is_radio    | tinyint(1)   | YES  |     | 0                 |                                               |
 | detail      | varchar(255) | YES  |     | NULL              |                                               |
 | create_time | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
 | update_time | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |

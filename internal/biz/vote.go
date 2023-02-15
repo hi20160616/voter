@@ -9,13 +9,13 @@ import (
 )
 
 type Vote struct {
-	IsRadio                int
+	VoteId, IsRadio        int
 	Title, Detail          string
 	CreateTime, UpdateTime time.Time
 }
 
 type Votes struct {
-	Collention    []*Vote
+	Collection    []*Vote
 	NextPageToken string
 }
 
