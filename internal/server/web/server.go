@@ -1,4 +1,4 @@
-package server
+package web
 
 import (
 	"context"
@@ -6,7 +6,7 @@ import (
 
 	"github.com/golang/glog"
 	"github.com/hi20160616/voter/configs"
-	"github.com/hi20160616/voter/internal/server/handler"
+	"github.com/hi20160616/voter/internal/server/web/handler"
 )
 
 func Run(ctx context.Context, cfg *configs.Config) error {

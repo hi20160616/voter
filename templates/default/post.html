@@ -1,0 +1,7 @@
+{{template "header" .}}
+<div class="container">
+    <!-- {{unescapeHTML (markdown .Data.Detail)}} -->
+    <h1>{{.Data.Title}}</h1>
+    {{markdown .Data.Detail | unescapeHTML}}
+</div>
+{{template "footer" .}}

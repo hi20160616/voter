@@ -1,7 +1,7 @@
 {{define "navbar"}}
 <nav class="navbar sticky-top navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-	<a class="navbar-brand" href="/">Voter</a>
+	<a class="navbar-brand" href="/"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" style="margin-top: -4px;" viewBox="0 0 576 512"><!--! Font Awesome Pro 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M96 80c0-26.5 21.5-48 48-48H432c26.5 0 48 21.5 48 48V384H96V80zm313 47c-9.4-9.4-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L409 161c9.4-9.4 9.4-24.6 0-33.9zM0 336c0-26.5 21.5-48 48-48H64V416H512V288h16c26.5 0 48 21.5 48 48v96c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V336z"/></svg> Voter</a>
 	<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
 	    <span class="navbar-toggler-icon"></span>
 	</button>
@@ -11,7 +11,7 @@
 	    <!--         <a class="nav-link" aria-current="page" href="/list/">Sites</a> -->
 	    <!--     </li> -->
 	    </ul>
-	    <form class="d-flex" action="/articles/s" method="GET">
+	    <form class="d-flex" action="/posts/s" method="GET">
 		<input class="form-control me-2" type="search" name="v" placeholder="Search" aria-label="Search">
 		<button class="btn btn-outline-success" type="submit">Search</button>
 	    </form>

@@ -13,7 +13,7 @@ import (
 
 	"github.com/golang/glog"
 	"github.com/hi20160616/voter/configs"
-	"github.com/hi20160616/voter/internal/server"
+	"github.com/hi20160616/voter/internal/server/web"
 
 	theGateway "github.com/hi20160616/voter/internal/server/gateway"
 	theGRPC "github.com/hi20160616/voter/internal/server/grpc"
@@ -30,7 +30,7 @@ func main() {
 
 	// Http server
 	g.Go(func() error {
-		return server.Run(ctx, cfg)
+		return web.Run(ctx, cfg)
 	})
 
 	// gRPC
