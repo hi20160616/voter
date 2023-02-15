@@ -1,0 +1,58 @@
+{{template "header" .}}
+<div class="container">
+    <form>
+	<div class="form-group">
+	    <label for="PostTitle">Title</label>
+	    <input type="text" class="form-control" id="PostTitle" aria-describedby="post title">
+	    <small id="emailHelp" class="form-text text-muted">Post title.</small>
+	</div>
+	<div class="form-group">
+	    <label for="VoteTitle">Vote Title</label>
+	    <textarea class="form-control" id="VoteTitle" rows="3"></textarea>
+	</div>
+	<div class="btn-group btn-group-sm mb-2" role="group" aria-label="Basic radio toggle button group" style="user-select: auto;">
+	    <input type="radio" class="btn-check" name="q" id="btnradio1" value="hd720" autocomplete="off" checked="" style="user-select: auto;">
+	    <label class="btn btn-outline-secondary" for="btnradio1" style="user-select: auto;">720p</label>
+	    <input type="radio" class="btn-check" name="q" id="btnradio2" value="hd1080" autocomplete="off" style="user-select: auto;">
+	    <label class="btn btn-outline-secondary" for="btnradio2" style="user-select: auto;">1080p</label>
+	</div>
+	<div class="custom-control custom-radio custom-control-inline">
+	    <input type="radio" id="IsRadio" name="customRadioOrCheckbox" class="custom-control-input">
+	    <label class="custom-control-label" for="IsRadio">Radio</label>
+	</div>
+	<div class="custom-control custom-radio custom-control-inline">
+	    <input type="radio" id="IsCheckbox" name="customRadioOrCheckbox" class="custom-control-input">
+	    <label class="custom-control-label" for="IsCheckbox">Checkbox</label>
+	</div>
+	<div class="form-group">
+	    <label for="option1">option1</label>
+	    <input class="form-control" type="text" placeholder="Input opiton content">
+	</div>
+	<div class="form-group">
+	    <label for="option1">option2</label>
+	    <input class="form-control" type="text" placeholder="Input opiton content">
+	</div>
+	<div class="form-group">
+	    <label for="option1">option3</label>
+	    <input class="form-control" type="text" placeholder="Input opiton content">
+	</div>
+	<div class="form-group">
+	    <label for="option1">option4</label>
+	    <input class="form-control" type="text" placeholder="Input opiton content">
+	</div>
+	<div class="form-group">
+	    <label for="option1">option5</label>
+	    <input class="form-control" type="text" placeholder="Input opiton content">
+	</div>
+	<div class="form-group">
+	    <label for="option1">option6</label>
+	    <input class="form-control" type="text" placeholder="Input opiton content">
+	</div>
+	<div class="form-group">
+	    <label for="option1">option7</label>
+	    <input class="form-control" type="text" placeholder="Input opiton content">
+	</div>
+	<button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+{{template "footer" .}}
