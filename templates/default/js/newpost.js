@@ -1,11 +1,5 @@
-{{template "header" .}}
-<div class="container">
-    <form>
-	<div class="form-group">
-	    <label for="PostTitle">Post Title</label>
-	    <input type="text" class="form-control border-primary" id="PostTitle" aria-describedby="post title">
-	    <small id="emailHelp" class="form-text text-muted">Post Title is the general title.</small>
-	</div>
+$(document).ready(function(){
+    let votehtml = `
 	<div class="vote border border-1 border-success rounded p-4 my-3">
 	    <div class="form-group">
 		<label for="VoteTitle">Vote Title</label>
@@ -50,8 +44,8 @@
 		<input type="text" class="form-control" placeholder="Input content or leave blank" aria-label="G" aria-describedby="basic-addon7">
 	    </div>
 	</div>
-	<button id="addvote" type="button" class="btn btn-success">Add Vote</button>
-	<button type="submit" class="btn btn-primary">Complete</button>
-    </form>
-</div>
-{{template "footer" .}}
+    `
+  $("#addvote").click(function(){
+    $("#addvote").before(votehtml);
+  });
+});

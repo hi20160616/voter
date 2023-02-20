@@ -1,16 +1,18 @@
 package handler
 
 import (
+	"bufio"
 	"context"
 	"log"
 	"net/http"
+	"os"
 	"regexp"
+	"strings"
 
 	pb "github.com/hi20160616/voter/api/voter/v1"
 	"github.com/hi20160616/voter/configs"
 	"github.com/hi20160616/voter/internal/server/web/render"
 	"github.com/hi20160616/voter/internal/service"
-	tmpl "github.com/hi20160616/voter/templates"
 )
 
 var validPath = regexp.MustCompile("^/(posts|votes|users|search)/(.*?)$")
@@ -38,11 +40,44 @@ func GetHandler(cfg *configs.Config) *http.ServeMux {
 		}
 		homeHandler(w, req)
 	})
-	mux.Handle("/s/", http.StripPrefix("/s/", http.FileServer(http.FS(tmpl.FS))))
+	// mux.Handle("/s/", http.StripPrefix("/s/", http.FileServer(http.FS(tmpl.FS))))
+	mux.HandleFunc("/s/", serveResource) // `/s` means source
 	mux.HandleFunc("/posts/", makeHandler(listPostsHandler, cfg))
 	mux.HandleFunc("/posts/v", makeHandler(getPostHandler, cfg))
+	mux.HandleFunc("/posts/newpost", makeHandler(newPostHandler, cfg))
 	// mux.HandleFunc("/posts/s", makeHandler(searchPostsHandler, cfg))
 	return mux
+}
+
+func serveResource(w http.ResponseWriter, req *http.Request) {
+	path := "templates" + req.URL.Path[2:] // filter `/s`
+	var contentType string
+	switch path != "" {
+	case strings.HasSuffix(path, ".css"):
+		contentType = "text/css"
+	case strings.HasSuffix(path, ".js"):
+		contentType = "text/javascript"
+	case strings.HasSuffix(path, ".png"):
+		contentType = "image/png"
+	case strings.HasSuffix(path, ".gif"):
+		contentType = "image/gif"
+	case strings.HasSuffix(path, ".jpg"):
+		contentType = "image/jpg"
+	default:
+		contentType = "text/plain"
+	}
+
+	f, err := os.Open(path)
+
+	if err == nil {
+		defer f.Close()
+		w.Header().Add("Content-Type", contentType)
+
+		br := bufio.NewReader(f)
+		br.WriteTo(w)
+	} else {
+		w.WriteHeader(404)
+	}
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
@@ -56,6 +91,11 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 	}
 	render.Derive(w, "home", &render.Page{Title: "Home", Data: ds.Posts})
+}
+
+func newPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+	p.Title = "New Post"
+	render.Derive(w, "newpost", p)
 }
 
 func listPostsHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
