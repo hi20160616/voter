@@ -40,7 +40,6 @@ func GetHandler(cfg *configs.Config) *http.ServeMux {
 		}
 		homeHandler(w, req)
 	})
-	// mux.Handle("/s/", http.StripPrefix("/s/", http.FileServer(http.FS(tmpl.FS))))
 	mux.HandleFunc("/s/", serveResource) // `/s` means source
 	mux.HandleFunc("/posts/", makeHandler(listPostsHandler, cfg))
 	mux.HandleFunc("/posts/v", makeHandler(getPostHandler, cfg))

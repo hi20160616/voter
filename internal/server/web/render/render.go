@@ -5,10 +5,10 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"path/filepath"
 	"time"
 
 	"github.com/hi20160616/voter/configs"
-	tmpl "github.com/hi20160616/voter/templates"
 	"github.com/yuin/goldmark"
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
@@ -19,10 +19,10 @@ type Page struct {
 	Cfg   *configs.Config
 }
 
-var templates = template.New("")
+var tmpl = template.New("")
 
 func init() {
-	templates.Funcs(template.FuncMap{
+	tmpl.Funcs(template.FuncMap{
 		"summary":      summary,
 		"smartTime":    smartTime,
 		"smartDate":    smartDate,
@@ -30,13 +30,15 @@ func init() {
 		"unescapeHTML": unescapeHTML,
 		"plusOne":      plusOne,
 	})
-	templates = template.Must(templates.ParseFS(tmpl.FS, "default/*.html"))
+	// templates = template.Must(templates.ParseFS(tmpl.FS, "default/*.html"))
+	pattern := filepath.Join("templates", "default", "*.html")
+	tmpl = template.Must(tmpl.ParseGlob(pattern))
 }
 
-func Derive(w http.ResponseWriter, tmpl string, p *Page) {
-	if err := templates.ExecuteTemplate(w, tmpl+".html", p); err != nil {
+func Derive(w http.ResponseWriter, tmplName string, p *Page) {
+	if err := tmpl.ExecuteTemplate(w, tmplName+".html", p); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Printf("err template: %s.html\n\terror: %#v", tmpl, err)
+		log.Printf("err template: %s.html\n\terror: %#v", tmplName, err)
 	}
 }
 
