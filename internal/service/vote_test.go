@@ -47,7 +47,7 @@ func TestListVotes(t *testing.T) {
 }
 
 func TestGetVote(t *testing.T) {
-	id := "1"
+	id := "4"
 	u, err := vs.GetVote(context.Background(), &v1.GetVoteRequest{Name: "votes/" + id})
 	if err != nil {
 		t.Fatal(err)
@@ -56,7 +56,7 @@ func TestGetVote(t *testing.T) {
 }
 
 func TestSearchVotes(t *testing.T) {
-	name := "votes/vote1/search"
+	name := "votes/Richael/search"
 	votes, err := vs.SearchVotes(context.Background(), &v1.SearchVotesRequest{Name: name})
 	if err != nil {
 		t.Fatal(err)
@@ -69,7 +69,7 @@ func TestSearchVotes(t *testing.T) {
 func TestUpdateVote(t *testing.T) {
 	u, err := vs.UpdateVote(context.Background(), &v1.UpdateVoteRequest{
 		Vote: &v1.Vote{
-			VoteId:  1,
+			VoteId:  4,
 			Title:   "Updated vote title",
 			IsRadio: 0,
 			A:       "a. Updated vote detail",
@@ -82,7 +82,7 @@ func TestUpdateVote(t *testing.T) {
 }
 
 func TestDeleteVote(t *testing.T) {
-	id := "1"
+	id := "4"
 	name := "votes/" + id + "/delete"
 	if _, err := vs.DeleteVote(context.Background(),
 		&v1.DeleteVoteRequest{Name: name}); err != nil {
