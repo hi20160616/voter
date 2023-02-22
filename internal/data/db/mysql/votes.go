@@ -13,9 +13,9 @@ import (
 )
 
 type Vote struct {
-	Id, IsRadio            int
-	Title, Detail          string
-	CreateTime, UpdateTime time.Time
+	Id, IsRadio, HasTxtField      int
+	Title, A, B, C, D, E, F, G, H string
+	CreateTime, UpdateTime        time.Time
 }
 
 type Votes struct {
@@ -34,18 +34,27 @@ type VoteQuery struct {
 }
 
 func (dc *DatabaseClient) InsertVote(ctx context.Context, vote *Vote) error {
-	q := `INSERT INTO votes(title, is_radio, detail) VALUES (?, ?, ?)
-		ON DUPLICATE KEY UPDATE title=?, is_radio=?, detail=?`
+	q := `
+INSERT INTO votes(title, is_radio, a, b, c, d, e, f, g, h, has_txt_field)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+ON DUPLICATE KEY UPDATE title=?, is_radio=?, a=?, b=?, c=?, d=?, e=?, f=?,
+g=?, h=?, has_txt_field=?`
 	aq := &VoteQuery{db: dc.db, query: q}
-	_, err := aq.db.Exec(aq.query, vote.Title, vote.IsRadio, vote.Detail,
-		vote.Title, vote.IsRadio, vote.Detail)
+	_, err := aq.db.Exec(
+		aq.query, vote.Title, vote.IsRadio, vote.A, vote.B, vote.C,
+		vote.D, vote.E, vote.F, vote.G, vote.H, vote.HasTxtField,
+		vote.Title, vote.IsRadio, vote.A, vote.B, vote.C,
+		vote.D, vote.E, vote.F, vote.G, vote.H, vote.HasTxtField)
 	return errors.WithMessage(err, "mariadb: votes: Insert error")
 }
 
 func (dc *DatabaseClient) UpdateVote(ctx context.Context, vote *Vote) error {
-	q := `UPDATE votes SET title=?, is_radio=?, detail=?  WHERE id=?`
+	q := `UPDATE votes SET title=?, is_radio=?, a=?, b=?, c=?, d=?, e=?, f=?,
+	g=?, h=?, has_txt_field=? WHERE id=?`
 	uq := &VoteQuery{db: dc.db, query: q}
-	_, err := uq.db.Exec(uq.query, vote.Title, vote.IsRadio, vote.Detail, vote.Id)
+	_, err := uq.db.Exec(uq.query, vote.Title, vote.IsRadio, vote.A, vote.B,
+		vote.C, vote.D, vote.E, vote.F, vote.G, vote.H, vote.HasTxtField,
+		vote.Id)
 	return err
 }
 
@@ -149,21 +158,30 @@ func (aq *VoteQuery) prepareQuery(ctx context.Context) error {
 }
 
 func mkVote(rows *sql.Rows) (*Votes, error) {
-	var title, detail sql.NullString
+	var title, a, b, c, d, e, f, g, h sql.NullString
 	var create_time, update_time sql.NullTime
-	var id, is_radio int
+	var id, is_radio, has_txt_field int
 	var votes = &Votes{}
 	for rows.Next() {
-		if err := rows.Scan(&id, &title, &is_radio, &detail, &create_time, &update_time); err != nil {
+		if err := rows.Scan(&id, &title, &is_radio, &a, &b, &c, &d, &e, &f,
+			&g, &h, &has_txt_field, &create_time, &update_time); err != nil {
 			return nil, errors.WithMessage(err, "mkVote rows.Scan error")
 		}
 		votes.Collection = append(votes.Collection, &Vote{
-			Id:         id,
-			Title:      title.String,
-			Detail:     detail.String,
-			IsRadio:    is_radio,
-			CreateTime: create_time.Time,
-			UpdateTime: update_time.Time,
+			Id:          id,
+			Title:       title.String,
+			IsRadio:     is_radio,
+			A:           a.String,
+			B:           b.String,
+			C:           c.String,
+			D:           d.String,
+			E:           e.String,
+			F:           f.String,
+			G:           g.String,
+			H:           h.String,
+			HasTxtField: has_txt_field,
+			CreateTime:  create_time.Time,
+			UpdateTime:  update_time.Time,
 		})
 	}
 	// TODO: to confirm code below can make sence.

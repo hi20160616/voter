@@ -9,9 +9,9 @@ import (
 )
 
 type Vote struct {
-	VoteId, IsRadio        int
-	Title, Detail          string
-	CreateTime, UpdateTime time.Time
+	VoteId, IsRadio, HasTxtField  int
+	Title, A, B, C, D, E, F, G, H string
+	CreateTime, UpdateTime        time.Time
 }
 
 type Votes struct {

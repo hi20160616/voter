@@ -34,17 +34,27 @@ func TestInsertVote(t *testing.T) {
 	}
 	tcs := []*Vote{
 		{
-			Title:  "testInsertVote1",
-			Detail: "Mazzy1",
+			Title:       "testInsertVote1",
+			A:           "Mazzya",
+			B:           "Mazzyb",
+			C:           "Mazzyc",
+			D:           "Mazzyd",
+			HasTxtField: 1,
 		},
 		{
-			Title:  "testInsertVote2",
-			Detail: "Mazzy2",
+			Title: "testInsertVote2",
+			A:     "Mazza",
+			B:     "Mazzb",
+			C:     "Mazzc",
+			D:     "Mazzd",
+			E:     "Mazze",
 		},
 		{
 			Title:   "testInsertVote3",
 			IsRadio: 0,
-			Detail:  "Mazzy3",
+			A:       "Mazzy3a",
+			B:       "Mazzy3b",
+			C:       "Mazzy3c",
 		},
 	}
 	for _, tc := range tcs {
@@ -66,6 +76,7 @@ func TestUpdateVote(t *testing.T) {
 		Id:      id,
 		Title:   "tttest",
 		IsRadio: 0,
+		A:       "updated Opt A",
 	}
 	getVote := func() *Vote {
 		ps := [4]string{"id", "=", strconv.Itoa(vote.Id), "or"}
@@ -88,10 +99,10 @@ func TestUpdateVote(t *testing.T) {
 				vote.Title, after.Title))
 		}
 	}
-	if before.Detail != after.Detail {
+	if before.A != after.A {
 		if err != nil {
 			t.Fatal(fmt.Errorf("want: %s, got: %s",
-				vote.Detail, after.Detail))
+				vote.A, after.A))
 		}
 	}
 	if before.IsRadio != after.IsRadio {

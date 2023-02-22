@@ -70,7 +70,15 @@ mysql> CREATE TABLE IF NOT EXISTS votes (
   id int(10) NOT NULL AUTO_INCREMENT,
   title VARCHAR(255),
   is_radio TINYINT(1) DEFAULT 0 COMMENT 'is radio: 1=no, 0=yes(default)',
-  detail varchar(255),
+  a varchar(255),
+  b varchar(255),
+  c varchar(255),
+  d varchar(255),
+  e varchar(255),
+  f varchar(255),
+  g varchar(255),
+  h varchar(255),
+  has_txt_field TINYINT(1) DEFAULT 0 COMMENT 'has txt field: 1=yes, 0=no(default)',
   create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (id)
@@ -86,17 +94,25 @@ mysql> show tables;
 2 rows in set (0.01 sec)
 
 mysql> desc votes;
-+-------------+--------------+------+-----+-------------------+-----------------------------------------------+
-| Field       | Type         | Null | Key | Default           | Extra                                         |
-+-------------+--------------+------+-----+-------------------+-----------------------------------------------+
-| id          | int          | NO   | PRI | NULL              | auto_increment                                |
-| title       | varchar(255) | YES  |     | NULL              |                                               |
-| is_radio    | tinyint(1)   | YES  |     | 0                 |                                               |
-| detail      | varchar(255) | YES  |     | NULL              |                                               |
-| create_time | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
-| update_time | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
-+-------------+--------------+------+-----+-------------------+-----------------------------------------------+
-6 rows in set (0.00 sec)
++---------------+--------------+------+-----+-------------------+-----------------------------------------------+
+| Field         | Type         | Null | Key | Default           | Extra                                         |
++---------------+--------------+------+-----+-------------------+-----------------------------------------------+
+| id            | int          | NO   | PRI | NULL              | auto_increment                                |
+| title         | varchar(255) | YES  |     | NULL              |                                               |
+| is_radio      | tinyint(1)   | YES  |     | 0                 |                                               |
+| a             | varchar(255) | YES  |     | NULL              |                                               |
+| b             | varchar(255) | YES  |     | NULL              |                                               |
+| c             | varchar(255) | YES  |     | NULL              |                                               |
+| d             | varchar(255) | YES  |     | NULL              |                                               |
+| e             | varchar(255) | YES  |     | NULL              |                                               |
+| f             | varchar(255) | YES  |     | NULL              |                                               |
+| g             | varchar(255) | YES  |     | NULL              |                                               |
+| h             | varchar(255) | YES  |     | NULL              |                                               |
+| has_txt_field | tinyint(1)   | YES  |     | 0                 |                                               |
+| create_time   | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
+| update_time   | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |
++---------------+--------------+------+-----+-------------------+-----------------------------------------------+
+14 rows in set (0.01 sec)
 ```
 
 ### Posts

@@ -10,9 +10,9 @@ $(document).ready(function(){
 		<label for="VoteType" style="display: block;">Vote Type</label>
 		<div class="btn-group btn-group-sm mb-2" role="group" id="VoteType" aria-label="Basic radio toggle button group" style="user-select: auto;">
 		    <input type="radio" class="btn-check" name="q" id="btnradio1" value="Radio" autocomplete="off" checked="" style="user-select: auto;">
-		    <label class="btn btn-outline-secondary" for="btnradio1" style="user-select: auto;">Radio</label>
+		    <label class="btn btn-outline-dark" for="btnradio1" style="user-select: auto;">Radio</label>
 		    <input type="radio" class="btn-check" name="q" id="btnradio2" value="CheckBox" autocomplete="off" style="user-select: auto;">
-		    <label class="btn btn-outline-secondary" for="btnradio2" style="user-select: auto;">CheckBox</label>
+		    <label class="btn btn-outline-dark" for="btnradio2" style="user-select: auto;">CheckBox</label>
 		</div>
 	    </div>
 	    <div class="input-group mb-3">
@@ -42,6 +42,15 @@ $(document).ready(function(){
 	    <div class="input-group mb-3">
 		<span class="input-group-text" id="basic-addon7">G</span>
 		<input type="text" class="form-control" placeholder="Input content or leave blank" aria-label="G" aria-describedby="basic-addon7">
+	    </div>
+	    <div class="form-group">
+		<label for="EnableTxtOpt" style="display: block;">Enable Text Option?</label>
+		<div class="btn-group btn-group-sm mb-2" role="group" id="EnableTxtOpt" aria-label="Basic radio toggle button group" style="user-select: auto;">
+		    <input type="radio" class="btn-check" name="e" id="btnEnable1" value="Yes" autocomplete="off" style="user-select: auto;">
+		    <label class="btn btn-outline-dark" for="btnEnable1" style="user-select: auto;">Yes</label>
+		    <input type="radio" class="btn-check" name="e" id="btnEnable2" value="No" autocomplete="off" checked="" style="user-select: auto;">
+		    <label class="btn btn-outline-dark" for="btnEnable2" style="user-select: auto;">No</label>
+		</div>
 	    </div>
 	</div>
     `

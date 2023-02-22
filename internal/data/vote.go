@@ -66,12 +66,20 @@ func (vr *voteRepo) ListVotes(ctx context.Context, parent string) (*biz.Votes, e
 	}
 	for _, v := range vs.Collection {
 		bizvs.Collection = append(bizvs.Collection, &biz.Vote{
-			VoteId:     v.Id,
-			Title:      v.Title,
-			IsRadio:    v.IsRadio,
-			Detail:     v.Detail,
-			CreateTime: v.CreateTime,
-			UpdateTime: v.UpdateTime,
+			VoteId:      v.Id,
+			Title:       v.Title,
+			IsRadio:     v.IsRadio,
+			A:           v.A,
+			B:           v.B,
+			C:           v.C,
+			D:           v.D,
+			E:           v.E,
+			F:           v.F,
+			G:           v.G,
+			H:           v.H,
+			HasTxtField: v.HasTxtField,
+			CreateTime:  v.CreateTime,
+			UpdateTime:  v.UpdateTime,
 		})
 	}
 	return bizvs, nil
@@ -94,12 +102,20 @@ func (vr *voteRepo) GetVote(ctx context.Context, name string) (*biz.Vote, error)
 		return nil, err
 	}
 	return &biz.Vote{
-		VoteId:     v.Id,
-		Title:      v.Title,
-		IsRadio:    v.IsRadio,
-		Detail:     v.Detail,
-		CreateTime: v.CreateTime,
-		UpdateTime: v.UpdateTime,
+		VoteId:      v.Id,
+		Title:       v.Title,
+		IsRadio:     v.IsRadio,
+		A:           v.A,
+		B:           v.B,
+		C:           v.C,
+		D:           v.D,
+		E:           v.E,
+		F:           v.F,
+		G:           v.G,
+		H:           v.H,
+		HasTxtField: v.HasTxtField,
+		CreateTime:  v.CreateTime,
+		UpdateTime:  v.UpdateTime,
 	}, nil
 }
 
@@ -119,26 +135,39 @@ func (vr *voteRepo) SearchVotes(ctx context.Context, name string) (*biz.Votes, e
 			// cs will be filtered by Where(clauses...)
 			// the last `or` `and` in clause will cut off.
 			// so, every clause need `or` or `and` for last element.
-			[4]string{"votename", "like", kw, "or"},
-			[4]string{"realname", "like", kw, "or"},
-			[4]string{"nickname", "like", kw, "or"},
-			[4]string{"vote_ip", "like", kw, "and"},
+			[4]string{"title", "like", kw, "or"},
+			[4]string{"a", "like", kw, "or"},
+			[4]string{"b", "like", kw, "or"},
+			[4]string{"c", "like", kw, "and"},
+			[4]string{"d", "like", kw, "and"},
+			[4]string{"e", "like", kw, "and"},
+			[4]string{"f", "like", kw, "and"},
+			[4]string{"g", "like", kw, "and"},
+			[4]string{"h", "like", kw, "and"},
 		)
 	}
-	us, err := vr.data.DBClient.DatabaseClient.QueryVote().
+	vs, err := vr.data.DBClient.DatabaseClient.QueryVote().
 		Where(cs...).All(ctx)
 	if err != nil {
 		return nil, err
 	}
 	bizvs := &biz.Votes{Collection: []*biz.Vote{}}
-	for _, e := range us.Collection {
+	for _, v := range vs.Collection {
 		bizvs.Collection = append(bizvs.Collection, &biz.Vote{
-			VoteId:     e.Id,
-			Title:      e.Title,
-			IsRadio:    e.IsRadio,
-			Detail:     e.Detail,
-			CreateTime: e.CreateTime,
-			UpdateTime: e.UpdateTime,
+			VoteId:      v.Id,
+			Title:       v.Title,
+			IsRadio:     v.IsRadio,
+			A:           v.A,
+			B:           v.B,
+			C:           v.C,
+			D:           v.D,
+			E:           v.E,
+			F:           v.F,
+			G:           v.G,
+			H:           v.H,
+			HasTxtField: v.HasTxtField,
+			CreateTime:  v.CreateTime,
+			UpdateTime:  v.UpdateTime,
 		})
 	}
 	return bizvs, nil
@@ -149,11 +178,19 @@ func (vr *voteRepo) CreateVote(ctx context.Context, vote *biz.Vote) (*biz.Vote, 
 	defer cancel()
 	if err := vr.data.DBClient.DatabaseClient.
 		InsertVote(ctx, &mysql.Vote{
-			Title:      vote.Title,
-			IsRadio:    vote.IsRadio,
-			Detail:     vote.Detail,
-			CreateTime: vote.CreateTime,
-			UpdateTime: vote.UpdateTime,
+			Title:       vote.Title,
+			IsRadio:     vote.IsRadio,
+			A:           vote.A,
+			B:           vote.B,
+			C:           vote.C,
+			D:           vote.D,
+			E:           vote.E,
+			F:           vote.F,
+			G:           vote.G,
+			H:           vote.H,
+			HasTxtField: vote.HasTxtField,
+			CreateTime:  vote.CreateTime,
+			UpdateTime:  vote.UpdateTime,
 		}); err != nil {
 		return nil, err
 	}
@@ -177,20 +214,52 @@ func (vr *voteRepo) UpdateVote(ctx context.Context, vote *biz.Vote) (*biz.Vote, 
 	if &vote.IsRadio != nil {
 		dbVote.IsRadio = vote.IsRadio
 	}
-	if &vote.Detail != nil {
-		dbVote.Detail = vote.Detail
+	if &vote.A != nil {
+		dbVote.A = vote.A
+	}
+	if &vote.B != nil {
+		dbVote.B = vote.B
+	}
+	if &vote.C != nil {
+		dbVote.C = vote.C
+	}
+	if &vote.D != nil {
+		dbVote.D = vote.D
+	}
+	if &vote.E != nil {
+		dbVote.E = vote.E
+	}
+	if &vote.F != nil {
+		dbVote.F = vote.F
+	}
+	if &vote.G != nil {
+		dbVote.G = vote.G
+	}
+	if &vote.H != nil {
+		dbVote.H = vote.H
+	}
+	if &vote.HasTxtField != nil {
+		dbVote.HasTxtField = vote.HasTxtField
 	}
 	if err := vr.data.DBClient.DatabaseClient.
 		UpdateVote(ctx, dbVote); err != nil {
 		return nil, err
 	}
 	return &biz.Vote{
-		VoteId:     dbVote.Id,
-		Title:      dbVote.Title,
-		IsRadio:    dbVote.IsRadio,
-		Detail:     dbVote.Detail,
-		CreateTime: dbVote.CreateTime,
-		UpdateTime: dbVote.UpdateTime,
+		VoteId:      dbVote.Id,
+		Title:       dbVote.Title,
+		IsRadio:     dbVote.IsRadio,
+		A:           dbVote.A,
+		B:           dbVote.B,
+		C:           dbVote.C,
+		D:           dbVote.D,
+		E:           dbVote.E,
+		F:           dbVote.F,
+		G:           dbVote.G,
+		H:           dbVote.H,
+		HasTxtField: dbVote.HasTxtField,
+		CreateTime:  dbVote.CreateTime,
+		UpdateTime:  dbVote.UpdateTime,
 	}, nil
 }
 

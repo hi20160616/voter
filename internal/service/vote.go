@@ -15,7 +15,7 @@ import (
 
 type VoteService struct {
 	pb.UnimplementedVotesAPIServer
-	uc *biz.VoteUsecase
+	vc *biz.VoteUsecase
 }
 
 func NewVoteService() (*VoteService, error) {
@@ -27,7 +27,7 @@ func NewVoteService() (*VoteService, error) {
 	db := &data.Data{DBClient: dbc}
 	repo := data.NewVoteRepo(db, log.Default())
 	voteUsecase := biz.NewVoteUsecase(repo, *log.Default())
-	return &VoteService{uc: voteUsecase}, nil
+	return &VoteService{vc: voteUsecase}, nil
 }
 
 func (vs *VoteService) ListVotes(ctx context.Context, in *pb.ListVotesRequest) (*pb.ListVotesResponse, error) {
@@ -36,7 +36,7 @@ func (vs *VoteService) ListVotes(ctx context.Context, in *pb.ListVotesRequest) (
 			fmt.Printf("Recovered in ListVotes: \n%v\n", r)
 		}
 	}()
-	bizvs, err := vs.uc.ListVotes(ctx, in.Parent)
+	bizvs, err := vs.vc.ListVotes(ctx, in.Parent)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,6 @@ func (vs *VoteService) ListVotes(ctx context.Context, in *pb.ListVotesRequest) (
 			VoteId:     int32(u.VoteId),
 			Title:      u.Title,
 			IsRadio:    int32(u.IsRadio),
-			Detail:     u.Detail,
 			CreateTime: timestamppb.New(u.CreateTime),
 			UpdateTime: timestamppb.New(u.UpdateTime),
 		})
@@ -54,23 +53,31 @@ func (vs *VoteService) ListVotes(ctx context.Context, in *pb.ListVotesRequest) (
 	return &pb.ListVotesResponse{Votes: resp}, nil
 }
 
-func (us *VoteService) GetVote(ctx context.Context, in *pb.GetVoteRequest) (*pb.Vote, error) {
+func (vs *VoteService) GetVote(ctx context.Context, in *pb.GetVoteRequest) (*pb.Vote, error) {
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Printf("Recovered in GetVote: %s\n%v\n", in.Name, r)
 		}
 	}()
-	bizu, err := us.uc.GetVote(ctx, in.Name)
+	bizv, err := vs.vc.GetVote(ctx, in.Name)
 	if err != nil {
 		return nil, err
 	}
 	return &pb.Vote{
-		VoteId:     int32(bizu.VoteId),
-		Title:      bizu.Title,
-		IsRadio:    int32(bizu.IsRadio),
-		Detail:     bizu.Detail,
-		CreateTime: timestamppb.New(bizu.CreateTime),
-		UpdateTime: timestamppb.New(bizu.UpdateTime),
+		VoteId:      int32(bizv.VoteId),
+		Title:       bizv.Title,
+		IsRadio:     int32(bizv.IsRadio),
+		A:           bizv.A,
+		B:           bizv.B,
+		C:           bizv.C,
+		D:           bizv.D,
+		E:           bizv.E,
+		F:           bizv.F,
+		G:           bizv.G,
+		H:           bizv.H,
+		HasTxtField: int32(bizv.HasTxtField),
+		CreateTime:  timestamppb.New(bizv.CreateTime),
+		UpdateTime:  timestamppb.New(bizv.UpdateTime),
 	}, nil
 }
 
@@ -80,78 +87,119 @@ func (us *VoteService) SearchVotes(ctx context.Context, in *pb.SearchVotesReques
 			fmt.Printf("Recovered in SearchVotes: \n%v\n", r)
 		}
 	}()
-	bizvs, err := us.uc.SearchVotes(ctx, in.Name)
+	bizvs, err := us.vc.SearchVotes(ctx, in.Name)
 	if err != nil {
 		return nil, err
 	}
 	resp := &pb.SearchVotesResponse{}
 	for _, e := range bizvs.Collection {
 		resp.Votes = append(resp.Votes, &pb.Vote{
-			VoteId:     int32(e.VoteId),
-			Title:      e.Title,
-			IsRadio:    int32(e.IsRadio),
-			Detail:     e.Detail,
-			CreateTime: timestamppb.New(e.CreateTime),
-			UpdateTime: timestamppb.New(e.UpdateTime),
+			VoteId:      int32(e.VoteId),
+			Title:       e.Title,
+			IsRadio:     int32(e.IsRadio),
+			A:           e.A,
+			B:           e.B,
+			C:           e.C,
+			D:           e.D,
+			E:           e.E,
+			F:           e.F,
+			G:           e.G,
+			H:           e.H,
+			HasTxtField: int32(e.HasTxtField),
+			CreateTime:  timestamppb.New(e.CreateTime),
+			UpdateTime:  timestamppb.New(e.UpdateTime),
 		})
 	}
 	return resp, nil
 }
 
-func (us *VoteService) CreateVote(ctx context.Context, in *pb.CreateVoteRequest) (*pb.Vote, error) {
+func (vs *VoteService) CreateVote(ctx context.Context, in *pb.CreateVoteRequest) (*pb.Vote, error) {
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Printf("Recovered in UpdateVotes: \n%v\n", r)
 		}
 	}()
-	u, err := us.uc.CreateVote(ctx, &biz.Vote{
-		VoteId:  int(in.Vote.VoteId),
-		Title:   in.Vote.Title,
-		IsRadio: int(in.Vote.IsRadio),
-		Detail:  in.Vote.Detail,
+	v, err := vs.vc.CreateVote(ctx, &biz.Vote{
+		VoteId:      int(in.Vote.VoteId),
+		Title:       in.Vote.Title,
+		IsRadio:     int(in.Vote.IsRadio),
+		A:           in.Vote.A,
+		B:           in.Vote.B,
+		C:           in.Vote.C,
+		D:           in.Vote.D,
+		E:           in.Vote.E,
+		F:           in.Vote.F,
+		G:           in.Vote.G,
+		H:           in.Vote.H,
+		HasTxtField: int(in.Vote.HasTxtField),
 	})
 	if err != nil {
 		return nil, err
 	}
 	return &pb.Vote{
-		VoteId:     int32(u.VoteId),
-		Title:      u.Title,
-		IsRadio:    int32(u.IsRadio),
-		Detail:     u.Detail,
-		CreateTime: timestamppb.New(u.CreateTime),
-		UpdateTime: timestamppb.New(u.UpdateTime),
+		VoteId:      int32(v.VoteId),
+		Title:       v.Title,
+		IsRadio:     int32(v.IsRadio),
+		A:           v.A,
+		B:           v.B,
+		C:           v.C,
+		D:           v.D,
+		E:           v.E,
+		F:           v.F,
+		G:           v.G,
+		H:           v.H,
+		HasTxtField: int32(v.HasTxtField),
+		CreateTime:  timestamppb.New(v.CreateTime),
+		UpdateTime:  timestamppb.New(v.UpdateTime),
 	}, nil
 }
 
-func (us *VoteService) UpdateVote(ctx context.Context, in *pb.UpdateVoteRequest) (*pb.Vote, error) {
+func (vs *VoteService) UpdateVote(ctx context.Context, in *pb.UpdateVoteRequest) (*pb.Vote, error) {
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Printf("Recovered in UpdateVotes: \n%v\n", r)
 		}
 	}()
-	u, err := us.uc.UpdateVote(ctx, &biz.Vote{
-		VoteId:  int(in.Vote.VoteId),
-		Title:   in.Vote.Title,
-		IsRadio: int(in.Vote.IsRadio),
-		Detail:  in.Vote.Detail,
+	v, err := vs.vc.UpdateVote(ctx, &biz.Vote{
+		VoteId:      int(in.Vote.VoteId),
+		Title:       in.Vote.Title,
+		IsRadio:     int(in.Vote.IsRadio),
+		A:           in.Vote.A,
+		B:           in.Vote.B,
+		C:           in.Vote.C,
+		D:           in.Vote.D,
+		E:           in.Vote.E,
+		F:           in.Vote.F,
+		G:           in.Vote.G,
+		H:           in.Vote.H,
+		HasTxtField: int(in.Vote.HasTxtField),
 	})
 	if err != nil {
 		return nil, err
 	}
 	return &pb.Vote{
-		VoteId:     int32(u.VoteId),
-		Title:      u.Title,
-		IsRadio:    int32(u.IsRadio),
-		UpdateTime: timestamppb.New(u.UpdateTime),
-		CreateTime: timestamppb.New(u.CreateTime),
+		VoteId:      int32(v.VoteId),
+		Title:       v.Title,
+		IsRadio:     int32(v.IsRadio),
+		A:           v.A,
+		B:           v.B,
+		C:           v.C,
+		D:           v.D,
+		E:           v.E,
+		F:           v.F,
+		G:           v.G,
+		H:           v.H,
+		HasTxtField: int32(v.HasTxtField),
+		CreateTime:  timestamppb.New(v.CreateTime),
+		UpdateTime:  timestamppb.New(v.UpdateTime),
 	}, nil
 }
 
-func (us *VoteService) DeleteVote(ctx context.Context, in *pb.DeleteVoteRequest) (*emptypb.Empty, error) {
+func (vs *VoteService) DeleteVote(ctx context.Context, in *pb.DeleteVoteRequest) (*emptypb.Empty, error) {
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Printf("Recovered in DeleteVotes: \n%v\n", r)
 		}
 	}()
-	return us.uc.DeleteVote(ctx, in.Name)
+	return vs.vc.DeleteVote(ctx, in.Name)
 }

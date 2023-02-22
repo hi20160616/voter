@@ -43,7 +43,8 @@ func GetHandler(cfg *configs.Config) *http.ServeMux {
 	mux.HandleFunc("/s/", serveResource) // `/s` means source
 	mux.HandleFunc("/posts/", makeHandler(listPostsHandler, cfg))
 	mux.HandleFunc("/posts/v", makeHandler(getPostHandler, cfg))
-	mux.HandleFunc("/posts/newpost", makeHandler(newPostHandler, cfg))
+	mux.HandleFunc("/posts/new", makeHandler(newPostHandler, cfg))
+	mux.HandleFunc("/votes/new", makeHandler(newVoteHandler, cfg))
 	// mux.HandleFunc("/posts/s", makeHandler(searchPostsHandler, cfg))
 	return mux
 }
@@ -95,6 +96,11 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 func newPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	p.Title = "New Post"
 	render.Derive(w, "newpost", p)
+}
+
+func newVoteHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+	p.Title = "New Vote"
+	render.Derive(w, "newvote", p)
 }
 
 func listPostsHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {

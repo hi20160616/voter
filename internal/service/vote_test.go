@@ -24,7 +24,9 @@ func TestCreateVote(t *testing.T) {
 		Vote: &v1.Vote{
 			Title:   "Richael",
 			IsRadio: 1,
-			Detail:  "create vote detail",
+			A:       "a. create vote detail",
+			B:       "b. create vote detail",
+			C:       "c. create vote detail",
 		},
 	})
 	if err != nil {
@@ -70,7 +72,7 @@ func TestUpdateVote(t *testing.T) {
 			VoteId:  1,
 			Title:   "Updated vote title",
 			IsRadio: 0,
-			Detail:  "Updated vote detail",
+			A:       "a. Updated vote detail",
 		},
 	})
 	if err != nil {
