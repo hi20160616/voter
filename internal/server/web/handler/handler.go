@@ -45,6 +45,7 @@ func GetHandler(cfg *configs.Config) *http.ServeMux {
 	mux.HandleFunc("/posts/v", makeHandler(getPostHandler, cfg))
 	mux.HandleFunc("/posts/new", makeHandler(newPostHandler, cfg))
 	mux.HandleFunc("/votes/new", makeHandler(newVoteHandler, cfg))
+	// mux.HandleFunc("/votes/save", makeHandler(saveVoteHandler, cfg))
 	// mux.HandleFunc("/posts/s", makeHandler(searchPostsHandler, cfg))
 	return mux
 }
@@ -92,56 +93,3 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	render.Derive(w, "home", &render.Page{Title: "Home", Data: ds.Posts})
 }
-
-func newPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
-	p.Title = "New Post"
-	render.Derive(w, "newpost", p)
-}
-
-func newVoteHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
-	p.Title = "New Vote"
-	render.Derive(w, "newvote", p)
-}
-
-func listPostsHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
-	ps, err := service.NewPostService()
-	if err != nil {
-		log.Println(err)
-	}
-
-	// ds, err := ps.ListPosts(context.Background(), &pb.ListPostsRequest{}, p.Cfg)
-	ds, err := ps.ListPosts(context.Background(), &pb.ListPostsRequest{})
-	if err != nil {
-		log.Println(err)
-	}
-	p.Data = ds.Posts
-	p.Title = "Posts"
-	render.Derive(w, "posts", p)
-}
-
-func getPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
-	id := r.URL.Query().Get("id")
-	ps, err := service.NewPostService()
-	if err != nil {
-		log.Println(err)
-	}
-
-	post, err := ps.GetPost(context.Background(), &pb.GetPostRequest{Name: "posts/" + id})
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-	p.Data = post
-	p.Title = post.Title
-	render.Derive(w, "post", p) // template name: post
-}
-
-// func searchPostsHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
-//         kws := r.URL.Query().Get("v")
-//         kws = strings.ReplaceAll(kws, " ", ",")
-//         as, err := service.SearchPosts(context.Background(), &pb.SearchPostsRequest{Name: "posts/" + kws + "/search"}, p.Cfg)
-//         if err != nil {
-//                 http.Error(w, err.Error(), http.StatusInternalServerError)
-//         }
-//         p.Data = as
-//         render.Derive(w, "search", p)
-// }

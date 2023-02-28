@@ -1,6 +1,6 @@
 {{template "header" .}}
 <div class="container">
-    <form>
+    <form action="votes/save" method="post" accept-charset="utf-8">
 	<div class="form-group">
 	    <label for="VoteTitle">Vote Title</label>
 	    <input type="text" class="form-control" id="VoteTitle" aria-describedby="vote title">
@@ -44,7 +44,7 @@
 	    <input type="text" class="form-control" placeholder="Input content or leave blank" aria-label="G" aria-describedby="basic-addon7">
 	</div>
 	<div class="form-check form-switch mb-3">
-	    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+	    <input class="form-check-input" type="checkbox" role="switch" id="HasTxtField">
 	    <label class="form-check-label" for="flexSwitchCheckDefault">Add Text input option</label>
 	</div>
 	<button type="submit" class="btn btn-dark">Commit</button>
