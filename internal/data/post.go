@@ -60,6 +60,7 @@ func (pr *postRepo) ListPosts(ctx context.Context, parent string) (*biz.Posts, e
 		bizps.Collection = append(bizps.Collection, &biz.Post{
 			PostId:     p.Id,
 			Title:      p.Title,
+			IsOpen:     p.IsOpen,
 			Detail:     p.Detail,
 			CreateTime: p.CreateTime,
 			UpdateTime: p.UpdateTime,

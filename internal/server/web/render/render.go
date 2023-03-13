@@ -29,6 +29,7 @@ func init() {
 		"markdown":     markdown,
 		"unescapeHTML": unescapeHTML,
 		"plusOne":      plusOne,
+		"isOpen":       isOpen,
 	})
 	// templates = template.Must(templates.ParseFS(tmpl.FS, "default/*.html"))
 	pattern := filepath.Join("templates", "default", "*.html")
@@ -92,4 +93,11 @@ func unescapeHTML(s string) template.HTML {
 
 func plusOne(x int) int {
 	return x + 1
+}
+
+func isOpen(x int32) string {
+	if x == 1 {
+		return "**Closed!**"
+	}
+	return "Open!"
 }

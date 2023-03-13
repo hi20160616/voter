@@ -3,5 +3,6 @@
     <!-- {{unescapeHTML (markdown .Data.Detail)}} -->
     <h1>{{.Data.Title}}</h1>
     {{markdown .Data.Detail | unescapeHTML}}
+    {{isOpen .Data.IsOpen}}
 </div>
 {{template "footer" .}}
