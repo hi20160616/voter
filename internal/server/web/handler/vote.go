@@ -67,3 +67,19 @@ func listVotesHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	p.Title = "Votes"
 	render.Derive(w, "votes", p)
 }
+
+func getVoteHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+	id := r.URL.Query().Get("id")
+	ps, err := service.NewVoteService()
+	if err != nil {
+		log.Println(err)
+	}
+
+	vote, err := ps.GetVote(context.Background(), &pb.GetVoteRequest{Name: "votes/" + id})
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	p.Data = vote
+	p.Title = vote.Title
+	render.Derive(w, "vote", p) // template name: vote
+}

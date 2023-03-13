@@ -1,0 +1,13 @@
+{{template "header" .}}
+<div class="container">
+    <h1>{{.Data.Title}}</h1>
+    {{markdown .Data.A | unescapeHTML}}
+    {{markdown .Data.B | unescapeHTML}}
+    {{markdown .Data.C | unescapeHTML}}
+    {{markdown .Data.D | unescapeHTML}}
+    {{markdown .Data.E | unescapeHTML}}
+<!-- new btn here -->
+<!-- edit btn here -->
+<!-- list btn here -->
+</div>
+{{template "footer" .}}
