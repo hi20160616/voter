@@ -40,8 +40,8 @@ func (dc *DatabaseClient) InsertUser(ctx context.Context, user *User) error {
 		ON DUPLICATE KEY UPDATE
 		username=?, password=?, realname=?, nickname=?,
 		avatar_url=?, phone=?, user_ip=INET_ATON(?)`
-	aq := &UserQuery{db: dc.db, query: q}
-	_, err := aq.db.Exec(aq.query,
+	uq := &UserQuery{db: dc.db, query: q}
+	_, err := uq.db.Exec(uq.query,
 		user.Username, user.Password, user.Realname, user.Nickname,
 		user.AvatarUrl, user.Phone, user.UserIp,
 		user.Username, user.Password, user.Realname, user.Nickname,
@@ -69,23 +69,23 @@ func (dc *DatabaseClient) UpdateUser(ctx context.Context, user *User) error {
 // all rows except deleted is 1
 func (dc *DatabaseClient) DeleteUser(ctx context.Context, id int) error {
 	q := `UPDATE users SET deleted=? WHERE id=?`
-	aq := &UserQuery{db: dc.db, query: q}
-	_, err := aq.db.Exec(aq.query, 1, id)
+	uq := &UserQuery{db: dc.db, query: q}
+	_, err := uq.db.Exec(uq.query, 1, id)
 	return err
 }
 
 func (dc *DatabaseClient) UndeleteUser(ctx context.Context, id int) error {
 	q := `UPDATE users SET deleted=? WHERE id=?`
-	aq := &UserQuery{db: dc.db, query: q}
-	_, err := aq.db.Exec(aq.query, 0, id)
+	uq := &UserQuery{db: dc.db, query: q}
+	_, err := uq.db.Exec(uq.query, 0, id)
 	return err
 }
 
 // PermanentlyDeleteUser is true delete from database instead of DeleteUser just update the row
 func (dc *DatabaseClient) PermanentlyDeleteUser(ctx context.Context, id int) error {
 	q := `DELETE FROM users WHERE id=?`
-	aq := &UserQuery{db: dc.db, query: q}
-	_, err := aq.db.Exec(aq.query, id)
+	uq := &UserQuery{db: dc.db, query: q}
+	_, err := uq.db.Exec(uq.query, id)
 	if err != nil {
 		return err
 	}
@@ -101,12 +101,12 @@ func (dc *DatabaseClient) QueryUser() *UserQuery {
 }
 
 // All2 will display all rows even if deleted field value is 1
-func (aq *UserQuery) All2(ctx context.Context) (*Users, error) {
-	if err := aq.prepareQuery(ctx); err != nil {
+func (uq *UserQuery) All2(ctx context.Context) (*Users, error) {
+	if err := uq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	// rows, err := aq.db.Query("SELECT * FROM users WHERE title like ?", "%%test%%")
-	rows, err := aq.db.Query(aq.query, aq.args...)
+	// rows, err := uq.db.Query("SELECT * FROM users WHERE title like ?", "%%test%%")
+	rows, err := uq.db.Query(uq.query, uq.args...)
 	if err != nil {
 		return nil, err
 	}
@@ -114,12 +114,12 @@ func (aq *UserQuery) All2(ctx context.Context) (*Users, error) {
 }
 
 // All will display all lines that the deleted field value is 0
-func (aq *UserQuery) All(ctx context.Context) (*Users, error) {
-	return aq.Where([4]string{"deleted", "=", "0"}).All2(ctx)
+func (uq *UserQuery) All(ctx context.Context) (*Users, error) {
+	return uq.Where([4]string{"deleted", "=", "0"}).All2(ctx)
 }
 
-func (aq *UserQuery) First(ctx context.Context) (*User, error) {
-	nodes, err := aq.Limit(1).All(ctx)
+func (uq *UserQuery) First(ctx context.Context) (*User, error) {
+	nodes, err := uq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -132,59 +132,59 @@ func (aq *UserQuery) First(ctx context.Context) (*User, error) {
 // cs: {["name", "=", "jack", "and"], ["title", "like", "anything", ""]}
 // the last `or` or `and` in clause will cut off after prepareQuery().
 // so, every clause need `or` or `and` for last element.
-func (aq *UserQuery) Where(cs ...[4]string) *UserQuery {
-	aq.clauses = append(aq.clauses, cs...)
-	return aq
+func (uq *UserQuery) Where(cs ...[4]string) *UserQuery {
+	uq.clauses = append(uq.clauses, cs...)
+	return uq
 }
 
-func (aq *UserQuery) Order(condition string) *UserQuery {
-	aq.order = condition
-	return aq
+func (uq *UserQuery) Order(condition string) *UserQuery {
+	uq.order = condition
+	return uq
 }
 
-func (aq *UserQuery) Limit(limit int) *UserQuery {
-	aq.limit = &limit
-	return aq
+func (uq *UserQuery) Limit(limit int) *UserQuery {
+	uq.limit = &limit
+	return uq
 }
 
-func (aq *UserQuery) Offset(offset int) *UserQuery {
-	aq.offset = &offset
-	return aq
+func (uq *UserQuery) Offset(offset int) *UserQuery {
+	uq.offset = &offset
+	return uq
 }
 
-func (aq *UserQuery) prepareQuery(ctx context.Context) error {
-	if aq.clauses != nil {
-		aq.query += " WHERE "
-		for i, c := range aq.clauses {
+func (uq *UserQuery) prepareQuery(ctx context.Context) error {
+	if uq.clauses != nil {
+		uq.query += " WHERE "
+		for i, c := range uq.clauses {
 			// TODO: 2nd clause cannot be tied together automaticly
 			// the last `or` or `and` in clause will cut off there.
 			// so, every clause need `or` or `and` for last element.
-			if i == len(aq.clauses)-1 {
-				aq.query += fmt.Sprintf(" %s %s ?", c[0], c[1])
+			if i == len(uq.clauses)-1 {
+				uq.query += fmt.Sprintf(" %s %s ?", c[0], c[1])
 			} else {
-				aq.query += fmt.Sprintf(" %s %s ? %s", c[0], c[1], c[3])
+				uq.query += fmt.Sprintf(" %s %s ? %s", c[0], c[1], c[3])
 			}
 			if strings.ToLower(c[1]) == "like" {
 				c[2] = fmt.Sprintf("%%%s%%", c[2])
 			} else {
 				c[2] = fmt.Sprintf("%s", c[2])
 			}
-			aq.args = append(aq.args, c[2])
+			uq.args = append(uq.args, c[2])
 		}
 	}
-	if aq.order != "" {
-		aq.query += " ORDER BY ?"
-		aq.args = append(aq.args, aq.order)
+	if uq.order != "" {
+		uq.query += " ORDER BY ?"
+		uq.args = append(uq.args, uq.order)
 	}
-	if aq.limit != nil {
-		aq.query += " LIMIT ?"
-		a := strconv.Itoa(*aq.limit)
-		aq.args = append(aq.args, a)
+	if uq.limit != nil {
+		uq.query += " LIMIT ?"
+		a := strconv.Itoa(*uq.limit)
+		uq.args = append(uq.args, a)
 	}
-	if aq.offset != nil {
-		aq.query += ", ?"
-		a := strconv.Itoa(*aq.offset)
-		aq.args = append(aq.args, a)
+	if uq.offset != nil {
+		uq.query += ", ?"
+		a := strconv.Itoa(*uq.offset)
+		uq.args = append(uq.args, a)
 	}
 	return nil
 }

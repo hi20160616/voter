@@ -36,8 +36,8 @@ type PostQuery struct {
 func (dc *DatabaseClient) InsertPost(ctx context.Context, post *Post) error {
 	q := `INSERT INTO posts(title, is_open, detail) VALUES (?, ?, ?)
 		ON DUPLICATE KEY UPDATE title=?, is_open=?, detail=?`
-	aq := &PostQuery{db: dc.db, query: q}
-	_, err := aq.db.Exec(aq.query, post.Title, post.IsOpen, post.Detail,
+	pq := &PostQuery{db: dc.db, query: q}
+	_, err := pq.db.Exec(pq.query, post.Title, post.IsOpen, post.Detail,
 		post.Title, post.IsOpen, post.Detail)
 	return errors.WithMessage(err, "mariadb: posts: Insert error")
 }
@@ -52,8 +52,8 @@ func (dc *DatabaseClient) UpdatePost(ctx context.Context, post *Post) error {
 // DeletePost2 is true delete from database instead of DeletePost just update the row
 func (dc *DatabaseClient) DeletePost(ctx context.Context, id int) error {
 	q := `DELETE FROM posts WHERE id=?`
-	aq := &PostQuery{db: dc.db, query: q}
-	_, err := aq.db.Exec(aq.query, id)
+	pq := &PostQuery{db: dc.db, query: q}
+	_, err := pq.db.Exec(pq.query, id)
 	if err != nil {
 		return err
 	}
@@ -65,20 +65,20 @@ func (dc *DatabaseClient) QueryPost() *PostQuery {
 }
 
 // All will display all rows
-func (aq *PostQuery) All(ctx context.Context) (*Posts, error) {
-	if err := aq.prepareQuery(ctx); err != nil {
+func (pq *PostQuery) All(ctx context.Context) (*Posts, error) {
+	if err := pq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	// rows, err := aq.db.Query("SELECT * FROM posts WHERE title like ?", "%%test%%")
-	rows, err := aq.db.Query(aq.query, aq.args...)
+	// rows, err := pq.db.Query("SELECT * FROM posts WHERE title like ?", "%%test%%")
+	rows, err := pq.db.Query(pq.query, pq.args...)
 	if err != nil {
 		return nil, err
 	}
 	return mkPost(rows)
 }
 
-func (aq *PostQuery) First(ctx context.Context) (*Post, error) {
-	nodes, err := aq.Limit(1).All(ctx)
+func (pq *PostQuery) First(ctx context.Context) (*Post, error) {
+	nodes, err := pq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -91,59 +91,59 @@ func (aq *PostQuery) First(ctx context.Context) (*Post, error) {
 // cs: {["name", "=", "jack", "and"], ["title", "like", "anything", ""]}
 // the last `or` or `and` in clause will cut off after prepareQuery().
 // so, every clause need `or` or `and` for last element.
-func (aq *PostQuery) Where(cs ...[4]string) *PostQuery {
-	aq.clauses = append(aq.clauses, cs...)
-	return aq
+func (pq *PostQuery) Where(cs ...[4]string) *PostQuery {
+	pq.clauses = append(pq.clauses, cs...)
+	return pq
 }
 
-func (aq *PostQuery) Order(condition string) *PostQuery {
-	aq.order = condition
-	return aq
+func (pq *PostQuery) Order(condition string) *PostQuery {
+	pq.order = condition
+	return pq
 }
 
-func (aq *PostQuery) Limit(limit int) *PostQuery {
-	aq.limit = &limit
-	return aq
+func (pq *PostQuery) Limit(limit int) *PostQuery {
+	pq.limit = &limit
+	return pq
 }
 
-func (aq *PostQuery) Offset(offset int) *PostQuery {
-	aq.offset = &offset
-	return aq
+func (pq *PostQuery) Offset(offset int) *PostQuery {
+	pq.offset = &offset
+	return pq
 }
 
-func (aq *PostQuery) prepareQuery(ctx context.Context) error {
-	if aq.clauses != nil {
-		aq.query += " WHERE "
-		for i, c := range aq.clauses {
+func (pq *PostQuery) prepareQuery(ctx context.Context) error {
+	if pq.clauses != nil {
+		pq.query += " WHERE "
+		for i, c := range pq.clauses {
 			// TODO: 2nd clause cannot be tied together automaticly
 			// the last `or` or `and` in clause will cut off there.
 			// so, every clause need `or` or `and` for last element.
-			if i == len(aq.clauses)-1 {
-				aq.query += fmt.Sprintf(" %s %s ?", c[0], c[1])
+			if i == len(pq.clauses)-1 {
+				pq.query += fmt.Sprintf(" %s %s ?", c[0], c[1])
 			} else {
-				aq.query += fmt.Sprintf(" %s %s ? %s", c[0], c[1], c[3])
+				pq.query += fmt.Sprintf(" %s %s ? %s", c[0], c[1], c[3])
 			}
 			if strings.ToLower(c[1]) == "like" {
 				c[2] = fmt.Sprintf("%%%s%%", c[2])
 			} else {
 				c[2] = fmt.Sprintf("%s", c[2])
 			}
-			aq.args = append(aq.args, c[2])
+			pq.args = append(pq.args, c[2])
 		}
 	}
-	if aq.order != "" {
-		aq.query += " ORDER BY ?"
-		aq.args = append(aq.args, aq.order)
+	if pq.order != "" {
+		pq.query += " ORDER BY ?"
+		pq.args = append(pq.args, pq.order)
 	}
-	if aq.limit != nil {
-		aq.query += " LIMIT ?"
-		a := strconv.Itoa(*aq.limit)
-		aq.args = append(aq.args, a)
+	if pq.limit != nil {
+		pq.query += " LIMIT ?"
+		a := strconv.Itoa(*pq.limit)
+		pq.args = append(pq.args, a)
 	}
-	if aq.offset != nil {
-		aq.query += ", ?"
-		a := strconv.Itoa(*aq.offset)
-		aq.args = append(aq.args, a)
+	if pq.offset != nil {
+		pq.query += ", ?"
+		a := strconv.Itoa(*pq.offset)
+		pq.args = append(pq.args, a)
 	}
 	return nil
 }

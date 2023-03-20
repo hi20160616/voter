@@ -33,8 +33,8 @@ type PostVoteQuery struct {
 func (dc *DatabaseClient) InsertPostVote(ctx context.Context, postVote *PostVote) error {
 	q := `INSERT INTO post_votes(post_id, vote_id) VALUES (?, ?)
 		ON DUPLICATE KEY UPDATE post_id=?, vote_id=?`
-	aq := &PostVoteQuery{db: dc.db, query: q}
-	_, err := aq.db.Exec(aq.query, postVote.PostId, postVote.VoteId,
+	pvq := &PostVoteQuery{db: dc.db, query: q}
+	_, err := pvq.db.Exec(pvq.query, postVote.PostId, postVote.VoteId,
 		postVote.PostId, postVote.VoteId)
 	return errors.WithMessage(err, "mariadb: postVotes: Insert error")
 }
@@ -49,8 +49,8 @@ func (dc *DatabaseClient) UpdatePostVote(ctx context.Context, postVote *PostVote
 // DeletePostVote2 is true delete from database instead of DeletePostVote just update the row
 func (dc *DatabaseClient) DeletePostVote(ctx context.Context, id int) error {
 	q := `DELETE FROM post_votes WHERE id=?`
-	aq := &PostVoteQuery{db: dc.db, query: q}
-	_, err := aq.db.Exec(aq.query, id)
+	pvq := &PostVoteQuery{db: dc.db, query: q}
+	_, err := pvq.db.Exec(pvq.query, id)
 	if err != nil {
 		return err
 	}
@@ -62,20 +62,20 @@ func (dc *DatabaseClient) QueryPostVote() *PostVoteQuery {
 }
 
 // All will display all rows
-func (aq *PostVoteQuery) All(ctx context.Context) (*PostVotes, error) {
-	if err := aq.prepareQuery(ctx); err != nil {
+func (pvq *PostVoteQuery) All(ctx context.Context) (*PostVotes, error) {
+	if err := pvq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	// rows, err := aq.db.Query("SELECT * FROM postVotes WHERE title like ?", "%%test%%")
-	rows, err := aq.db.Query(aq.query, aq.args...)
+	// rows, err := pvq.db.Query("SELECT * FROM postVotes WHERE title like ?", "%%test%%")
+	rows, err := pvq.db.Query(pvq.query, pvq.args...)
 	if err != nil {
 		return nil, err
 	}
 	return mkPostVote(rows)
 }
 
-func (aq *PostVoteQuery) First(ctx context.Context) (*PostVote, error) {
-	nodes, err := aq.Limit(1).All(ctx)
+func (pvq *PostVoteQuery) First(ctx context.Context) (*PostVote, error) {
+	nodes, err := pvq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -88,59 +88,59 @@ func (aq *PostVoteQuery) First(ctx context.Context) (*PostVote, error) {
 // cs: {["name", "=", "jack", "and"], ["title", "like", "anything", ""]}
 // the last `or` or `and` in clause will cut off after prepareQuery().
 // so, every clause need `or` or `and` for last element.
-func (aq *PostVoteQuery) Where(cs ...[4]string) *PostVoteQuery {
-	aq.clauses = append(aq.clauses, cs...)
-	return aq
+func (pvq *PostVoteQuery) Where(cs ...[4]string) *PostVoteQuery {
+	pvq.clauses = append(pvq.clauses, cs...)
+	return pvq
 }
 
-func (aq *PostVoteQuery) Order(condition string) *PostVoteQuery {
-	aq.order = condition
-	return aq
+func (pvq *PostVoteQuery) Order(condition string) *PostVoteQuery {
+	pvq.order = condition
+	return pvq
 }
 
-func (aq *PostVoteQuery) Limit(limit int) *PostVoteQuery {
-	aq.limit = &limit
-	return aq
+func (pvq *PostVoteQuery) Limit(limit int) *PostVoteQuery {
+	pvq.limit = &limit
+	return pvq
 }
 
-func (aq *PostVoteQuery) Offset(offset int) *PostVoteQuery {
-	aq.offset = &offset
-	return aq
+func (pvq *PostVoteQuery) Offset(offset int) *PostVoteQuery {
+	pvq.offset = &offset
+	return pvq
 }
 
-func (aq *PostVoteQuery) prepareQuery(ctx context.Context) error {
-	if aq.clauses != nil {
-		aq.query += " WHERE "
-		for i, c := range aq.clauses {
+func (pvq *PostVoteQuery) prepareQuery(ctx context.Context) error {
+	if pvq.clauses != nil {
+		pvq.query += " WHERE "
+		for i, c := range pvq.clauses {
 			// TODO: 2nd clause cannot be tied together automaticly
 			// the last `or` or `and` in clause will cut off there.
 			// so, every clause need `or` or `and` for last element.
-			if i == len(aq.clauses)-1 {
-				aq.query += fmt.Sprintf(" %s %s ?", c[0], c[1])
+			if i == len(pvq.clauses)-1 {
+				pvq.query += fmt.Sprintf(" %s %s ?", c[0], c[1])
 			} else {
-				aq.query += fmt.Sprintf(" %s %s ? %s", c[0], c[1], c[3])
+				pvq.query += fmt.Sprintf(" %s %s ? %s", c[0], c[1], c[3])
 			}
 			if strings.ToLower(c[1]) == "like" {
 				c[2] = fmt.Sprintf("%%%s%%", c[2])
 			} else {
 				c[2] = fmt.Sprintf("%s", c[2])
 			}
-			aq.args = append(aq.args, c[2])
+			pvq.args = append(pvq.args, c[2])
 		}
 	}
-	if aq.order != "" {
-		aq.query += " ORDER BY ?"
-		aq.args = append(aq.args, aq.order)
+	if pvq.order != "" {
+		pvq.query += " ORDER BY ?"
+		pvq.args = append(pvq.args, pvq.order)
 	}
-	if aq.limit != nil {
-		aq.query += " LIMIT ?"
-		a := strconv.Itoa(*aq.limit)
-		aq.args = append(aq.args, a)
+	if pvq.limit != nil {
+		pvq.query += " LIMIT ?"
+		a := strconv.Itoa(*pvq.limit)
+		pvq.args = append(pvq.args, a)
 	}
-	if aq.offset != nil {
-		aq.query += ", ?"
-		a := strconv.Itoa(*aq.offset)
-		aq.args = append(aq.args, a)
+	if pvq.offset != nil {
+		pvq.query += ", ?"
+		a := strconv.Itoa(*pvq.offset)
+		pvq.args = append(pvq.args, a)
 	}
 	return nil
 }

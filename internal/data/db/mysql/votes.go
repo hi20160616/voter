@@ -39,9 +39,9 @@ INSERT INTO votes(title, is_radio, a, b, c, d, e, f, g, h, has_txt_field)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 ON DUPLICATE KEY UPDATE title=?, is_radio=?, a=?, b=?, c=?, d=?, e=?, f=?,
 g=?, h=?, has_txt_field=?`
-	aq := &VoteQuery{db: dc.db, query: q}
-	_, err := aq.db.Exec(
-		aq.query, vote.Title, vote.IsRadio, vote.A, vote.B, vote.C,
+	vq := &VoteQuery{db: dc.db, query: q}
+	_, err := vq.db.Exec(
+		vq.query, vote.Title, vote.IsRadio, vote.A, vote.B, vote.C,
 		vote.D, vote.E, vote.F, vote.G, vote.H, vote.HasTxtField,
 		vote.Title, vote.IsRadio, vote.A, vote.B, vote.C,
 		vote.D, vote.E, vote.F, vote.G, vote.H, vote.HasTxtField)
@@ -51,8 +51,8 @@ g=?, h=?, has_txt_field=?`
 func (dc *DatabaseClient) UpdateVote(ctx context.Context, vote *Vote) error {
 	q := `UPDATE votes SET title=?, is_radio=?, a=?, b=?, c=?, d=?, e=?, f=?,
 	g=?, h=?, has_txt_field=? WHERE id=?`
-	uq := &VoteQuery{db: dc.db, query: q}
-	_, err := uq.db.Exec(uq.query, vote.Title, vote.IsRadio, vote.A, vote.B,
+	vq := &VoteQuery{db: dc.db, query: q}
+	_, err := vq.db.Exec(vq.query, vote.Title, vote.IsRadio, vote.A, vote.B,
 		vote.C, vote.D, vote.E, vote.F, vote.G, vote.H, vote.HasTxtField,
 		vote.Id)
 	return err
@@ -61,8 +61,8 @@ func (dc *DatabaseClient) UpdateVote(ctx context.Context, vote *Vote) error {
 // DeleteVote2 is true delete from database instead of DeleteVote just update the row
 func (dc *DatabaseClient) DeleteVote(ctx context.Context, id int) error {
 	q := `DELETE FROM votes WHERE id=?`
-	aq := &VoteQuery{db: dc.db, query: q}
-	_, err := aq.db.Exec(aq.query, id)
+	vq := &VoteQuery{db: dc.db, query: q}
+	_, err := vq.db.Exec(vq.query, id)
 	if err != nil {
 		return err
 	}
@@ -74,20 +74,20 @@ func (dc *DatabaseClient) QueryVote() *VoteQuery {
 }
 
 // All will display all rows
-func (aq *VoteQuery) All(ctx context.Context) (*Votes, error) {
-	if err := aq.prepareQuery(ctx); err != nil {
+func (vq *VoteQuery) All(ctx context.Context) (*Votes, error) {
+	if err := vq.prepareQuery(ctx); err != nil {
 		return nil, err
 	}
-	// rows, err := aq.db.Query("SELECT * FROM votes WHERE title like ?", "%%test%%")
-	rows, err := aq.db.Query(aq.query, aq.args...)
+	// rows, err := vq.db.Query("SELECT * FROM votes WHERE title like ?", "%%test%%")
+	rows, err := vq.db.Query(vq.query, vq.args...)
 	if err != nil {
 		return nil, err
 	}
 	return mkVote(rows)
 }
 
-func (aq *VoteQuery) First(ctx context.Context) (*Vote, error) {
-	nodes, err := aq.Limit(1).All(ctx)
+func (vq *VoteQuery) First(ctx context.Context) (*Vote, error) {
+	nodes, err := vq.Limit(1).All(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -100,59 +100,59 @@ func (aq *VoteQuery) First(ctx context.Context) (*Vote, error) {
 // cs: {["name", "=", "jack", "and"], ["title", "like", "anything", ""]}
 // the last `or` or `and` in clause will cut off after prepareQuery().
 // so, every clause need `or` or `and` for last element.
-func (aq *VoteQuery) Where(cs ...[4]string) *VoteQuery {
-	aq.clauses = append(aq.clauses, cs...)
-	return aq
+func (vq *VoteQuery) Where(cs ...[4]string) *VoteQuery {
+	vq.clauses = append(vq.clauses, cs...)
+	return vq
 }
 
-func (aq *VoteQuery) Order(condition string) *VoteQuery {
-	aq.order = condition
-	return aq
+func (vq *VoteQuery) Order(condition string) *VoteQuery {
+	vq.order = condition
+	return vq
 }
 
-func (aq *VoteQuery) Limit(limit int) *VoteQuery {
-	aq.limit = &limit
-	return aq
+func (vq *VoteQuery) Limit(limit int) *VoteQuery {
+	vq.limit = &limit
+	return vq
 }
 
-func (aq *VoteQuery) Offset(offset int) *VoteQuery {
-	aq.offset = &offset
-	return aq
+func (vq *VoteQuery) Offset(offset int) *VoteQuery {
+	vq.offset = &offset
+	return vq
 }
 
-func (aq *VoteQuery) prepareQuery(ctx context.Context) error {
-	if aq.clauses != nil {
-		aq.query += " WHERE "
-		for i, c := range aq.clauses {
+func (vq *VoteQuery) prepareQuery(ctx context.Context) error {
+	if vq.clauses != nil {
+		vq.query += " WHERE "
+		for i, c := range vq.clauses {
 			// TODO: 2nd clause cannot be tied together automaticly
 			// the last `or` or `and` in clause will cut off there.
 			// so, every clause need `or` or `and` for last element.
-			if i == len(aq.clauses)-1 {
-				aq.query += fmt.Sprintf(" %s %s ?", c[0], c[1])
+			if i == len(vq.clauses)-1 {
+				vq.query += fmt.Sprintf(" %s %s ?", c[0], c[1])
 			} else {
-				aq.query += fmt.Sprintf(" %s %s ? %s", c[0], c[1], c[3])
+				vq.query += fmt.Sprintf(" %s %s ? %s", c[0], c[1], c[3])
 			}
 			if strings.ToLower(c[1]) == "like" {
 				c[2] = fmt.Sprintf("%%%s%%", c[2])
 			} else {
 				c[2] = fmt.Sprintf("%s", c[2])
 			}
-			aq.args = append(aq.args, c[2])
+			vq.args = append(vq.args, c[2])
 		}
 	}
-	if aq.order != "" {
-		aq.query += " ORDER BY ?"
-		aq.args = append(aq.args, aq.order)
+	if vq.order != "" {
+		vq.query += " ORDER BY ?"
+		vq.args = append(vq.args, vq.order)
 	}
-	if aq.limit != nil {
-		aq.query += " LIMIT ?"
-		a := strconv.Itoa(*aq.limit)
-		aq.args = append(aq.args, a)
+	if vq.limit != nil {
+		vq.query += " LIMIT ?"
+		a := strconv.Itoa(*vq.limit)
+		vq.args = append(vq.args, a)
 	}
-	if aq.offset != nil {
-		aq.query += ", ?"
-		a := strconv.Itoa(*aq.offset)
-		aq.args = append(aq.args, a)
+	if vq.offset != nil {
+		vq.query += ", ?"
+		a := strconv.Itoa(*vq.offset)
+		vq.args = append(vq.args, a)
 	}
 	return nil
 }
