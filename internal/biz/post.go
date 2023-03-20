@@ -9,7 +9,7 @@ import (
 )
 
 type Post struct {
-	PostId, IsOpen         int
+	PostId, IsClosed       int
 	Title, Detail          string
 	CreateTime, UpdateTime time.Time
 }

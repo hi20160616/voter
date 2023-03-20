@@ -22,9 +22,9 @@ func TestCreatePosts(t *testing.T) {
 
 	a, err := ps.CreatePost(context.Background(), &v1.CreatePostRequest{
 		Post: &v1.Post{
-			Title:  "Test CreatePost Service",
-			IsOpen: 1,
-			Detail: "Test CreatePost Service Detail",
+			Title:    "Test CreatePost Service",
+			IsClosed: 1,
+			Detail:   "Test CreatePost Service Detail",
 		},
 	})
 	if err != nil {
@@ -67,9 +67,9 @@ func TestSearchPosts(t *testing.T) {
 func TestCreatePost(t *testing.T) {
 	p, err := ps.CreatePost(context.Background(), &v1.CreatePostRequest{
 		Post: &v1.Post{
-			Title:  "CreateViaPS1",
-			IsOpen: 1,
-			Detail: "CreateViaPS1",
+			Title:    "CreateViaPS1",
+			IsClosed: 1,
+			Detail:   "CreateViaPS1",
 		},
 	})
 	if err != nil {
@@ -81,10 +81,10 @@ func TestCreatePost(t *testing.T) {
 func TestUpdatePost(t *testing.T) {
 	a, err := ps.UpdatePost(context.Background(), &v1.UpdatePostRequest{
 		Post: &v1.Post{
-			PostId: 1,
-			Title:  "UpdateViaPS",
-			IsOpen: 1,
-			Detail: "UpdateViaPS",
+			PostId:   1,
+			Title:    "UpdateViaPS",
+			IsClosed: 1,
+			Detail:   "UpdateViaPS",
 		},
 	})
 	if err != nil {

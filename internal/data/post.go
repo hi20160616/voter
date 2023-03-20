@@ -60,7 +60,7 @@ func (pr *postRepo) ListPosts(ctx context.Context, parent string) (*biz.Posts, e
 		bizps.Collection = append(bizps.Collection, &biz.Post{
 			PostId:     p.Id,
 			Title:      p.Title,
-			IsOpen:     p.IsOpen,
+			IsClosed:   p.IsClosed,
 			Detail:     p.Detail,
 			CreateTime: p.CreateTime,
 			UpdateTime: p.UpdateTime,
@@ -87,7 +87,7 @@ func (pr *postRepo) GetPost(ctx context.Context, name string) (*biz.Post, error)
 	return &biz.Post{
 		PostId:     p.Id,
 		Title:      p.Title,
-		IsOpen:     p.IsOpen,
+		IsClosed:   p.IsClosed,
 		Detail:     p.Detail,
 		UpdateTime: p.UpdateTime,
 		CreateTime: p.CreateTime,
@@ -124,7 +124,7 @@ func (pr *postRepo) SearchPosts(ctx context.Context, name string) (*biz.Posts, e
 		bizps.Collection = append(bizps.Collection, &biz.Post{
 			PostId:     p.Id,
 			Title:      p.Title,
-			IsOpen:     p.IsOpen,
+			IsClosed:   p.IsClosed,
 			Detail:     p.Detail,
 			UpdateTime: p.UpdateTime,
 			CreateTime: p.CreateTime,
@@ -138,9 +138,9 @@ func (pr *postRepo) CreatePost(ctx context.Context, post *biz.Post) (*biz.Post, 
 	defer cancel()
 	if err := pr.data.DBClient.DatabaseClient.
 		InsertPost(ctx, &mysql.Post{
-			Title:  post.Title,
-			IsOpen: post.IsOpen,
-			Detail: post.Detail,
+			Title:    post.Title,
+			IsClosed: post.IsClosed,
+			Detail:   post.Detail,
 		}); err != nil {
 		return nil, err
 	}
@@ -161,8 +161,8 @@ func (pr *postRepo) UpdatePost(ctx context.Context, post *biz.Post) (*biz.Post, 
 	if &post.Title != nil {
 		dbPost.Title = post.Title
 	}
-	if &post.IsOpen != nil {
-		dbPost.IsOpen = post.IsOpen
+	if &post.IsClosed != nil {
+		dbPost.IsClosed = post.IsClosed
 	}
 	if &post.Detail != nil {
 		dbPost.Detail = post.Detail
@@ -174,7 +174,7 @@ func (pr *postRepo) UpdatePost(ctx context.Context, post *biz.Post) (*biz.Post, 
 	return &biz.Post{
 		PostId:     dbPost.Id,
 		Title:      dbPost.Title,
-		IsOpen:     dbPost.IsOpen,
+		IsClosed:   dbPost.IsClosed,
 		Detail:     dbPost.Detail,
 		CreateTime: dbPost.CreateTime,
 		UpdateTime: dbPost.UpdateTime,

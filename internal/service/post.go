@@ -30,13 +30,13 @@ func NewPostService() (*PostService, error) {
 	return &PostService{pc: postUsecase}, nil
 }
 
-func (as *PostService) ListPosts(ctx context.Context, in *pb.ListPostsRequest) (*pb.ListPostsResponse, error) {
+func (ps *PostService) ListPosts(ctx context.Context, in *pb.ListPostsRequest) (*pb.ListPostsResponse, error) {
 	defer func() {
 		if r := recover(); r != nil {
 			fmt.Printf("Recovered in ListPosts: \n%v\n", r)
 		}
 	}()
-	bizps, err := as.pc.ListPosts(ctx, in.Parent)
+	bizps, err := ps.pc.ListPosts(ctx, in.Parent)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (as *PostService) ListPosts(ctx context.Context, in *pb.ListPostsRequest) (
 		resp = append(resp, &pb.Post{
 			PostId:     int32(p.PostId),
 			Title:      p.Title,
-			IsOpen:     int32(p.IsOpen),
+			IsClosed:   int32(p.IsClosed),
 			Detail:     p.Detail,
 			CreateTime: timestamppb.New(p.CreateTime),
 			UpdateTime: timestamppb.New(p.UpdateTime),
@@ -67,7 +67,7 @@ func (ps *PostService) GetPost(ctx context.Context, in *pb.GetPostRequest) (*pb.
 	return &pb.Post{
 		PostId:     int32(bizp.PostId),
 		Title:      bizp.Title,
-		IsOpen:     int32(bizp.IsOpen),
+		IsClosed:   int32(bizp.IsClosed),
 		Detail:     bizp.Detail,
 		CreateTime: timestamppb.New(bizp.CreateTime),
 		UpdateTime: timestamppb.New(bizp.UpdateTime),
@@ -89,7 +89,7 @@ func (ps *PostService) SearchPosts(ctx context.Context, in *pb.SearchPostsReques
 		resp.Posts = append(resp.Posts, &pb.Post{
 			PostId:     int32(e.PostId),
 			Title:      e.Title,
-			IsOpen:     int32(e.IsOpen),
+			IsClosed:   int32(e.IsClosed),
 			Detail:     e.Detail,
 			CreateTime: timestamppb.New(e.CreateTime),
 			UpdateTime: timestamppb.New(e.UpdateTime),
@@ -105,16 +105,16 @@ func (ps *PostService) CreatePost(ctx context.Context, in *pb.CreatePostRequest)
 		}
 	}()
 	p, err := ps.pc.CreatePost(ctx, &biz.Post{
-		Title:  in.Post.Title,
-		IsOpen: int(in.Post.IsOpen),
-		Detail: in.Post.Detail,
+		Title:    in.Post.Title,
+		IsClosed: int(in.Post.IsClosed),
+		Detail:   in.Post.Detail,
 	})
 	if err != nil {
 		return nil, err
 	}
 	return &pb.Post{
 		Title:      p.Title,
-		IsOpen:     int32(p.IsOpen),
+		IsClosed:   int32(p.IsClosed),
 		Detail:     p.Detail,
 		UpdateTime: timestamppb.New(p.UpdateTime),
 		CreateTime: timestamppb.New(p.CreateTime),
@@ -128,10 +128,10 @@ func (ps *PostService) UpdatePost(ctx context.Context, in *pb.UpdatePostRequest)
 		}
 	}()
 	p, err := ps.pc.UpdatePost(ctx, &biz.Post{
-		PostId: int(in.Post.PostId),
-		Title:  in.Post.Title,
-		IsOpen: int(in.Post.IsOpen),
-		Detail: in.Post.Detail,
+		PostId:   int(in.Post.PostId),
+		Title:    in.Post.Title,
+		IsClosed: int(in.Post.IsClosed),
+		Detail:   in.Post.Detail,
 	})
 	if err != nil {
 		return nil, err
@@ -139,7 +139,7 @@ func (ps *PostService) UpdatePost(ctx context.Context, in *pb.UpdatePostRequest)
 	return &pb.Post{
 		PostId:     int32(p.PostId),
 		Title:      p.Title,
-		IsOpen:     int32(p.IsOpen),
+		IsClosed:   int32(p.IsClosed),
 		Detail:     p.Detail,
 		UpdateTime: timestamppb.New(p.UpdateTime),
 		CreateTime: timestamppb.New(p.CreateTime),

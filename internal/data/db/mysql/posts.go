@@ -13,7 +13,7 @@ import (
 )
 
 type Post struct {
-	Id, IsOpen             int
+	Id, IsClosed           int
 	Title, Detail          string
 	CreateTime, UpdateTime time.Time
 }
@@ -34,18 +34,18 @@ type PostQuery struct {
 }
 
 func (dc *DatabaseClient) InsertPost(ctx context.Context, post *Post) error {
-	q := `INSERT INTO posts(title, is_open, detail) VALUES (?, ?, ?)
-		ON DUPLICATE KEY UPDATE title=?, is_open=?, detail=?`
+	q := `INSERT INTO posts(title, is_closed, detail) VALUES (?, ?, ?)
+		ON DUPLICATE KEY UPDATE title=?, is_closed=?, detail=?`
 	pq := &PostQuery{db: dc.db, query: q}
-	_, err := pq.db.Exec(pq.query, post.Title, post.IsOpen, post.Detail,
-		post.Title, post.IsOpen, post.Detail)
+	_, err := pq.db.Exec(pq.query, post.Title, post.IsClosed, post.Detail,
+		post.Title, post.IsClosed, post.Detail)
 	return errors.WithMessage(err, "mariadb: posts: Insert error")
 }
 
 func (dc *DatabaseClient) UpdatePost(ctx context.Context, post *Post) error {
-	q := `UPDATE posts SET title=?, is_open=?, detail=?  WHERE id=?`
+	q := `UPDATE posts SET title=?, is_closed=?, detail=?  WHERE id=?`
 	uq := &PostQuery{db: dc.db, query: q}
-	_, err := uq.db.Exec(uq.query, post.Title, post.IsOpen, post.Detail, post.Id)
+	_, err := uq.db.Exec(uq.query, post.Title, post.IsClosed, post.Detail, post.Id)
 	return err
 }
 
@@ -151,17 +151,17 @@ func (pq *PostQuery) prepareQuery(ctx context.Context) error {
 func mkPost(rows *sql.Rows) (*Posts, error) {
 	var title, detail sql.NullString
 	var create_time, update_time sql.NullTime
-	var id, is_open int
+	var id, is_closed int
 	var posts = &Posts{}
 	for rows.Next() {
-		if err := rows.Scan(&id, &title, &is_open, &detail, &create_time, &update_time); err != nil {
+		if err := rows.Scan(&id, &title, &is_closed, &detail, &create_time, &update_time); err != nil {
 			return nil, errors.WithMessage(err, "mkPost rows.Scan error")
 		}
 		posts.Collection = append(posts.Collection, &Post{
 			Id:         id,
 			Title:      title.String,
 			Detail:     detail.String,
-			IsOpen:     is_open,
+			IsClosed:   is_closed,
 			CreateTime: create_time.Time,
 			UpdateTime: update_time.Time,
 		})

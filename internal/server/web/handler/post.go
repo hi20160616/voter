@@ -57,3 +57,27 @@ func getPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 //         p.Data = as
 //         render.Derive(w, "search", p)
 // }
+
+func savePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+	ps, err := service.NewPostService()
+	if err != nil {
+		log.Println(err)
+	}
+
+	isClosed := 0
+	if v := r.FormValue("IsClosed"); v == "Yes" {
+		isClosed = 1
+	}
+	_, err = ps.CreatePost(context.Background(), &pb.CreatePostRequest{
+		Post: &pb.Post{
+			Title:    r.FormValue("PostTitle"),
+			IsClosed: int32(isClosed),
+			Detail:   r.FormValue("PostDetail"),
+		},
+	})
+	if err != nil {
+		log.Println(err)
+	}
+	p.Title = "Post success."
+	render.Derive(w, "posts", p)
+}

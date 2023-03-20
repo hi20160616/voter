@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	pb "github.com/hi20160616/voter/api/voter/v1"
-	v1 "github.com/hi20160616/voter/api/voter/v1"
 	"github.com/hi20160616/voter/internal/server/web/render"
 	"github.com/hi20160616/voter/internal/service"
 )
@@ -32,7 +31,7 @@ func saveVoteHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	}
 
 	_, err = vs.CreateVote(context.Background(), &pb.CreateVoteRequest{
-		Vote: &v1.Vote{
+		Vote: &pb.Vote{
 			Title:       r.FormValue("VoteTitle"),
 			IsRadio:     int32(isRadio),
 			A:           r.FormValue("A"),

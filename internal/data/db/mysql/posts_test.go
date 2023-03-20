@@ -42,9 +42,9 @@ func TestInsertPost(t *testing.T) {
 			Detail: "Mazzy2",
 		},
 		{
-			Title:  "testInsertPost3",
-			IsOpen: 0,
-			Detail: "Mazzy3",
+			Title:    "testInsertPost3",
+			IsClosed: 0,
+			Detail:   "Mazzy3",
 		},
 	}
 	for _, tc := range tcs {
@@ -63,9 +63,9 @@ func TestUpdatePost(t *testing.T) {
 		t.Fatal(err)
 	}
 	post := &Post{
-		Id:     id,
-		Title:  "tttest",
-		IsOpen: 0,
+		Id:       id,
+		Title:    "tttest",
+		IsClosed: 0,
 	}
 	getPost := func() *Post {
 		ps := [4]string{"id", "=", strconv.Itoa(post.Id), "or"}
@@ -94,10 +94,10 @@ func TestUpdatePost(t *testing.T) {
 				post.Detail, after.Detail))
 		}
 	}
-	if before.IsOpen != after.IsOpen {
+	if before.IsClosed != after.IsClosed {
 		if err != nil {
 			t.Fatal(fmt.Errorf("want: %d, got: %d",
-				post.IsOpen, after.IsOpen))
+				post.IsClosed, after.IsClosed))
 		}
 	}
 }

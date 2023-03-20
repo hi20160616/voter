@@ -120,7 +120,7 @@ mysql> desc votes;
 mysql> CREATE TABLE IF NOT EXISTS posts (
   id int(10) NOT NULL AUTO_INCREMENT,
   title VARCHAR(255),
-  is_open TINYINT(1) DEFAULT 1 COMMENT 'is open: 0=no, 1=yes(default)',
+  is_closed TINYINT(1) DEFAULT 0 COMMENT 'is closed: 0=no(default), 1=yes',
   detail VARCHAR(255),
   create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -143,7 +143,7 @@ mysql> desc posts;
 +-------------+--------------+------+-----+-------------------+-----------------------------------------------+
 | id          | int          | NO   | PRI | NULL              | auto_increment                                |
 | title       | varchar(255) | YES  |     | NULL              |                                               |
-| is_open     | tinyint(1)   | YES  |     | 1                 |                                               |
+| is_closed   | tinyint(1)   | YES  |     | 0                 |                                               |
 | detail      | varchar(255) | YES  |     | NULL              |                                               |
 | create_time | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED                             |
 | update_time | timestamp    | YES  |     | CURRENT_TIMESTAMP | DEFAULT_GENERATED on update CURRENT_TIMESTAMP |

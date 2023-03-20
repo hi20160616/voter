@@ -96,7 +96,7 @@ message Post{
   string name = 1;
   int32 post_id = 2;
   string title = 3;
-  int32 is_open = 4;
+  int32 is_closed = 4;
   string detail = 5;
   google.protobuf.Timestamp create_time = 6;
   google.protobuf.Timestamp update_time = 7;
