@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package voter.post_votes.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "github.com/hi20160616/voter/api/voter/v1;v1";
+
+service PostVotesAPI {
+  rpc GetPostVotes(GetPostVotesRequest) returns (PostVotes) {
+    option (google.api.http) = {
+      get: "/v1/{name=post_votes/*}"
+    };
+  }
+  rpc CreatePostVotes(CreatePostVotesRequest) returns (PostVote) {
+    option (google.api.http) = {
+      post: "/v1/{parent=post_votes/*/create}"
+      body: "post_vote"
+    };
+  }
+  rpc UpdatePostVotes(UpdatePostVotesRequest) returns (PostVote) {
+    option (google.api.http) = {
+      patch: "/v1/{post_vote.name=post_votes/*/update}"
+      body: "post_vote"
+    };
+  }
+  rpc DeletePostVotes(DeletePostVotesRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/{name=post_votes/*/delete}"
+    };
+  }
+}
+
+message GetPostVotesRequest {
+  string name = 1;
+}
+
+message CreatePostVotesRequest {
+  string parent = 1;
+  PostVote post_vote = 2;
+}
+
+message UpdatePostVotesRequest {
+  PostVote post_vote = 1;
+  // The update mask applies to the resource. For the `FieldMask` definition,
+  // see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message DeletePostVotesRequest {
+  string name = 1;
+}
+
+message PostVote{
+  string name = 1;
+  int32 post_id = 2;
+  int32 vote_id = 3;
+}
+
+message PostVotes{
+  repeated PostVote post_votes = 1;
+}
