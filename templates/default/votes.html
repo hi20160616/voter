@@ -18,7 +18,13 @@
 	    {{range $i, $data := .Data}}
 	    <tr>
 		<th scope="row">{{plusOne $i}}</th>
-		<td><a href="/votes/v?id={{$data.VoteId}}" class="text-decoration-none" >{{$data.Title}}</a></td>
+		<td>
+		    <div class="form-check">
+			<label class="form-check-label" for="vote_{{$data.VoteId}}">
+			    <a href="/votes/v?id={{$data.VoteId}}" class="text-decoration-none">{{$data.Title}}</a>
+			</label>
+		    </div>
+		</td>
 		<td><span class="badge bg-dark">{{smartDate $data.UpdateTime $data.Title}}</span><span class="badge bg-light text-dark">{{smartTime $data.UpdateTime $data.Title}}</span></td>
 		<td><span class="badge bg-dark">{{smartDate $data.CreateTime $data.Title}}</span><span class="badge bg-light text-dark">{{smartTime $data.CreateTime $data.Title}}</span></td>
 	    </tr>

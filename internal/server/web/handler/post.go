@@ -21,7 +21,6 @@ func listPostsHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 		log.Println(err)
 	}
 
-	// ds, err := ps.ListPosts(context.Background(), &pb.ListPostsRequest{}, p.Cfg)
 	ds, err := ps.ListPosts(context.Background(), &pb.ListPostsRequest{})
 	if err != nil {
 		log.Println(err)
@@ -59,25 +58,66 @@ func getPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 // }
 
 func savePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+	id := r.URL.Query().Get("id")
 	ps, err := service.NewPostService()
 	if err != nil {
 		log.Println(err)
 	}
 
 	isClosed := 0
-	if v := r.FormValue("IsClosed"); v == "Yes" {
+	if v := r.FormValue("IsClosed"); v == "1" {
 		isClosed = 1
 	}
-	_, err = ps.CreatePost(context.Background(), &pb.CreatePostRequest{
-		Post: &pb.Post{
-			Title:    r.FormValue("PostTitle"),
-			IsClosed: int32(isClosed),
-			Detail:   r.FormValue("PostDetail"),
-		},
+	title := r.FormValue("PostTitle")
+	detail := r.FormValue("PostDetail")
+	if id == "" {
+		// if is create a post
+		post, err := ps.CreatePost(context.Background(), &pb.CreatePostRequest{
+			Post: &pb.Post{
+				Title:    title,
+				IsClosed: int32(isClosed),
+				Detail:   detail,
+			},
+		})
+		if err != nil {
+			log.Println(err)
+		}
+		p.Data = post
+		render.Derive(w, "post", p)
+	} else {
+		// edit a post
+		post, err := ps.GetPost(context.Background(), &pb.GetPostRequest{
+			Name: "posts/" + id,
+		})
+		if err != nil {
+			log.Println(err)
+		}
+		post, err = ps.UpdatePost(context.Background(), &pb.UpdatePostRequest{
+			Post: &pb.Post{
+				PostId:   post.PostId,
+				Title:    title,
+				IsClosed: int32(isClosed),
+				Detail:   detail,
+			},
+		})
+		p.Data = post
+		render.Derive(w, "post", p)
+	}
+}
+
+func editPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+	id := r.URL.Query().Get("id")
+	ps, err := service.NewPostService()
+	if err != nil {
+		log.Println(err)
+	}
+
+	post, err := ps.GetPost(context.Background(), &pb.GetPostRequest{
+		Name: "posts/" + id,
 	})
 	if err != nil {
 		log.Println(err)
 	}
-	p.Title = "Post success."
-	render.Derive(w, "posts", p)
+	p.Data = post
+	render.Derive(w, "editpost", p)
 }

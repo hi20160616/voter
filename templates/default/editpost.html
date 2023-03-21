@@ -1,17 +1,17 @@
 {{template "header" .}}
 <div class="container">
-    <form action="/posts/save" method="post" accept-charset="utf-8">
+    <form action="/posts/save/v?id={{.Data.PostId}}" method="post" accept-charset="utf-8">
 	<div class="form-group">
 	    <label for="PostTitle">Post Title</label>
-	    <input type="text" class="form-control" name="PostTitle" id="PostTitle" aria-describedby="post title">
+	    <input type="text" class="form-control" name="PostTitle" id="PostTitle" aria-describedby="post title" value="{{.Data.Title}}">
 	    <small id="TitleHelp" class="form-text text-muted">Post Title is the general title.</small>
 	</div>
 	<div class="form-group">
 	    <label for="PostDetail" class="form-label">Post Detail</label>
-	    <textarea class="form-control" name="PostDetail" id="PostDetail" rows="3"></textarea>
+	    <textarea class="form-control" name="PostDetail" id="PostDetail" rows="3">{{.Data.Detail}}</textarea>
 	</div>
 	<div class="form-check form-switch my-3">
-	    <input class="form-check-input" type="checkbox" name="IsClosed" value="1" role="switch" id="IsClosed">
+		<input class="form-check-input" type="checkbox" name="IsClosed" value="1" role="switch" id="IsClosed" {{if1Checked .Data.IsClosed}}>
 	    <label class="form-check-label" for="IsClosed">Close the post.</label>
 	</div>
 	<div class="form-group">

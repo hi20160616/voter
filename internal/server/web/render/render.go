@@ -30,6 +30,7 @@ func init() {
 		"unescapeHTML": unescapeHTML,
 		"plusOne":      plusOne,
 		"isClosed":     isClosed,
+		"if1Checked":   if1Checked,
 	})
 	// templates = template.Must(templates.ParseFS(tmpl.FS, "default/*.html"))
 	pattern := filepath.Join("templates", "default", "*.html")
@@ -100,4 +101,11 @@ func isClosed(x int32) string {
 		return "**Closed!**"
 	}
 	return "Is Open!"
+}
+
+func if1Checked(x int32) string {
+	if x == 1 {
+		return "checked"
+	}
+	return ""
 }

@@ -4,5 +4,6 @@
     <h1>{{.Data.Title}}</h1>
     {{markdown .Data.Detail | unescapeHTML}}
     {{isClosed .Data.IsClosed}}
+    <a href="/posts/edit/v?id={{.Data.PostId}}" class="btn btn-primary my-3">Edit</a>
 </div>
 {{template "footer" .}}
