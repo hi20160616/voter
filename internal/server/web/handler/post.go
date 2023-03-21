@@ -100,6 +100,7 @@ func savePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 				Detail:   detail,
 			},
 		})
+		// add votes_post
 		p.Data = post
 		render.Derive(w, "post", p)
 	}
@@ -133,6 +134,5 @@ func editPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 		Post:  post,
 		Votes: votes.Votes,
 	}
-	// p.Data = &struct{Post *pb.Post, Votes []*pb.Vote}{post, votes}
 	render.Derive(w, "editpost", p)
 }
