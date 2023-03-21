@@ -118,6 +118,21 @@ func editPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	if err != nil {
 		log.Println(err)
 	}
-	p.Data = post
+	vs, err := service.NewVoteService()
+	if err != nil {
+		log.Println(err)
+	}
+	votes, err := vs.ListVotes(context.Background(), &pb.ListVotesRequest{})
+	if err != nil {
+		log.Println(err)
+	}
+	p.Data = struct {
+		Post  *pb.Post
+		Votes []*pb.Vote
+	}{
+		Post:  post,
+		Votes: votes.Votes,
+	}
+	// p.Data = &struct{Post *pb.Post, Votes []*pb.Vote}{post, votes}
 	render.Derive(w, "editpost", p)
 }
