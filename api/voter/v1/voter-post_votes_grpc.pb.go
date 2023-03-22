@@ -23,10 +23,13 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PostVotesAPIClient interface {
-	GetPostVotes(ctx context.Context, in *GetPostVotesRequest, opts ...grpc.CallOption) (*PostVotes, error)
-	CreatePostVotes(ctx context.Context, in *CreatePostVotesRequest, opts ...grpc.CallOption) (*PostVote, error)
-	UpdatePostVotes(ctx context.Context, in *UpdatePostVotesRequest, opts ...grpc.CallOption) (*PostVote, error)
-	DeletePostVotes(ctx context.Context, in *DeletePostVotesRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	ListPostVotes(ctx context.Context, in *ListPostVotesRequest, opts ...grpc.CallOption) (*ListPostVotesResponse, error)
+	GetByPidVid(ctx context.Context, in *GetByPidVidRequest, opts ...grpc.CallOption) (*PostVote, error)
+	GetPostVote(ctx context.Context, in *GetPostVoteRequest, opts ...grpc.CallOption) (*PostVote, error)
+	ListVidsByPid(ctx context.Context, in *ListVidsByPidRequest, opts ...grpc.CallOption) (*ListVidsByPidResponse, error)
+	CreatePostVote(ctx context.Context, in *CreatePostVoteRequest, opts ...grpc.CallOption) (*PostVote, error)
+	UpdatePostVote(ctx context.Context, in *UpdatePostVoteRequest, opts ...grpc.CallOption) (*PostVote, error)
+	DeletePostVote(ctx context.Context, in *DeletePostVoteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type postVotesAPIClient struct {
@@ -37,36 +40,63 @@ func NewPostVotesAPIClient(cc grpc.ClientConnInterface) PostVotesAPIClient {
 	return &postVotesAPIClient{cc}
 }
 
-func (c *postVotesAPIClient) GetPostVotes(ctx context.Context, in *GetPostVotesRequest, opts ...grpc.CallOption) (*PostVotes, error) {
-	out := new(PostVotes)
-	err := c.cc.Invoke(ctx, "/voter.post_votes.v1.PostVotesAPI/GetPostVotes", in, out, opts...)
+func (c *postVotesAPIClient) ListPostVotes(ctx context.Context, in *ListPostVotesRequest, opts ...grpc.CallOption) (*ListPostVotesResponse, error) {
+	out := new(ListPostVotesResponse)
+	err := c.cc.Invoke(ctx, "/voter.post_votes.v1.PostVotesAPI/ListPostVotes", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *postVotesAPIClient) CreatePostVotes(ctx context.Context, in *CreatePostVotesRequest, opts ...grpc.CallOption) (*PostVote, error) {
+func (c *postVotesAPIClient) GetByPidVid(ctx context.Context, in *GetByPidVidRequest, opts ...grpc.CallOption) (*PostVote, error) {
 	out := new(PostVote)
-	err := c.cc.Invoke(ctx, "/voter.post_votes.v1.PostVotesAPI/CreatePostVotes", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/voter.post_votes.v1.PostVotesAPI/GetByPidVid", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *postVotesAPIClient) UpdatePostVotes(ctx context.Context, in *UpdatePostVotesRequest, opts ...grpc.CallOption) (*PostVote, error) {
+func (c *postVotesAPIClient) GetPostVote(ctx context.Context, in *GetPostVoteRequest, opts ...grpc.CallOption) (*PostVote, error) {
 	out := new(PostVote)
-	err := c.cc.Invoke(ctx, "/voter.post_votes.v1.PostVotesAPI/UpdatePostVotes", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/voter.post_votes.v1.PostVotesAPI/GetPostVote", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *postVotesAPIClient) DeletePostVotes(ctx context.Context, in *DeletePostVotesRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *postVotesAPIClient) ListVidsByPid(ctx context.Context, in *ListVidsByPidRequest, opts ...grpc.CallOption) (*ListVidsByPidResponse, error) {
+	out := new(ListVidsByPidResponse)
+	err := c.cc.Invoke(ctx, "/voter.post_votes.v1.PostVotesAPI/ListVidsByPid", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postVotesAPIClient) CreatePostVote(ctx context.Context, in *CreatePostVoteRequest, opts ...grpc.CallOption) (*PostVote, error) {
+	out := new(PostVote)
+	err := c.cc.Invoke(ctx, "/voter.post_votes.v1.PostVotesAPI/CreatePostVote", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postVotesAPIClient) UpdatePostVote(ctx context.Context, in *UpdatePostVoteRequest, opts ...grpc.CallOption) (*PostVote, error) {
+	out := new(PostVote)
+	err := c.cc.Invoke(ctx, "/voter.post_votes.v1.PostVotesAPI/UpdatePostVote", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *postVotesAPIClient) DeletePostVote(ctx context.Context, in *DeletePostVoteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/voter.post_votes.v1.PostVotesAPI/DeletePostVotes", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/voter.post_votes.v1.PostVotesAPI/DeletePostVote", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -77,10 +107,13 @@ func (c *postVotesAPIClient) DeletePostVotes(ctx context.Context, in *DeletePost
 // All implementations must embed UnimplementedPostVotesAPIServer
 // for forward compatibility
 type PostVotesAPIServer interface {
-	GetPostVotes(context.Context, *GetPostVotesRequest) (*PostVotes, error)
-	CreatePostVotes(context.Context, *CreatePostVotesRequest) (*PostVote, error)
-	UpdatePostVotes(context.Context, *UpdatePostVotesRequest) (*PostVote, error)
-	DeletePostVotes(context.Context, *DeletePostVotesRequest) (*emptypb.Empty, error)
+	ListPostVotes(context.Context, *ListPostVotesRequest) (*ListPostVotesResponse, error)
+	GetByPidVid(context.Context, *GetByPidVidRequest) (*PostVote, error)
+	GetPostVote(context.Context, *GetPostVoteRequest) (*PostVote, error)
+	ListVidsByPid(context.Context, *ListVidsByPidRequest) (*ListVidsByPidResponse, error)
+	CreatePostVote(context.Context, *CreatePostVoteRequest) (*PostVote, error)
+	UpdatePostVote(context.Context, *UpdatePostVoteRequest) (*PostVote, error)
+	DeletePostVote(context.Context, *DeletePostVoteRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedPostVotesAPIServer()
 }
 
@@ -88,17 +121,26 @@ type PostVotesAPIServer interface {
 type UnimplementedPostVotesAPIServer struct {
 }
 
-func (UnimplementedPostVotesAPIServer) GetPostVotes(context.Context, *GetPostVotesRequest) (*PostVotes, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetPostVotes not implemented")
+func (UnimplementedPostVotesAPIServer) ListPostVotes(context.Context, *ListPostVotesRequest) (*ListPostVotesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListPostVotes not implemented")
 }
-func (UnimplementedPostVotesAPIServer) CreatePostVotes(context.Context, *CreatePostVotesRequest) (*PostVote, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreatePostVotes not implemented")
+func (UnimplementedPostVotesAPIServer) GetByPidVid(context.Context, *GetByPidVidRequest) (*PostVote, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetByPidVid not implemented")
 }
-func (UnimplementedPostVotesAPIServer) UpdatePostVotes(context.Context, *UpdatePostVotesRequest) (*PostVote, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdatePostVotes not implemented")
+func (UnimplementedPostVotesAPIServer) GetPostVote(context.Context, *GetPostVoteRequest) (*PostVote, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPostVote not implemented")
 }
-func (UnimplementedPostVotesAPIServer) DeletePostVotes(context.Context, *DeletePostVotesRequest) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeletePostVotes not implemented")
+func (UnimplementedPostVotesAPIServer) ListVidsByPid(context.Context, *ListVidsByPidRequest) (*ListVidsByPidResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListVidsByPid not implemented")
+}
+func (UnimplementedPostVotesAPIServer) CreatePostVote(context.Context, *CreatePostVoteRequest) (*PostVote, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreatePostVote not implemented")
+}
+func (UnimplementedPostVotesAPIServer) UpdatePostVote(context.Context, *UpdatePostVoteRequest) (*PostVote, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdatePostVote not implemented")
+}
+func (UnimplementedPostVotesAPIServer) DeletePostVote(context.Context, *DeletePostVoteRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeletePostVote not implemented")
 }
 func (UnimplementedPostVotesAPIServer) mustEmbedUnimplementedPostVotesAPIServer() {}
 
@@ -113,74 +155,128 @@ func RegisterPostVotesAPIServer(s grpc.ServiceRegistrar, srv PostVotesAPIServer)
 	s.RegisterService(&PostVotesAPI_ServiceDesc, srv)
 }
 
-func _PostVotesAPI_GetPostVotes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetPostVotesRequest)
+func _PostVotesAPI_ListPostVotes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListPostVotesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PostVotesAPIServer).GetPostVotes(ctx, in)
+		return srv.(PostVotesAPIServer).ListPostVotes(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/voter.post_votes.v1.PostVotesAPI/GetPostVotes",
+		FullMethod: "/voter.post_votes.v1.PostVotesAPI/ListPostVotes",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostVotesAPIServer).GetPostVotes(ctx, req.(*GetPostVotesRequest))
+		return srv.(PostVotesAPIServer).ListPostVotes(ctx, req.(*ListPostVotesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PostVotesAPI_CreatePostVotes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreatePostVotesRequest)
+func _PostVotesAPI_GetByPidVid_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetByPidVidRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PostVotesAPIServer).CreatePostVotes(ctx, in)
+		return srv.(PostVotesAPIServer).GetByPidVid(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/voter.post_votes.v1.PostVotesAPI/CreatePostVotes",
+		FullMethod: "/voter.post_votes.v1.PostVotesAPI/GetByPidVid",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostVotesAPIServer).CreatePostVotes(ctx, req.(*CreatePostVotesRequest))
+		return srv.(PostVotesAPIServer).GetByPidVid(ctx, req.(*GetByPidVidRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PostVotesAPI_UpdatePostVotes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdatePostVotesRequest)
+func _PostVotesAPI_GetPostVote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetPostVoteRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PostVotesAPIServer).UpdatePostVotes(ctx, in)
+		return srv.(PostVotesAPIServer).GetPostVote(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/voter.post_votes.v1.PostVotesAPI/UpdatePostVotes",
+		FullMethod: "/voter.post_votes.v1.PostVotesAPI/GetPostVote",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostVotesAPIServer).UpdatePostVotes(ctx, req.(*UpdatePostVotesRequest))
+		return srv.(PostVotesAPIServer).GetPostVote(ctx, req.(*GetPostVoteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PostVotesAPI_DeletePostVotes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeletePostVotesRequest)
+func _PostVotesAPI_ListVidsByPid_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListVidsByPidRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(PostVotesAPIServer).DeletePostVotes(ctx, in)
+		return srv.(PostVotesAPIServer).ListVidsByPid(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/voter.post_votes.v1.PostVotesAPI/DeletePostVotes",
+		FullMethod: "/voter.post_votes.v1.PostVotesAPI/ListVidsByPid",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostVotesAPIServer).DeletePostVotes(ctx, req.(*DeletePostVotesRequest))
+		return srv.(PostVotesAPIServer).ListVidsByPid(ctx, req.(*ListVidsByPidRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostVotesAPI_CreatePostVote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreatePostVoteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostVotesAPIServer).CreatePostVote(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/voter.post_votes.v1.PostVotesAPI/CreatePostVote",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostVotesAPIServer).CreatePostVote(ctx, req.(*CreatePostVoteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostVotesAPI_UpdatePostVote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdatePostVoteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostVotesAPIServer).UpdatePostVote(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/voter.post_votes.v1.PostVotesAPI/UpdatePostVote",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostVotesAPIServer).UpdatePostVote(ctx, req.(*UpdatePostVoteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _PostVotesAPI_DeletePostVote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeletePostVoteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PostVotesAPIServer).DeletePostVote(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/voter.post_votes.v1.PostVotesAPI/DeletePostVote",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PostVotesAPIServer).DeletePostVote(ctx, req.(*DeletePostVoteRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -193,20 +289,32 @@ var PostVotesAPI_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*PostVotesAPIServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetPostVotes",
-			Handler:    _PostVotesAPI_GetPostVotes_Handler,
+			MethodName: "ListPostVotes",
+			Handler:    _PostVotesAPI_ListPostVotes_Handler,
 		},
 		{
-			MethodName: "CreatePostVotes",
-			Handler:    _PostVotesAPI_CreatePostVotes_Handler,
+			MethodName: "GetByPidVid",
+			Handler:    _PostVotesAPI_GetByPidVid_Handler,
 		},
 		{
-			MethodName: "UpdatePostVotes",
-			Handler:    _PostVotesAPI_UpdatePostVotes_Handler,
+			MethodName: "GetPostVote",
+			Handler:    _PostVotesAPI_GetPostVote_Handler,
 		},
 		{
-			MethodName: "DeletePostVotes",
-			Handler:    _PostVotesAPI_DeletePostVotes_Handler,
+			MethodName: "ListVidsByPid",
+			Handler:    _PostVotesAPI_ListVidsByPid_Handler,
+		},
+		{
+			MethodName: "CreatePostVote",
+			Handler:    _PostVotesAPI_CreatePostVote_Handler,
+		},
+		{
+			MethodName: "UpdatePostVote",
+			Handler:    _PostVotesAPI_UpdatePostVote_Handler,
+		},
+		{
+			MethodName: "DeletePostVote",
+			Handler:    _PostVotesAPI_DeletePostVote_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

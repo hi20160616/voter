@@ -2,8 +2,10 @@ package handler
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 
 	pb "github.com/hi20160616/voter/api/voter/v1"
 	"github.com/hi20160616/voter/internal/server/web/render"
@@ -85,7 +87,7 @@ func savePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 		p.Data = post
 		render.Derive(w, "post", p)
 	} else {
-		// edit a post
+		// update a post
 		post, err := ps.GetPost(context.Background(), &pb.GetPostRequest{
 			Name: "posts/" + id,
 		})
@@ -100,10 +102,87 @@ func savePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 				Detail:   detail,
 			},
 		})
-		// add votes_post
+		// get vids as fVids from form
+		err = r.ParseForm()
+		if err != nil {
+			log.Println(err)
+		}
+		sv := r.Form["SelectedVotes"]
+		fVids := []int{}
+		for _, e := range sv {
+			vid, err := strconv.Atoi(e)
+			if err != nil {
+				log.Println(err)
+			}
+			fVids = append(fVids, vid)
+		}
+		// get vids as dbVids from database
+		pvs, err := service.NewPostVoteService()
+		if err != nil {
+			log.Println(err)
+		}
+		pbResponse, err := pvs.ListVidsByPid(context.Background(),
+			&pb.ListVidsByPidRequest{Name: "post_votes/" +
+				strconv.Itoa(int(post.PostId)) + "/list"})
+		if err != nil {
+			log.Println(err)
+		}
+
+		dbVids := []int{}
+		for _, e := range pbResponse.Vids {
+			dbVids = append(dbVids, int(e))
+		}
+
+		addVids := IntSliceDiff(fVids, dbVids)
+		delVids := IntSliceDiff(dbVids, fVids)
+
+		for _, e := range addVids {
+			_, err = pvs.CreatePostVote(context.Background(),
+				&pb.CreatePostVoteRequest{
+					PostVote: &pb.PostVote{
+						PostId: post.PostId,
+						VoteId: int32(e),
+					}})
+		}
+
+		for _, e := range delVids {
+			post_vote, err := pvs.GetByPidVid(context.Background(),
+				&pb.GetByPidVidRequest{
+					Name: fmt.Sprintf("post_votes/%d/%d/id",
+						post.PostId, e)})
+			if err != nil {
+				log.Println(err)
+			}
+			_, err = pvs.DeletePostVote(context.Background(),
+				&pb.DeletePostVoteRequest{
+					Name: fmt.Sprintf("post_votes/%d/delete",
+						post_vote.PostVoteId)})
+			if err != nil {
+				log.Println(err)
+			}
+		}
+
 		p.Data = post
 		render.Derive(w, "post", p)
 	}
+}
+
+// IntSliceDiff return []int in set1 but not in set2
+func IntSliceDiff(set1, set2 []int) (ret []int) {
+	for _, s1 := range set1 {
+		i := 0
+		for _, s2 := range set2 {
+			if s1 == s2 {
+				i++
+				continue
+			}
+		}
+		if i == 0 {
+			ret = append(ret, s1)
+		}
+	}
+
+	return
 }
 
 func editPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {

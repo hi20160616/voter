@@ -31,8 +31,78 @@ var _ = runtime.String
 var _ = utilities.NewDoubleArray
 var _ = metadata.Join
 
-func request_PostVotesAPI_GetPostVotes_0(ctx context.Context, marshaler runtime.Marshaler, client PostVotesAPIClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq GetPostVotesRequest
+var (
+	filter_PostVotesAPI_ListPostVotes_0 = &utilities.DoubleArray{Encoding: map[string]int{"parent": 0}, Base: []int{1, 2, 0, 0}, Check: []int{0, 1, 2, 2}}
+)
+
+func request_PostVotesAPI_ListPostVotes_0(ctx context.Context, marshaler runtime.Marshaler, client PostVotesAPIClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq ListPostVotesRequest
+	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["parent"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "parent")
+	}
+
+	protoReq.Parent, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "parent", err)
+	}
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_PostVotesAPI_ListPostVotes_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.ListPostVotes(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_PostVotesAPI_ListPostVotes_0(ctx context.Context, marshaler runtime.Marshaler, server PostVotesAPIServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq ListPostVotesRequest
+	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["parent"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "parent")
+	}
+
+	protoReq.Parent, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "parent", err)
+	}
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_PostVotesAPI_ListPostVotes_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := server.ListPostVotes(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
+func request_PostVotesAPI_GetByPidVid_0(ctx context.Context, marshaler runtime.Marshaler, client PostVotesAPIClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq GetByPidVidRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -52,13 +122,13 @@ func request_PostVotesAPI_GetPostVotes_0(ctx context.Context, marshaler runtime.
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "name", err)
 	}
 
-	msg, err := client.GetPostVotes(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.GetByPidVid(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_PostVotesAPI_GetPostVotes_0(ctx context.Context, marshaler runtime.Marshaler, server PostVotesAPIServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq GetPostVotesRequest
+func local_request_PostVotesAPI_GetByPidVid_0(ctx context.Context, marshaler runtime.Marshaler, server PostVotesAPIServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq GetByPidVidRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -78,22 +148,14 @@ func local_request_PostVotesAPI_GetPostVotes_0(ctx context.Context, marshaler ru
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "name", err)
 	}
 
-	msg, err := server.GetPostVotes(ctx, &protoReq)
+	msg, err := server.GetByPidVid(ctx, &protoReq)
 	return msg, metadata, err
 
 }
 
-func request_PostVotesAPI_CreatePostVotes_0(ctx context.Context, marshaler runtime.Marshaler, client PostVotesAPIClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq CreatePostVotesRequest
+func request_PostVotesAPI_GetPostVote_0(ctx context.Context, marshaler runtime.Marshaler, client PostVotesAPIClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq GetPostVoteRequest
 	var metadata runtime.ServerMetadata
-
-	newReader, berr := utilities.IOReaderFactory(req.Body)
-	if berr != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
-	}
-	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq.PostVote); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
 
 	var (
 		val string
@@ -102,32 +164,24 @@ func request_PostVotesAPI_CreatePostVotes_0(ctx context.Context, marshaler runti
 		_   = err
 	)
 
-	val, ok = pathParams["parent"]
+	val, ok = pathParams["name"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "parent")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "name")
 	}
 
-	protoReq.Parent, err = runtime.String(val)
+	protoReq.Name, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "parent", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "name", err)
 	}
 
-	msg, err := client.CreatePostVotes(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.GetPostVote(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_PostVotesAPI_CreatePostVotes_0(ctx context.Context, marshaler runtime.Marshaler, server PostVotesAPIServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq CreatePostVotesRequest
+func local_request_PostVotesAPI_GetPostVote_0(ctx context.Context, marshaler runtime.Marshaler, server PostVotesAPIServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq GetPostVoteRequest
 	var metadata runtime.ServerMetadata
-
-	newReader, berr := utilities.IOReaderFactory(req.Body)
-	if berr != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
-	}
-	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq.PostVote); err != nil && err != io.EOF {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
-	}
 
 	var (
 		val string
@@ -136,27 +190,165 @@ func local_request_PostVotesAPI_CreatePostVotes_0(ctx context.Context, marshaler
 		_   = err
 	)
 
-	val, ok = pathParams["parent"]
+	val, ok = pathParams["name"]
 	if !ok {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "parent")
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "name")
 	}
 
-	protoReq.Parent, err = runtime.String(val)
+	protoReq.Name, err = runtime.String(val)
 	if err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "parent", err)
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "name", err)
 	}
 
-	msg, err := server.CreatePostVotes(ctx, &protoReq)
+	msg, err := server.GetPostVote(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
+func request_PostVotesAPI_ListVidsByPid_0(ctx context.Context, marshaler runtime.Marshaler, client PostVotesAPIClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq ListVidsByPidRequest
+	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["name"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "name")
+	}
+
+	protoReq.Name, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "name", err)
+	}
+
+	msg, err := client.ListVidsByPid(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_PostVotesAPI_ListVidsByPid_0(ctx context.Context, marshaler runtime.Marshaler, server PostVotesAPIServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq ListVidsByPidRequest
+	var metadata runtime.ServerMetadata
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["name"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "name")
+	}
+
+	protoReq.Name, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "name", err)
+	}
+
+	msg, err := server.ListVidsByPid(ctx, &protoReq)
 	return msg, metadata, err
 
 }
 
 var (
-	filter_PostVotesAPI_UpdatePostVotes_0 = &utilities.DoubleArray{Encoding: map[string]int{"post_vote": 0, "postVote": 1, "name": 2}, Base: []int{1, 3, 4, 5, 2, 0, 0, 0, 0}, Check: []int{0, 1, 1, 1, 2, 5, 2, 3, 4}}
+	filter_PostVotesAPI_CreatePostVote_0 = &utilities.DoubleArray{Encoding: map[string]int{"post_vote": 0, "postVote": 1, "parent": 2}, Base: []int{1, 1, 2, 4, 0, 0, 0, 0}, Check: []int{0, 1, 1, 1, 2, 3, 4, 4}}
 )
 
-func request_PostVotesAPI_UpdatePostVotes_0(ctx context.Context, marshaler runtime.Marshaler, client PostVotesAPIClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq UpdatePostVotesRequest
+func request_PostVotesAPI_CreatePostVote_0(ctx context.Context, marshaler runtime.Marshaler, client PostVotesAPIClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq CreatePostVoteRequest
+	var metadata runtime.ServerMetadata
+
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
+	}
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq.PostVote); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["parent"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "parent")
+	}
+
+	protoReq.Parent, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "parent", err)
+	}
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_PostVotesAPI_CreatePostVote_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := client.CreatePostVote(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	return msg, metadata, err
+
+}
+
+func local_request_PostVotesAPI_CreatePostVote_0(ctx context.Context, marshaler runtime.Marshaler, server PostVotesAPIServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq CreatePostVoteRequest
+	var metadata runtime.ServerMetadata
+
+	newReader, berr := utilities.IOReaderFactory(req.Body)
+	if berr != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", berr)
+	}
+	if err := marshaler.NewDecoder(newReader()).Decode(&protoReq.PostVote); err != nil && err != io.EOF {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	var (
+		val string
+		ok  bool
+		err error
+		_   = err
+	)
+
+	val, ok = pathParams["parent"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "parent")
+	}
+
+	protoReq.Parent, err = runtime.String(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "parent", err)
+	}
+
+	if err := req.ParseForm(); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_PostVotesAPI_CreatePostVote_0); err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+
+	msg, err := server.CreatePostVote(ctx, &protoReq)
+	return msg, metadata, err
+
+}
+
+var (
+	filter_PostVotesAPI_UpdatePostVote_0 = &utilities.DoubleArray{Encoding: map[string]int{"post_vote": 0, "postVote": 1, "name": 2}, Base: []int{1, 3, 4, 5, 2, 0, 0, 0, 0}, Check: []int{0, 1, 1, 1, 2, 5, 2, 3, 4}}
+)
+
+func request_PostVotesAPI_UpdatePostVote_0(ctx context.Context, marshaler runtime.Marshaler, client PostVotesAPIClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq UpdatePostVoteRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -194,17 +386,17 @@ func request_PostVotesAPI_UpdatePostVotes_0(ctx context.Context, marshaler runti
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_PostVotesAPI_UpdatePostVotes_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_PostVotesAPI_UpdatePostVote_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := client.UpdatePostVotes(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.UpdatePostVote(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_PostVotesAPI_UpdatePostVotes_0(ctx context.Context, marshaler runtime.Marshaler, server PostVotesAPIServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq UpdatePostVotesRequest
+func local_request_PostVotesAPI_UpdatePostVote_0(ctx context.Context, marshaler runtime.Marshaler, server PostVotesAPIServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq UpdatePostVoteRequest
 	var metadata runtime.ServerMetadata
 
 	newReader, berr := utilities.IOReaderFactory(req.Body)
@@ -242,17 +434,17 @@ func local_request_PostVotesAPI_UpdatePostVotes_0(ctx context.Context, marshaler
 	if err := req.ParseForm(); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_PostVotesAPI_UpdatePostVotes_0); err != nil {
+	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_PostVotesAPI_UpdatePostVote_0); err != nil {
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
 	}
 
-	msg, err := server.UpdatePostVotes(ctx, &protoReq)
+	msg, err := server.UpdatePostVote(ctx, &protoReq)
 	return msg, metadata, err
 
 }
 
-func request_PostVotesAPI_DeletePostVotes_0(ctx context.Context, marshaler runtime.Marshaler, client PostVotesAPIClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq DeletePostVotesRequest
+func request_PostVotesAPI_DeletePostVote_0(ctx context.Context, marshaler runtime.Marshaler, client PostVotesAPIClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq DeletePostVoteRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -272,13 +464,13 @@ func request_PostVotesAPI_DeletePostVotes_0(ctx context.Context, marshaler runti
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "name", err)
 	}
 
-	msg, err := client.DeletePostVotes(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
+	msg, err := client.DeletePostVote(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
 	return msg, metadata, err
 
 }
 
-func local_request_PostVotesAPI_DeletePostVotes_0(ctx context.Context, marshaler runtime.Marshaler, server PostVotesAPIServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
-	var protoReq DeletePostVotesRequest
+func local_request_PostVotesAPI_DeletePostVote_0(ctx context.Context, marshaler runtime.Marshaler, server PostVotesAPIServer, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
+	var protoReq DeletePostVoteRequest
 	var metadata runtime.ServerMetadata
 
 	var (
@@ -298,7 +490,7 @@ func local_request_PostVotesAPI_DeletePostVotes_0(ctx context.Context, marshaler
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "name", err)
 	}
 
-	msg, err := server.DeletePostVotes(ctx, &protoReq)
+	msg, err := server.DeletePostVote(ctx, &protoReq)
 	return msg, metadata, err
 
 }
@@ -309,7 +501,7 @@ func local_request_PostVotesAPI_DeletePostVotes_0(ctx context.Context, marshaler
 // Note that using this registration option will cause many gRPC library features to stop working. Consider using RegisterPostVotesAPIHandlerFromEndpoint instead.
 func RegisterPostVotesAPIHandlerServer(ctx context.Context, mux *runtime.ServeMux, server PostVotesAPIServer) error {
 
-	mux.Handle("GET", pattern_PostVotesAPI_GetPostVotes_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_PostVotesAPI_ListPostVotes_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -317,12 +509,12 @@ func RegisterPostVotesAPIHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/voter.post_votes.v1.PostVotesAPI/GetPostVotes", runtime.WithHTTPPathPattern("/v1/{name=post_votes/*}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/voter.post_votes.v1.PostVotesAPI/ListPostVotes", runtime.WithHTTPPathPattern("/v1/{parent=posts_votes}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_PostVotesAPI_GetPostVotes_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_PostVotesAPI_ListPostVotes_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -330,11 +522,11 @@ func RegisterPostVotesAPIHandlerServer(ctx context.Context, mux *runtime.ServeMu
 			return
 		}
 
-		forward_PostVotesAPI_GetPostVotes_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_PostVotesAPI_ListPostVotes_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("POST", pattern_PostVotesAPI_CreatePostVotes_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_PostVotesAPI_GetByPidVid_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -342,12 +534,12 @@ func RegisterPostVotesAPIHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/voter.post_votes.v1.PostVotesAPI/CreatePostVotes", runtime.WithHTTPPathPattern("/v1/{parent=post_votes/*/create}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/voter.post_votes.v1.PostVotesAPI/GetByPidVid", runtime.WithHTTPPathPattern("/v1/{name=post_votes/*/*/id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_PostVotesAPI_CreatePostVotes_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_PostVotesAPI_GetByPidVid_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -355,11 +547,11 @@ func RegisterPostVotesAPIHandlerServer(ctx context.Context, mux *runtime.ServeMu
 			return
 		}
 
-		forward_PostVotesAPI_CreatePostVotes_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_PostVotesAPI_GetByPidVid_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("PATCH", pattern_PostVotesAPI_UpdatePostVotes_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_PostVotesAPI_GetPostVote_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -367,12 +559,12 @@ func RegisterPostVotesAPIHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/voter.post_votes.v1.PostVotesAPI/UpdatePostVotes", runtime.WithHTTPPathPattern("/v1/{post_vote.name=post_votes/*/update}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/voter.post_votes.v1.PostVotesAPI/GetPostVote", runtime.WithHTTPPathPattern("/v1/{name=post_votes/*}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_PostVotesAPI_UpdatePostVotes_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_PostVotesAPI_GetPostVote_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -380,11 +572,11 @@ func RegisterPostVotesAPIHandlerServer(ctx context.Context, mux *runtime.ServeMu
 			return
 		}
 
-		forward_PostVotesAPI_UpdatePostVotes_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_PostVotesAPI_GetPostVote_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("DELETE", pattern_PostVotesAPI_DeletePostVotes_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_PostVotesAPI_ListVidsByPid_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		var stream runtime.ServerTransportStream
@@ -392,12 +584,12 @@ func RegisterPostVotesAPIHandlerServer(ctx context.Context, mux *runtime.ServeMu
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/voter.post_votes.v1.PostVotesAPI/DeletePostVotes", runtime.WithHTTPPathPattern("/v1/{name=post_votes/*/delete}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/voter.post_votes.v1.PostVotesAPI/ListVidsByPid", runtime.WithHTTPPathPattern("/v1/{name=post_votes/*/list}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := local_request_PostVotesAPI_DeletePostVotes_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		resp, md, err := local_request_PostVotesAPI_ListVidsByPid_0(annotatedContext, inboundMarshaler, server, req, pathParams)
 		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
@@ -405,7 +597,82 @@ func RegisterPostVotesAPIHandlerServer(ctx context.Context, mux *runtime.ServeMu
 			return
 		}
 
-		forward_PostVotesAPI_DeletePostVotes_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_PostVotesAPI_ListVidsByPid_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("POST", pattern_PostVotesAPI_CreatePostVote_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/voter.post_votes.v1.PostVotesAPI/CreatePostVote", runtime.WithHTTPPathPattern("/v1/{parent=post_votes/*/create}"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_PostVotesAPI_CreatePostVote_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_PostVotesAPI_CreatePostVote_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("PATCH", pattern_PostVotesAPI_UpdatePostVote_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/voter.post_votes.v1.PostVotesAPI/UpdatePostVote", runtime.WithHTTPPathPattern("/v1/{post_vote.name=post_votes/*/update}"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_PostVotesAPI_UpdatePostVote_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_PostVotesAPI_UpdatePostVote_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("DELETE", pattern_PostVotesAPI_DeletePostVote_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		var stream runtime.ServerTransportStream
+		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/voter.post_votes.v1.PostVotesAPI/DeletePostVote", runtime.WithHTTPPathPattern("/v1/{name=post_votes/*/delete}"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := local_request_PostVotesAPI_DeletePostVote_0(annotatedContext, inboundMarshaler, server, req, pathParams)
+		md.HeaderMD, md.TrailerMD = metadata.Join(md.HeaderMD, stream.Header()), metadata.Join(md.TrailerMD, stream.Trailer())
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_PostVotesAPI_DeletePostVote_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -450,91 +717,157 @@ func RegisterPostVotesAPIHandler(ctx context.Context, mux *runtime.ServeMux, con
 // "PostVotesAPIClient" to call the correct interceptors.
 func RegisterPostVotesAPIHandlerClient(ctx context.Context, mux *runtime.ServeMux, client PostVotesAPIClient) error {
 
-	mux.Handle("GET", pattern_PostVotesAPI_GetPostVotes_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_PostVotesAPI_ListPostVotes_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/voter.post_votes.v1.PostVotesAPI/GetPostVotes", runtime.WithHTTPPathPattern("/v1/{name=post_votes/*}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/voter.post_votes.v1.PostVotesAPI/ListPostVotes", runtime.WithHTTPPathPattern("/v1/{parent=posts_votes}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_PostVotesAPI_GetPostVotes_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_PostVotesAPI_ListPostVotes_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_PostVotesAPI_GetPostVotes_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_PostVotesAPI_ListPostVotes_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("POST", pattern_PostVotesAPI_CreatePostVotes_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_PostVotesAPI_GetByPidVid_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/voter.post_votes.v1.PostVotesAPI/CreatePostVotes", runtime.WithHTTPPathPattern("/v1/{parent=post_votes/*/create}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/voter.post_votes.v1.PostVotesAPI/GetByPidVid", runtime.WithHTTPPathPattern("/v1/{name=post_votes/*/*/id}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_PostVotesAPI_CreatePostVotes_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_PostVotesAPI_GetByPidVid_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_PostVotesAPI_CreatePostVotes_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_PostVotesAPI_GetByPidVid_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("PATCH", pattern_PostVotesAPI_UpdatePostVotes_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_PostVotesAPI_GetPostVote_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/voter.post_votes.v1.PostVotesAPI/UpdatePostVotes", runtime.WithHTTPPathPattern("/v1/{post_vote.name=post_votes/*/update}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/voter.post_votes.v1.PostVotesAPI/GetPostVote", runtime.WithHTTPPathPattern("/v1/{name=post_votes/*}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_PostVotesAPI_UpdatePostVotes_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_PostVotesAPI_GetPostVote_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_PostVotesAPI_UpdatePostVotes_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_PostVotesAPI_GetPostVote_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
-	mux.Handle("DELETE", pattern_PostVotesAPI_DeletePostVotes_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+	mux.Handle("GET", pattern_PostVotesAPI_ListVidsByPid_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
 		ctx, cancel := context.WithCancel(req.Context())
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/voter.post_votes.v1.PostVotesAPI/DeletePostVotes", runtime.WithHTTPPathPattern("/v1/{name=post_votes/*/delete}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/voter.post_votes.v1.PostVotesAPI/ListVidsByPid", runtime.WithHTTPPathPattern("/v1/{name=post_votes/*/list}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
 		}
-		resp, md, err := request_PostVotesAPI_DeletePostVotes_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		resp, md, err := request_PostVotesAPI_ListVidsByPid_0(annotatedContext, inboundMarshaler, client, req, pathParams)
 		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
 		if err != nil {
 			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
 			return
 		}
 
-		forward_PostVotesAPI_DeletePostVotes_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+		forward_PostVotesAPI_ListVidsByPid_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("POST", pattern_PostVotesAPI_CreatePostVote_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/voter.post_votes.v1.PostVotesAPI/CreatePostVote", runtime.WithHTTPPathPattern("/v1/{parent=post_votes/*/create}"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_PostVotesAPI_CreatePostVote_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_PostVotesAPI_CreatePostVote_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("PATCH", pattern_PostVotesAPI_UpdatePostVote_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/voter.post_votes.v1.PostVotesAPI/UpdatePostVote", runtime.WithHTTPPathPattern("/v1/{post_vote.name=post_votes/*/update}"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_PostVotesAPI_UpdatePostVote_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_PostVotesAPI_UpdatePostVote_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
+
+	})
+
+	mux.Handle("DELETE", pattern_PostVotesAPI_DeletePostVote_0, func(w http.ResponseWriter, req *http.Request, pathParams map[string]string) {
+		ctx, cancel := context.WithCancel(req.Context())
+		defer cancel()
+		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
+		var err error
+		var annotatedContext context.Context
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/voter.post_votes.v1.PostVotesAPI/DeletePostVote", runtime.WithHTTPPathPattern("/v1/{name=post_votes/*/delete}"))
+		if err != nil {
+			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
+			return
+		}
+		resp, md, err := request_PostVotesAPI_DeletePostVote_0(annotatedContext, inboundMarshaler, client, req, pathParams)
+		annotatedContext = runtime.NewServerMetadataContext(annotatedContext, md)
+		if err != nil {
+			runtime.HTTPError(annotatedContext, mux, outboundMarshaler, w, req, err)
+			return
+		}
+
+		forward_PostVotesAPI_DeletePostVote_0(annotatedContext, mux, outboundMarshaler, w, req, resp, mux.GetForwardResponseOptions()...)
 
 	})
 
@@ -542,21 +875,33 @@ func RegisterPostVotesAPIHandlerClient(ctx context.Context, mux *runtime.ServeMu
 }
 
 var (
-	pattern_PostVotesAPI_GetPostVotes_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 2, 5, 2}, []string{"v1", "post_votes", "name"}, ""))
+	pattern_PostVotesAPI_ListPostVotes_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 4, 1, 5, 2}, []string{"v1", "posts_votes", "parent"}, ""))
 
-	pattern_PostVotesAPI_CreatePostVotes_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 4, 3, 5, 3}, []string{"v1", "post_votes", "create", "parent"}, ""))
+	pattern_PostVotesAPI_GetByPidVid_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 1, 0, 2, 2, 4, 4, 5, 3}, []string{"v1", "post_votes", "id", "name"}, ""))
 
-	pattern_PostVotesAPI_UpdatePostVotes_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 4, 3, 5, 3}, []string{"v1", "post_votes", "update", "post_vote.name"}, ""))
+	pattern_PostVotesAPI_GetPostVote_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 2, 5, 2}, []string{"v1", "post_votes", "name"}, ""))
 
-	pattern_PostVotesAPI_DeletePostVotes_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 4, 3, 5, 3}, []string{"v1", "post_votes", "delete", "name"}, ""))
+	pattern_PostVotesAPI_ListVidsByPid_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 4, 3, 5, 3}, []string{"v1", "post_votes", "list", "name"}, ""))
+
+	pattern_PostVotesAPI_CreatePostVote_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 4, 3, 5, 3}, []string{"v1", "post_votes", "create", "parent"}, ""))
+
+	pattern_PostVotesAPI_UpdatePostVote_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 4, 3, 5, 3}, []string{"v1", "post_votes", "update", "post_vote.name"}, ""))
+
+	pattern_PostVotesAPI_DeletePostVote_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 2, 2, 4, 3, 5, 3}, []string{"v1", "post_votes", "delete", "name"}, ""))
 )
 
 var (
-	forward_PostVotesAPI_GetPostVotes_0 = runtime.ForwardResponseMessage
+	forward_PostVotesAPI_ListPostVotes_0 = runtime.ForwardResponseMessage
 
-	forward_PostVotesAPI_CreatePostVotes_0 = runtime.ForwardResponseMessage
+	forward_PostVotesAPI_GetByPidVid_0 = runtime.ForwardResponseMessage
 
-	forward_PostVotesAPI_UpdatePostVotes_0 = runtime.ForwardResponseMessage
+	forward_PostVotesAPI_GetPostVote_0 = runtime.ForwardResponseMessage
 
-	forward_PostVotesAPI_DeletePostVotes_0 = runtime.ForwardResponseMessage
+	forward_PostVotesAPI_ListVidsByPid_0 = runtime.ForwardResponseMessage
+
+	forward_PostVotesAPI_CreatePostVote_0 = runtime.ForwardResponseMessage
+
+	forward_PostVotesAPI_UpdatePostVote_0 = runtime.ForwardResponseMessage
+
+	forward_PostVotesAPI_DeletePostVote_0 = runtime.ForwardResponseMessage
 )

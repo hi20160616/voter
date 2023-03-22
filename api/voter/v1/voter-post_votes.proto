@@ -9,54 +9,100 @@ import "google/protobuf/empty.proto";
 option go_package = "github.com/hi20160616/voter/api/voter/v1;v1";
 
 service PostVotesAPI {
-  rpc GetPostVotes(GetPostVotesRequest) returns (PostVotes) {
+  rpc ListPostVotes(ListPostVotesRequest) returns (ListPostVotesResponse) {
+    option (google.api.http) = {
+      get: "/v1/{parent=posts_votes}"
+    };
+  }
+  rpc GetByPidVid(GetByPidVidRequest) returns (PostVote) {
+    option (google.api.http) = {
+      get: "/v1/{name=post_votes/*/*/id}"
+    };
+  }
+  rpc GetPostVote(GetPostVoteRequest) returns (PostVote) {
     option (google.api.http) = {
       get: "/v1/{name=post_votes/*}"
     };
   }
-  rpc CreatePostVotes(CreatePostVotesRequest) returns (PostVote) {
+  rpc ListVidsByPid(ListVidsByPidRequest) returns (ListVidsByPidResponse) {
+    option (google.api.http) = {
+      get: "/v1/{name=post_votes/*/list}"
+    };
+  }
+  rpc CreatePostVote(CreatePostVoteRequest) returns (PostVote) {
     option (google.api.http) = {
       post: "/v1/{parent=post_votes/*/create}"
       body: "post_vote"
     };
   }
-  rpc UpdatePostVotes(UpdatePostVotesRequest) returns (PostVote) {
+  rpc UpdatePostVote(UpdatePostVoteRequest) returns (PostVote) {
     option (google.api.http) = {
       patch: "/v1/{post_vote.name=post_votes/*/update}"
       body: "post_vote"
     };
   }
-  rpc DeletePostVotes(DeletePostVotesRequest) returns (google.protobuf.Empty) {
+  rpc DeletePostVote(DeletePostVoteRequest) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       delete: "/v1/{name=post_votes/*/delete}"
     };
   }
 }
 
-message GetPostVotesRequest {
+message ListPostVotesRequest{
+  // The parent resource name
+  string parent = 1;
+
+  // The maximum number of items to return.
+  int32 page_size = 2;
+
+  // The next_page_token value returned from a previous List request, if any.
+  string page_token = 3;
+}
+
+message ListPostVotesResponse{
+  repeated PostVote postVotes = 1;
+  string next_page_token = 2;
+}
+
+message GetPostVoteRequest {
   string name = 1;
 }
 
-message CreatePostVotesRequest {
-  string parent = 1;
-  PostVote post_vote = 2;
+message GetByPidVidRequest {
+  string name = 1;
 }
 
-message UpdatePostVotesRequest {
+message ListVidsByPidRequest{
+  string name = 1;
+}
+
+message ListVidsByPidResponse{
+  int32 Pid = 1;
+  repeated int32 Vids = 2;
+}
+
+message CreatePostVoteRequest {
+  string parent = 1;
+  int32 post_vote_id = 2;
+  PostVote post_vote = 3;
+}
+
+message UpdatePostVoteRequest {
   PostVote post_vote = 1;
   // The update mask applies to the resource. For the `FieldMask` definition,
   // see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
   google.protobuf.FieldMask update_mask = 2;
 }
 
-message DeletePostVotesRequest {
+message DeletePostVoteRequest {
   string name = 1;
 }
 
 message PostVote{
   string name = 1;
-  int32 post_id = 2;
-  int32 vote_id = 3;
+  int32 post_vote_id = 2;
+  int32 post_id = 3;
+  int32 vote_id = 4;
 }
 
 message PostVotes{
