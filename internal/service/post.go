@@ -113,6 +113,7 @@ func (ps *PostService) CreatePost(ctx context.Context, in *pb.CreatePostRequest)
 		return nil, err
 	}
 	return &pb.Post{
+		PostId:     int32(p.PostId),
 		Title:      p.Title,
 		IsClosed:   int32(p.IsClosed),
 		Detail:     p.Detail,

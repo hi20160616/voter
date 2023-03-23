@@ -33,13 +33,16 @@ type PostQuery struct {
 	keywords []string
 }
 
-func (dc *DatabaseClient) InsertPost(ctx context.Context, post *Post) error {
+func (dc *DatabaseClient) InsertPost(ctx context.Context, post *Post) (int64, error) {
 	q := `INSERT INTO posts(title, is_closed, detail) VALUES (?, ?, ?)
 		ON DUPLICATE KEY UPDATE title=?, is_closed=?, detail=?`
 	pq := &PostQuery{db: dc.db, query: q}
-	_, err := pq.db.Exec(pq.query, post.Title, post.IsClosed, post.Detail,
+	result, err := pq.db.Exec(pq.query, post.Title, post.IsClosed, post.Detail,
 		post.Title, post.IsClosed, post.Detail)
-	return errors.WithMessage(err, "mariadb: posts: Insert error")
+	if err != nil {
+		return 0, errors.WithMessage(err, "mariadb: posts: Insert error")
+	}
+	return result.LastInsertId()
 }
 
 func (dc *DatabaseClient) UpdatePost(ctx context.Context, post *Post) error {

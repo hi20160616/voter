@@ -48,12 +48,13 @@ func TestInsertPost(t *testing.T) {
 		},
 	}
 	for _, tc := range tcs {
-		err := c.DatabaseClient.InsertPost(context.Background(), tc)
+		id, err := c.DatabaseClient.InsertPost(context.Background(), tc)
 		if err != nil {
 			if err != nil {
 				t.Fatal(err)
 			}
 		}
+		fmt.Println(id)
 	}
 }
 

@@ -136,14 +136,16 @@ func (pr *postRepo) SearchPosts(ctx context.Context, name string) (*biz.Posts, e
 func (pr *postRepo) CreatePost(ctx context.Context, post *biz.Post) (*biz.Post, error) {
 	ctx, cancel := context.WithTimeout(ctx, 50*time.Second)
 	defer cancel()
-	if err := pr.data.DBClient.DatabaseClient.
+	lastInsertId, err := pr.data.DBClient.DatabaseClient.
 		InsertPost(ctx, &mysql.Post{
 			Title:    post.Title,
 			IsClosed: post.IsClosed,
 			Detail:   post.Detail,
-		}); err != nil {
+		})
+	if err != nil {
 		return nil, err
 	}
+	post.PostId = int(lastInsertId)
 	return post, nil
 }
 
