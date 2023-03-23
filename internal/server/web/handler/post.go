@@ -122,8 +122,7 @@ func savePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 			log.Println(err)
 		}
 		pbResponse, err := pvs.ListVidsByPid(context.Background(),
-			&pb.ListVidsByPidRequest{Name: "post_votes/" +
-				strconv.Itoa(int(post.PostId)) + "/list"})
+			&pb.ListVidsByPidRequest{Name: "post_votes/" + id + "/list"})
 		if err != nil {
 			log.Println(err)
 		}
@@ -206,12 +205,20 @@ func editPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	if err != nil {
 		log.Println(err)
 	}
+	pvs, err := service.NewPostVoteService()
+	lsVidByPid, err := pvs.ListVidsByPid(context.Background(),
+		&pb.ListVidsByPidRequest{Name: "post_votes/" + id + "/list"})
+	if err != nil {
+		log.Println(err)
+	}
 	p.Data = struct {
-		Post  *pb.Post
-		Votes []*pb.Vote
+		Post     *pb.Post
+		Votes    []*pb.Vote
+		PostVids []int32
 	}{
-		Post:  post,
-		Votes: votes.Votes,
+		Post:     post,
+		Votes:    votes.Votes,
+		PostVids: lsVidByPid.Vids,
 	}
 	render.Derive(w, "editpost", p)
 }
