@@ -32,6 +32,7 @@ func init() {
 		"isClosed":     isClosed,
 		"if1Checked":   if1Checked,
 		"ifHasCheckIt": ifHasCheckIt,
+		"isRadio":      isRadio,
 	})
 	// templates = template.Must(templates.ParseFS(tmpl.FS, "default/*.html"))
 	pattern := filepath.Join("templates", "default", "*.html")
@@ -118,4 +119,11 @@ func ifHasCheckIt(x int32, vids []int32) string {
 		}
 	}
 	return ""
+}
+
+func isRadio(x int32) string {
+	if x == 1 {
+		return "radio"
+	}
+	return "checkbox"
 }

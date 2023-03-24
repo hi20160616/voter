@@ -1,9 +1,33 @@
 {{template "header" .}}
 <div class="container">
-    <!-- {{unescapeHTML (markdown .Data.Detail)}} -->
-    <h1>{{.Data.Title}}</h1>
-    {{markdown .Data.Detail | unescapeHTML}}
-    {{isClosed .Data.IsClosed}}
-    <a href="/posts/edit/v?id={{.Data.PostId}}" class="btn btn-primary my-3">Edit</a>
+    <!-- {{unescapeHTML (markdown .Data.Post.Detail)}} -->
+    <h1>{{.Data.Post.Title}}</h1>
+    {{markdown .Data.Post.Detail | unescapeHTML}}
+    {{isClosed .Data.Post.IsClosed}}
+    <div class="form-group">
+	<div class="list-group">
+	    {{range $vote := .Data.Votes}}
+	    <label class="list-group-item">
+		{{$vote.Title}}
+	    </label>
+	    {{if $vote.A}}
+	    <label class="list-group-item">
+		<input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="{{$vote.VoteId}}" id="vote_a" >
+		{{$vote.A}}
+	    </label>
+	    {{end}}
+	    <label class="list-group-item">
+		<input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="{{$vote.VoteId}}" id="vote_b" >
+		{{$vote.B}}
+	    </label>
+	    <label class="list-group-item">
+		<input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="{{$vote.VoteId}}" id="vote_c" >
+		{{$vote.C}}
+	    </label>
+	    {{end}}
+	</div>
+    </div>
+    <a href="/posts/save/v?id={{.Data.Post.PostId}}" class="btn btn-dark my-3">Vote</a>
+    <a href="/posts/edit/v?id={{.Data.Post.PostId}}" class="btn btn-primary my-3">Edit</a>
 </div>
 {{template "footer" .}}

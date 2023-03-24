@@ -19,6 +19,9 @@ service VotesAPI {
       additional_bindings {
         get: "/v1/{parent=departments/*}/votes"
       }
+      additional_bindings {
+        get: "/v1/{parent=pid/*}/votes"
+      }
     };
   }
   rpc GetVote(GetVoteRequest) returns (Vote) {

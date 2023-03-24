@@ -43,7 +43,18 @@ func getPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	p.Data = post
+
+	vs, err := service.NewVoteService()
+	votes, err := vs.ListVotes(context.Background(),
+		&pb.ListVotesRequest{Parent: "pid/" + id + "/votes"})
+
+	p.Data = struct {
+		Post  *pb.Post
+		Votes []*pb.Vote
+	}{
+		Post:  post,
+		Votes: votes.Votes,
+	}
 	p.Title = post.Title
 	render.Derive(w, "post", p) // template name: post
 }
@@ -132,7 +143,26 @@ func savePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 			dbVids = append(dbVids, int(e))
 		}
 
+		// IntSliceDiff return []int in set1 but not in set2
+		IntSliceDiff := func(set1, set2 []int) (ret []int) {
+			for _, s1 := range set1 {
+				i := 0
+				for _, s2 := range set2 {
+					if s1 == s2 {
+						i++
+						continue
+					}
+				}
+				if i == 0 {
+					ret = append(ret, s1)
+				}
+			}
+
+			return
+		}
+		// Need add vids in form but not in database
 		addVids := IntSliceDiff(fVids, dbVids)
+		// Need del vids in database but not in form
 		delVids := IntSliceDiff(dbVids, fVids)
 
 		for _, e := range addVids {
@@ -164,24 +194,6 @@ func savePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 		p.Data = post
 		render.Derive(w, "post", p)
 	}
-}
-
-// IntSliceDiff return []int in set1 but not in set2
-func IntSliceDiff(set1, set2 []int) (ret []int) {
-	for _, s1 := range set1 {
-		i := 0
-		for _, s2 := range set2 {
-			if s1 == s2 {
-				i++
-				continue
-			}
-		}
-		if i == 0 {
-			ret = append(ret, s1)
-		}
-	}
-
-	return
 }
 
 func editPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {

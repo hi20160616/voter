@@ -40,7 +40,75 @@ func (vr *voteRepo) ListVotes(ctx context.Context, parent string) (*biz.Votes, e
 	bizvs := &biz.Votes{}
 	vs := &mysql.Votes{}
 	var err error
-	re := regexp.MustCompile(`^(departments|roles|votegroups)/(.+)/votes$`)
+	// reserved cases
+	// re := regexp.MustCompile(`^(departments|roles|votegroups|pid)/(.+)/votes$`)
+	re := regexp.MustCompile(`^(pid)/(.+)/votes$`)
+	x := re.FindStringSubmatch(parent)
+	y, err := regexp.MatchString(parent, `^votes$`)
+	if err != nil {
+		return nil, err
+	}
+	if len(x) != 3 && y {
+		vs, err = vr.data.DBClient.DatabaseClient.QueryVote().All(ctx)
+	} else {
+		clause := [4]string{}
+		clauses := [][4]string{}
+		switch x[1] {
+		// reserved cases
+		// case "departments":
+		//         clause = [4]string{"department_id", "=", x[2], "and"}
+		// case "roles":
+		//         clause = [4]string{"role_id", "=", x[2], "and"}
+		// case "votegroups":
+		//         clause = [4]string{"votegroup_id", "=", x[2], "and"}
+		case "pid":
+			clause = [4]string{"post_id", "=", x[2], "or"}
+			pvs, err := vr.data.DBClient.DatabaseClient.QueryPostVote().
+				Where(clause).All(ctx)
+			if err != nil {
+				return nil, err
+			}
+			for _, e := range pvs.Collection {
+				clauses = append(clauses, [4]string{"id", "=",
+					strconv.Itoa(e.VoteId), "or"})
+			}
+		}
+		vs, err = vr.data.DBClient.DatabaseClient.QueryVote().
+			Where(clauses...).All(ctx)
+	}
+	if err != nil {
+		return nil, err
+	}
+	for _, v := range vs.Collection {
+		bizvs.Collection = append(bizvs.Collection, &biz.Vote{
+			VoteId:      v.Id,
+			Title:       v.Title,
+			IsRadio:     v.IsRadio,
+			A:           v.A,
+			B:           v.B,
+			C:           v.C,
+			D:           v.D,
+			E:           v.E,
+			F:           v.F,
+			G:           v.G,
+			H:           v.H,
+			HasTxtField: v.HasTxtField,
+			CreateTime:  v.CreateTime,
+			UpdateTime:  v.UpdateTime,
+		})
+	}
+	return bizvs, nil
+}
+
+func (vr *voteRepo) ListVotesByPid(ctx context.Context, parent string) (*biz.Votes, error) {
+	ctx, cancel := context.WithTimeout(ctx, 50*time.Second)
+	defer cancel()
+	bizvs := &biz.Votes{}
+	vs := &mysql.Votes{}
+	var err error
+	// reserved cases
+	// re := regexp.MustCompile(`^(departments|roles|votegroups|pid)/(.+)/votes$`)
+	re := regexp.MustCompile(`^(pid)/(.+)/votes$`)
 	x := re.FindStringSubmatch(parent)
 	y, err := regexp.MatchString(parent, `^votes$`)
 	if err != nil {
@@ -51,12 +119,15 @@ func (vr *voteRepo) ListVotes(ctx context.Context, parent string) (*biz.Votes, e
 	} else {
 		clause := [4]string{}
 		switch x[1] {
-		case "departments":
-			clause = [4]string{"department_id", "=", x[2], "and"}
-		case "roles":
-			clause = [4]string{"role_id", "=", x[2], "and"}
-		case "votegroups":
-			clause = [4]string{"votegroup_id", "=", x[2], "and"}
+		// reserved cases
+		// case "departments":
+		//         clause = [4]string{"department_id", "=", x[2], "and"}
+		// case "roles":
+		//         clause = [4]string{"role_id", "=", x[2], "and"}
+		// case "votegroups":
+		//         clause = [4]string{"votegroup_id", "=", x[2], "and"}
+		case "pid":
+			clause = [4]string{"post_id", "=", x[2], "and"}
 		}
 		vs, err = vr.data.DBClient.DatabaseClient.QueryVote().
 			Where(clause).All(ctx)
