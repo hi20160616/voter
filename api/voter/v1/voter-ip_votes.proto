@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+package voter.ip_votes.v1;
+
+import "google/api/annotations.proto";
+import "google/protobuf/field_mask.proto";
+import "google/protobuf/empty.proto";
+
+option go_package = "github.com/hi20160616/voter/api/voter/v1;v1";
+
+service IpVotesAPI {
+  rpc ListIpVotes(ListIpVotesRequest) returns (ListIpVotesResponse) {
+    option (google.api.http) = {
+      get: "/v1/{parent=ips_votes}"
+    };
+  }
+  rpc GetIpVote(GetIpVoteRequest) returns (IpVote) {
+    option (google.api.http) = {
+      get: "/v1/{name=ip_votes/*}"
+    };
+  }
+  rpc CreateIpVote(CreateIpVoteRequest) returns (IpVote) {
+    option (google.api.http) = {
+      post: "/v1/{parent=ip_votes/*/create}"
+      body: "ip_vote"
+    };
+  }
+  rpc UpdateIpVote(UpdateIpVoteRequest) returns (IpVote) {
+    option (google.api.http) = {
+      patch: "/v1/{ip_vote.name=ip_votes/*/update}"
+      body: "ip_vote"
+    };
+  }
+  rpc DeleteIpVote(DeleteIpVoteRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/{name=ip_votes/*/delete}"
+    };
+  }
+}
+
+message ListIpVotesRequest{
+  // The parent resource name
+  string parent = 1;
+
+  // The maximum number of items to return.
+  int32 page_size = 2;
+
+  // The next_page_token value returned from a previous List request, if any.
+  string page_token = 3;
+}
+
+message ListIpVotesResponse{
+  repeated IpVote ipVotes = 1;
+  string next_page_token = 2;
+}
+
+message GetIpVoteRequest {
+  string name = 1;
+}
+
+message CreateIpVoteRequest {
+  string parent = 1;
+  int32 ip_vote_id = 2;
+  IpVote ip_vote = 3;
+}
+
+message UpdateIpVoteRequest {
+  IpVote ip_vote = 1;
+  // The update mask applies to the resource. For the `FieldMask` definition,
+  // see https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#fieldmask
+  google.protobuf.FieldMask update_mask = 2;
+}
+
+message DeleteIpVoteRequest {
+  string name = 1;
+}
+
+message IpVote{
+  string name = 1;
+  int32 ip_vote_id = 2;
+  string ip = 3;
+  int32 vote_id = 4;
+  string opts = 5;
+  string txtField = 6;
+}
+
+message IpVotes{
+  repeated IpVote ip_votes = 1;
+}

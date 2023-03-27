@@ -170,3 +170,27 @@ mysql> desc post_votes;
 +---------+------+------+-----+---------+----------------+
 3 rows in set (0.00 sec)
 ```
+
+### IpVotes
+```
+mysql> CREATE TABLE IF NOT EXISTS ip_votes (
+  id int(10) NOT NULL AUTO_INCREMENT,
+  ip int(10),
+  vote_id int(10),
+  opts VARCHAR(8),
+  txt_field VARCHAR(255),
+  PRIMARY KEY (id)
+);
+
+mysql> desc ip_votes;
++-----------+--------------+------+-----+---------+----------------+
+| Field     | Type         | Null | Key | Default | Extra          |
++-----------+--------------+------+-----+---------+----------------+
+| id        | int          | NO   | PRI | NULL    | auto_increment |
+| ip        | int          | YES  |     | NULL    |                |
+| vote_id   | int          | YES  |     | NULL    |                |
+| opts      | varchar(8)   | YES  |     | NULL    |                |
+| txt_field | varchar(255) | YES  |     | NULL    |                |
++-----------+--------------+------+-----+---------+----------------+
+5 rows in set (0.00 sec)
+```
