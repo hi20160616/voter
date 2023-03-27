@@ -5,27 +5,41 @@
     {{markdown .Data.Post.Detail | unescapeHTML}}
     {{isClosed .Data.Post.IsClosed}}
     <div class="form-group">
-	<div class="list-group">
+	<ul class="list-group list-group-flush">
 	    {{range $vote := .Data.Votes}}
-	    <label class="list-group-item">
-		{{$vote.Title}}
-	    </label>
-	    {{if $vote.A}}
-	    <label class="list-group-item">
-		<input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="{{$vote.VoteId}}" id="vote_a" >
-		{{$vote.A}}
-	    </label>
+	    <div class="card mt-3 bg-light">
+	    	<div class="card-body">
+	    	    <h5 class="card-title">{{$vote.Title}}</h5>
+		    <p class="card-text">
+			{{if $vote.A}}
+			<label class="list-group-item border-top-0 border-end-0 border-start-0 bg-light">
+			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="{{$vote.VoteId}}">
+			    {{$vote.A}}
+			</label>
+			{{end}}
+			{{if $vote.B}}
+			<label class="list-group-item border-top-0 border-end-0 border-start-0 bg-light">
+			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="{{$vote.VoteId}}">
+			    {{$vote.B}}
+			</label>
+			{{end}}
+			{{if $vote.C}}
+			<label class="list-group-item border-top-0 border-end-0 border-start-0 bg-light">
+			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="{{$vote.VoteId}}">
+			    {{$vote.C}}
+			</label>
+			{{end}}
+			{{if $vote.D}}
+			<label class="list-group-item border-top-0 border-end-0 border-start-0 bg-light">
+			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="{{$vote.VoteId}}">
+			    {{$vote.D}}
+			</label>
+			{{end}}
+		    </p>
+	    	</div>
+	    </div>
 	    {{end}}
-	    <label class="list-group-item">
-		<input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="{{$vote.VoteId}}" id="vote_b" >
-		{{$vote.B}}
-	    </label>
-	    <label class="list-group-item">
-		<input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="{{$vote.VoteId}}" id="vote_c" >
-		{{$vote.C}}
-	    </label>
-	    {{end}}
-	</div>
+	</ul>
     </div>
     <a href="/posts/save/v?id={{.Data.Post.PostId}}" class="btn btn-dark my-3">Vote</a>
     <a href="/posts/edit/v?id={{.Data.Post.PostId}}" class="btn btn-primary my-3">Edit</a>
