@@ -47,6 +47,7 @@ func GetHandler(cfg *configs.Config) *http.ServeMux {
 	mux.HandleFunc("/posts/save", makeHandler(savePostHandler, cfg))
 	mux.HandleFunc("/posts/save/v", makeHandler(savePostHandler, cfg))
 	mux.HandleFunc("/posts/edit/v", makeHandler(editPostHandler, cfg))
+	mux.HandleFunc("/posts/vote/v", makeHandler(votePostHandler, cfg))
 	mux.HandleFunc("/votes/", makeHandler(listVotesHandler, cfg))
 	mux.HandleFunc("/votes/v", makeHandler(getVoteHandler, cfg))
 	mux.HandleFunc("/votes/new", makeHandler(newVoteHandler, cfg))

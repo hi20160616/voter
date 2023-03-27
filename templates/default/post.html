@@ -4,6 +4,7 @@
     <h1>{{.Data.Post.Title}}</h1>
     {{markdown .Data.Post.Detail | unescapeHTML}}
     {{isClosed .Data.Post.IsClosed}}
+    <form action="/posts/vote/v?id={{.Data.Post.PostId}}" method="post" accept-charset="utf-8">
     <div class="form-group">
 	<ul class="list-group list-group-flush">
 	    {{range $vote := .Data.Votes}}
@@ -13,25 +14,25 @@
 		    <p class="card-text">
 			{{if $vote.A}}
 			<label class="list-group-item border-top-0 border-end-0 border-start-0 bg-light">
-			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="{{$vote.VoteId}}">
+			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="A">
 			    {{$vote.A}}
 			</label>
 			{{end}}
 			{{if $vote.B}}
 			<label class="list-group-item border-top-0 border-end-0 border-start-0 bg-light">
-			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="{{$vote.VoteId}}">
+			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="B">
 			    {{$vote.B}}
 			</label>
 			{{end}}
 			{{if $vote.C}}
 			<label class="list-group-item border-top-0 border-end-0 border-start-0 bg-light">
-			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="{{$vote.VoteId}}">
+			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="C">
 			    {{$vote.C}}
 			</label>
 			{{end}}
 			{{if $vote.D}}
 			<label class="list-group-item border-top-0 border-end-0 border-start-0 bg-light">
-			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="{{$vote.VoteId}}">
+			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="D">
 			    {{$vote.D}}
 			</label>
 			{{end}}
@@ -41,7 +42,8 @@
 	    {{end}}
 	</ul>
     </div>
-    <a href="/posts/save/v?id={{.Data.Post.PostId}}" class="btn btn-dark my-3">Vote</a>
+    <button class="btn btn-dark my-3" type="submit">Vote</button>
     <a href="/posts/edit/v?id={{.Data.Post.PostId}}" class="btn btn-primary my-3">Edit</a>
+    </form>
 </div>
 {{template "footer" .}}

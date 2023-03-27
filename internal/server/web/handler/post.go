@@ -234,3 +234,28 @@ func editPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	}
 	render.Derive(w, "editpost", p)
 }
+
+func votePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+	// id := r.URL.Query().Get("id")
+	// vs, err := service.NewVoteService()
+	// if err != nil {
+	//         log.Println(err)
+	// }
+	// err = r.ParseForm()
+	// if err != nil {
+	//         log.Println(err)
+	// }
+	//
+	// sv := r.Form["vote1"]
+	// vote1Opts := []string{}
+	// for _, e := range sv {
+	//         vote1Opts = append(vote1Opts, e)
+	// }
+	//
+	// vote, err := vs.UpdateVote(context.Background(), &pb.UpdateVoteRequest{
+	//         Vote: &pb.Vote{
+	//                 VoteId: int32(1),
+	//                 A:      vote1Opts[0],
+	//         },
+	// })
+}
