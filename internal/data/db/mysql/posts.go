@@ -40,7 +40,7 @@ func (dc *DatabaseClient) InsertPost(ctx context.Context, post *Post) (int64, er
 	result, err := pq.db.Exec(pq.query, post.Title, post.IsClosed, post.Detail,
 		post.Title, post.IsClosed, post.Detail)
 	if err != nil {
-		return 0, errors.WithMessage(err, "mariadb: posts: Insert error")
+		return 0, errors.WithMessage(err, "mysql: posts: Insert error")
 	}
 	return result.LastInsertId()
 }

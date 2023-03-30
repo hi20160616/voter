@@ -45,7 +45,7 @@ g=?, h=?, has_txt_field=?`
 		vote.D, vote.E, vote.F, vote.G, vote.H, vote.HasTxtField,
 		vote.Title, vote.IsRadio, vote.A, vote.B, vote.C,
 		vote.D, vote.E, vote.F, vote.G, vote.H, vote.HasTxtField)
-	return errors.WithMessage(err, "mariadb: votes: Insert error")
+	return errors.WithMessage(err, "mysql: votes: Insert error")
 }
 
 func (dc *DatabaseClient) UpdateVote(ctx context.Context, vote *Vote) error {

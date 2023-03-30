@@ -36,7 +36,7 @@ func (dc *DatabaseClient) InsertPostVote(ctx context.Context, postVote *PostVote
 	pvq := &PostVoteQuery{db: dc.db, query: q}
 	_, err := pvq.db.Exec(pvq.query, postVote.PostId, postVote.VoteId,
 		postVote.PostId, postVote.VoteId)
-	return errors.WithMessage(err, "mariadb: postVotes: Insert error")
+	return errors.WithMessage(err, "mysql: postVotes: Insert error")
 }
 
 func (dc *DatabaseClient) UpdatePostVote(ctx context.Context, postVote *PostVote) error {

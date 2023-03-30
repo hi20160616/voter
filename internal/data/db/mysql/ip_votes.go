@@ -31,18 +31,21 @@ type IpVoteQuery struct {
 	keywords []string
 }
 
-func (dc *DatabaseClient) InsertIpVote(ctx context.Context, ipVote *IpVote) error {
-	q := `INSERT INTO ip_votes(ip, vote_id, opts, txt_field) VALUES (?, ?, ?, ?)
-		ON DUPLICATE KEY UPDATE ip=?, vote_id=?, opts=?, txt_field=?`
+func (dc *DatabaseClient) InsertIpVote(ctx context.Context, ipVote *IpVote) (int64, error) {
+	q := `INSERT INTO ip_votes(ip, vote_id, opts, txt_field) VALUES (INET_ATON(?), ?, ?, ?)
+		ON DUPLICATE KEY UPDATE ip=INET_ATON(?), vote_id=?, opts=?, txt_field=?`
 	ivq := &IpVoteQuery{db: dc.db, query: q}
-	_, err := ivq.db.Exec(
+	x, err := ivq.db.Exec(
 		ivq.query, ipVote.Ip, ipVote.VoteId, ipVote.Opts, ipVote.TxtField,
 		ipVote.Ip, ipVote.VoteId, ipVote.Opts, ipVote.TxtField)
-	return errors.WithMessage(err, "mariadb: ipVotes: Insert error")
+	if err != nil {
+		return 0, errors.WithMessage(err, "mysql: ipVotes: Insert error")
+	}
+	return x.LastInsertId()
 }
 
 func (dc *DatabaseClient) UpdateIpVote(ctx context.Context, ipVote *IpVote) error {
-	q := `UPDATE ip_votes SET ip=?, vote_id=?, opts=?, txt_field WHERE id=?`
+	q := `UPDATE ip_votes SET ip=INET_ATON(?), vote_id=?, opts=?, txt_field=? WHERE id=?`
 	uq := &IpVoteQuery{db: dc.db, query: q}
 	_, err := uq.db.Exec(uq.query, ipVote.Ip, ipVote.VoteId, ipVote.Opts,
 		ipVote.TxtField, ipVote.Id)
@@ -150,15 +153,15 @@ func (ivq *IpVoteQuery) prepareQuery(ctx context.Context) error {
 
 func mkIpVote(rows *sql.Rows) (*IpVotes, error) {
 	var id, vote_id int
-	var ip, opts, txtField string
+	var ip, opts, txtField sql.NullString
 	var ipVotes = &IpVotes{}
 	for rows.Next() {
-		if err := rows.Scan(&id, &ip, &opts, &txtField, &vote_id); err != nil {
+		if err := rows.Scan(&id, &ip, &vote_id, &opts, &txtField); err != nil {
 			return nil, errors.WithMessage(err, "mkIpVote rows.Scan error")
 		}
 		ipVotes.Collection = append(ipVotes.Collection, &IpVote{
-			Id: id, Ip: ip, Opts: opts, TxtField: txtField,
-			VoteId: vote_id})
+			Id: id, Ip: ip.String, VoteId: vote_id, Opts: opts.String,
+			TxtField: txtField.String})
 	}
 	// TODO: to confirm code below can make sence.
 	if err := rows.Err(); err != nil {

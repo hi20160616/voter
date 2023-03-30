@@ -91,7 +91,7 @@ func (ivr *ipVoteRepo) CreateIpVote(ctx context.Context, ipVote *biz.IpVote) (*b
 	_, err := ivr.data.DBClient.DatabaseClient.QueryIpVote().
 		Where(clauses...).First(ctx)
 	if err != nil && errors.Is(err, mysql.ErrNotFound) {
-		if err := ivr.data.DBClient.DatabaseClient.
+		if x, err := ivr.data.DBClient.DatabaseClient.
 			InsertIpVote(ctx, &mysql.IpVote{
 				Ip:       ipVote.Ip,
 				VoteId:   ipVote.VoteId,
@@ -100,6 +100,7 @@ func (ivr *ipVoteRepo) CreateIpVote(ctx context.Context, ipVote *biz.IpVote) (*b
 			}); err != nil {
 			return nil, err
 		} else {
+			ipVote.IpVoteId = int(x)
 			return ipVote, nil
 		}
 	}
