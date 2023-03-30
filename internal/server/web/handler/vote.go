@@ -78,7 +78,24 @@ func getVoteHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	p.Data = vote
+	p.Data = struct{ Vote *pb.Vote }{Vote: vote}
 	p.Title = vote.Title
 	render.Derive(w, "vote", p) // template name: vote
+}
+
+func editVoteHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+	id := r.URL.Query().Get("id")
+	vs, err := service.NewVoteService()
+	if err != nil {
+		log.Println(err)
+	}
+
+	vote, err := vs.GetVote(context.Background(), &pb.GetVoteRequest{
+		Name: "votes/" + id,
+	})
+	if err != nil {
+		log.Println(err)
+	}
+	p.Data = struct{ Vote *pb.Vote }{Vote: vote}
+	render.Derive(w, "editvote", p)
 }

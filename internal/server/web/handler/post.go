@@ -95,8 +95,19 @@ func savePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 		if err != nil {
 			log.Println(err)
 		}
-		p.Data = post
-		render.Derive(w, "post", p)
+		vs, err := service.NewVoteService()
+		votes, err := vs.ListVotes(context.Background(),
+			&pb.ListVotesRequest{Parent: "pid/" +
+				strconv.Itoa(int(post.PostId)) + "/votes"})
+		p.Data = struct {
+			Post  *pb.Post
+			Votes []*pb.Vote
+		}{
+			Post:  post,
+			Votes: votes.Votes,
+		}
+		p.Title = post.Title
+		render.Derive(w, "post", p) // template name: post
 	} else {
 		// update a post
 		post, err := ps.GetPost(context.Background(), &pb.GetPostRequest{
@@ -190,9 +201,19 @@ func savePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 				log.Println(err)
 			}
 		}
-
-		p.Data = post
-		render.Derive(w, "post", p)
+		vs, err := service.NewVoteService()
+		votes, err := vs.ListVotes(context.Background(),
+			&pb.ListVotesRequest{Parent: "pid/" +
+				strconv.Itoa(int(post.PostId)) + "/votes"})
+		p.Data = struct {
+			Post  *pb.Post
+			Votes []*pb.Vote
+		}{
+			Post:  post,
+			Votes: votes.Votes,
+		}
+		p.Title = post.Title
+		render.Derive(w, "post", p) // template name: post
 	}
 }
 

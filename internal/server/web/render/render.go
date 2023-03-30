@@ -123,7 +123,7 @@ func ifHasCheckIt(x int32, vids []int32) string {
 
 func isRadio(x int32) string {
 	if x == 1 {
-		return "radio"
+		return "checkbox"
 	}
-	return "checkbox"
+	return "radio"
 }

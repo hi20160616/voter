@@ -1,13 +1,60 @@
 {{template "header" .}}
 <div class="container">
-    <h1>{{.Data.Title}}</h1>
-    {{markdown .Data.A | unescapeHTML}}
-    {{markdown .Data.B | unescapeHTML}}
-    {{markdown .Data.C | unescapeHTML}}
-    {{markdown .Data.D | unescapeHTML}}
-    {{markdown .Data.E | unescapeHTML}}
-<!-- new btn here -->
-<!-- edit btn here -->
-<!-- list btn here -->
+    <div class="card mt-3 bg-light">
+	<div class="card-body">
+	    <h5 class="card-title">{{.Data.Vote.Title}}</h5>
+	    <p class="card-text">
+	    {{if .Data.Vote.A}}
+	    <label class="list-group-item border-top-0 border-end-0 border-start-0 bg-light">
+		<input class="form-check-input me-1" type="{{isRadio .Data.Vote.IsRadio}}" name="vote{{.Data.Vote.VoteId}}" value="A">
+		{{.Data.Vote.A}}
+	    </label>
+	    {{end}}
+	    {{if .Data.Vote.B}}
+	    <label class="list-group-item border-top-0 border-end-0 border-start-0 bg-light">
+		<input class="form-check-input me-1" type="{{isRadio .Data.Vote.IsRadio}}" name="vote{{.Data.Vote.VoteId}}" value="B">
+		{{.Data.Vote.B}}
+	    </label>
+	    {{end}}
+	    {{if .Data.Vote.C}}
+	    <label class="list-group-item border-top-0 border-end-0 border-start-0 bg-light">
+		<input class="form-check-input me-1" type="{{isRadio .Data.Vote.IsRadio}}" name="vote{{.Data.Vote.VoteId}}" value="C">
+		{{.Data.Vote.C}}
+	    </label>
+	    {{end}}
+	    {{if .Data.Vote.D}}
+	    <label class="list-group-item border-top-0 border-end-0 border-start-0 bg-light">
+		<input class="form-check-input me-1" type="{{isRadio .Data.Vote.IsRadio}}" name="vote{{.Data.Vote.VoteId}}" value="D">
+		{{.Data.Vote.D}}
+	    </label>
+	    {{end}}
+	    {{if .Data.Vote.E}}
+	    <label class="list-group-item border-top-0 border-end-0 border-start-0 bg-light">
+		<input class="form-check-input me-1" type="{{isRadio .Data.Vote.IsRadio}}" name="vote{{.Data.Vote.VoteId}}" value="E">
+		{{.Data.Vote.E}}
+	    </label>
+	    {{end}}
+	    {{if .Data.Vote.F}}
+	    <label class="list-group-item border-top-0 border-end-0 border-start-0 bg-light">
+		<input class="form-check-input me-1" type="{{isRadio .Data.Vote.IsRadio}}" name="vote{{.Data.Vote.VoteId}}" value="F">
+		{{.Data.Vote.F}}
+	    </label>
+	    {{end}}
+	    {{if .Data.Vote.G}}
+	    <label class="list-group-item border-top-0 border-end-0 border-start-0 bg-light">
+		<input class="form-check-input me-1" type="{{isRadio .Data.Vote.IsRadio}}" name="vote{{.Data.Vote.VoteId}}" value="G">
+		{{.Data.Vote.G}}
+	    </label>
+	    {{end}}
+	    {{if .Data.Vote.H}}
+	    <label class="list-group-item border-top-0 border-end-0 border-start-0 bg-light">
+		<input class="form-check-input me-1" type="{{isRadio .Data.Vote.IsRadio}}" name="vote{{.Data.Vote.VoteId}}" value="H">
+		{{.Data.Vote.H}}
+	    </label>
+	    {{end}}
+	    </p>
+	</div>
+    </div>
+    <a href="/votes/edit/v?id={{.Data.Vote.VoteId}}" class="btn btn-primary my-3">Edit</a>
 </div>
 {{template "footer" .}}

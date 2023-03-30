@@ -18,7 +18,7 @@
     "Source": "voter_db_user:voter_db_pwd@(127.0.0.1:3306)/voter?loc=Asia%2FShanghai&parseTime=true"
   },
   "web":{
-    "Addr": ":80",
+    "Addr": ":8080",
     "Tmpl": "templates"
   }
 
