@@ -342,7 +342,8 @@ func (vr *voteRepo) DeleteVote(ctx context.Context, name string) (*emptypb.Empty
 	x := re.FindStringSubmatch(name)
 	if len(x) != 2 {
 		return &emptypb.Empty{},
-			errors.New("voteRepo: DeleteVote: name cannot match regex express")
+			errors.New(
+				"voteRepo: DeleteVote: name cannot match regex express: " + name)
 	}
 	id, err := strconv.Atoi(x[1])
 	if err != nil {

@@ -74,7 +74,7 @@ func TestUpdateIpVote(t *testing.T) {
 }
 
 func TestDeleteIpVote(t *testing.T) {
-	id := "4"
+	id := "15"
 	name := "ip_votes/" + id + "/delete"
 	if _, err := ivs.DeleteIpVote(context.Background(), &v1.DeleteIpVoteRequest{Name: name}); err != nil {
 		t.Fatal(err)

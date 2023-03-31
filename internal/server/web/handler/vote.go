@@ -132,3 +132,25 @@ func editVoteHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	p.Data = struct{ Vote *pb.Vote }{Vote: vote}
 	render.Derive(w, "editvote", p)
 }
+
+func delVoteHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+	id := r.URL.Query().Get("id")
+	vs, err := service.NewVoteService()
+	if err != nil {
+		log.Println(err)
+	}
+
+	_, err = vs.DeleteVote(context.Background(), &pb.DeleteVoteRequest{
+		Name: "votes/" + id + "/delete",
+	})
+	if err != nil {
+		log.Println(err)
+	}
+	ds, err := vs.ListVotes(context.Background(), &pb.ListVotesRequest{})
+	if err != nil {
+		log.Println(err)
+	}
+	p.Data = ds.Votes
+	p.Title = "Votes"
+	render.Derive(w, "votes", p)
+}
