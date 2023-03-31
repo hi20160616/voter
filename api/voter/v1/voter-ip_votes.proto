@@ -12,6 +12,9 @@ service IpVotesAPI {
   rpc ListIpVotes(ListIpVotesRequest) returns (ListIpVotesResponse) {
     option (google.api.http) = {
       get: "/v1/{parent=ips_votes}"
+      // additional_bindings {
+      //   get: "/v1/{parent=ip/*}/ip_votes"
+      // }
     };
   }
   rpc GetIpVote(GetIpVoteRequest) returns (IpVote) {

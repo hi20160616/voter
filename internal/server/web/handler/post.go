@@ -1,9 +1,12 @@
 package handler
 
 import (
+	"bytes"
 	"context"
+	"encoding/binary"
 	"fmt"
 	"log"
+	"net"
 	"net/http"
 	"strconv"
 
@@ -11,6 +14,39 @@ import (
 	"github.com/hi20160616/voter/internal/server/web/render"
 	"github.com/hi20160616/voter/internal/service"
 )
+
+const (
+	XForwardedFor = "X-Forwarded-For"
+	XRealIP       = "X-Real-IP"
+)
+
+// RemoteIp 返回远程客户端的 IP，如 192.168.1.1
+func RemoteIp(req *http.Request) string {
+	remoteAddr := req.RemoteAddr
+	if ip := req.Header.Get(XRealIP); ip != "" {
+		remoteAddr = ip
+	} else if ip = req.Header.Get(XForwardedFor); ip != "" {
+		remoteAddr = ip
+	} else {
+		remoteAddr, _, _ = net.SplitHostPort(remoteAddr)
+	}
+
+	if remoteAddr == "::1" {
+		remoteAddr = "127.0.0.1"
+	}
+
+	return remoteAddr
+}
+
+// Ip2long 将 IPv4 字符串形式转为 uint32
+func Ip2long(ipstr string) uint32 {
+	ip := net.ParseIP(ipstr)
+	if ip == nil {
+		return 0
+	}
+	ip = ip.To4()
+	return binary.BigEndian.Uint32(ip)
+}
 
 func newPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	p.Title = "New Post"
@@ -39,14 +75,15 @@ func getPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 		log.Println(err)
 	}
 
-	post, err := ps.GetPost(context.Background(), &pb.GetPostRequest{Name: "posts/" + id})
+	post, err := ps.GetPost(context.Background(), &pb.GetPostRequest{
+		Name: "posts/" + id})
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
 	vs, err := service.NewVoteService()
-	votes, err := vs.ListVotes(context.Background(),
-		&pb.ListVotesRequest{Parent: "pid/" + id + "/votes"})
+	votes, err := vs.ListVotes(context.Background(), &pb.ListVotesRequest{
+		Parent: "pid/" + id + "/votes"})
 
 	p.Data = struct {
 		Post  *pb.Post
@@ -255,26 +292,55 @@ func editPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 }
 
 func votePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
-	// id := r.URL.Query().Get("id")
-	// vs, err := service.NewVoteService()
-	// if err != nil {
-	//         log.Println(err)
-	// }
-	// err = r.ParseForm()
-	// if err != nil {
-	//         log.Println(err)
-	// }
-	//
-	// sv := r.Form["vote1"]
-	// vote1Opts := []string{}
-	// for _, e := range sv {
-	//         vote1Opts = append(vote1Opts, e)
-	// }
-	//
-	// vote, err := vs.UpdateVote(context.Background(), &pb.UpdateVoteRequest{
-	//         Vote: &pb.Vote{
-	//                 VoteId: int32(1),
-	//                 A:      vote1Opts[0],
-	//         },
-	// })
+	id := r.URL.Query().Get("id")
+	iid, err := strconv.Atoi(id)
+	if err != nil {
+		log.Println(err)
+	}
+	err = r.ParseForm()
+	if err != nil {
+		log.Println(err)
+	}
+
+	sv := r.Form["vote1"]
+	optsArr := []byte{'0', '0', '0', '0', '0', '0', '0', '0'}
+	for _, e := range sv {
+		switch e {
+		case "A":
+			optsArr[0] = '1'
+		case "B":
+			optsArr[1] = '1'
+		case "C":
+			optsArr[2] = '1'
+		case "D":
+			optsArr[3] = '1'
+		case "E":
+			optsArr[4] = '1'
+		case "F":
+			optsArr[5] = '1'
+		case "G":
+			optsArr[6] = '1'
+		case "H":
+			optsArr[7] = '1'
+		}
+	}
+	iv := &pb.IpVote{
+		Ip:     RemoteIp(r),
+		VoteId: int32(iid),
+		Opts:   bytes.NewBuffer(optsArr).String(),
+	}
+
+	ivs, err := service.NewIpVoteService()
+	if err != nil {
+		log.Println(err)
+	}
+
+	// prejudge exist of ip and vote at data/ip_vote.go
+	// insert row or update if exist
+	x, err := ivs.CreateIpVote(context.Background(), &pb.CreateIpVoteRequest{
+		IpVote: iv})
+	if err != nil {
+		log.Println(err)
+	}
+	fmt.Println(x)
 }

@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"net"
 	"regexp"
 	"strconv"
 	"time"
@@ -81,46 +82,83 @@ func (ivr *ipVoteRepo) GetIpVote(ctx context.Context, name string) (*biz.IpVote,
 	}, nil
 }
 
+// inet_aton convert ip,
+// If the given input IPv4 address is a.b.c.d then
+// return string of value a×2563+ b×2562+ c×2561 + d
+func inet_aton(ip string) string {
+	var ip_int uint32
+	ip_byte := net.ParseIP(ip).To4()
+	for i := 0; i < len(ip_byte); i++ {
+		ip_int |= uint32(ip_byte[i])
+		if i < 3 {
+			ip_int <<= 8
+		}
+	}
+	return strconv.Itoa(int(ip_int))
+}
+
+// CreateIpVote insert a row to database if ip and vote not exist, otherwise, update this row
 func (ivr *ipVoteRepo) CreateIpVote(ctx context.Context, ipVote *biz.IpVote) (*biz.IpVote, error) {
 	ctx, cancel := context.WithTimeout(ctx, 50*time.Second)
 	defer cancel()
+	ip := inet_aton(ipVote.Ip)
 	clauses := [][4]string{
-		{"ip", "=", ipVote.Ip, "and"},
+		{"ip", "=", ip, "and"},
 		{"vote_id", "=", strconv.Itoa(ipVote.VoteId), "and"},
 	}
+
 	_, err := ivr.data.DBClient.DatabaseClient.QueryIpVote().
 		Where(clauses...).First(ctx)
-	if err != nil && errors.Is(err, mysql.ErrNotFound) {
-		if x, err := ivr.data.DBClient.DatabaseClient.
-			InsertIpVote(ctx, &mysql.IpVote{
-				Ip:       ipVote.Ip,
-				VoteId:   ipVote.VoteId,
-				Opts:     ipVote.Opts,
-				TxtField: ipVote.TxtField,
-			}); err != nil {
-			return nil, err
+	if err != nil {
+		if errors.Is(err, mysql.ErrNotFound) {
+			ipvoteid, err := ivr.data.DBClient.DatabaseClient.
+				InsertIpVote(ctx, &mysql.IpVote{
+					Ip:       ipVote.Ip,
+					VoteId:   ipVote.VoteId,
+					Opts:     ipVote.Opts,
+					TxtField: ipVote.TxtField,
+				})
+			if err != nil {
+				return nil, err
+			} else {
+				ipVote.IpVoteId = int(ipvoteid)
+				return ipVote, nil
+			}
 		} else {
-			ipVote.IpVoteId = int(x)
-			return ipVote, nil
+			return nil, err
 		}
 	}
-	if err != nil {
-		return nil, err
-	}
 	// err is nil means ip_id and vote_id query back, it is exist.
-	return nil, ErrRowExist
+	// update the row
+	return ivr.UpdateIpVote(ctx, ipVote)
 }
 
 func (ivr *ipVoteRepo) UpdateIpVote(ctx context.Context, ipVote *biz.IpVote) (*biz.IpVote, error) {
 	ctx, cancel := context.WithTimeout(ctx, 50*time.Second)
 	defer cancel()
-	dbIpVote, err := ivr.data.DBClient.DatabaseClient.QueryIpVote().
-		Where([4]string{"id", "=", strconv.Itoa(ipVote.IpVoteId), "and"}).
-		First(ctx)
-	if err != nil {
-		return nil, errors.Join(fmt.Errorf(
-			"ipVoteRepo: UpdateIpVote: query ipVote by id error: %v: %v",
-			ipVote, err))
+	dbIpVote := &mysql.IpVote{}
+	var err error
+	if ipVote.IpVoteId == 0 {
+		ip := inet_aton(ipVote.Ip)
+		dbIpVote, err = ivr.data.DBClient.DatabaseClient.QueryIpVote().Where(
+			[][4]string{
+				{"ip", "=", ip, "and"},
+				{"vote_id", "=", strconv.Itoa(ipVote.VoteId), "and"},
+			}...).First(ctx)
+		if err != nil {
+			return nil, errors.Join(fmt.Errorf(
+				"ipVoteRepo: UpdateIpVote: query ipVote by ip"+
+					"and vote_id error: %v: %v", ipVote, err))
+		}
+	} else {
+		dbIpVote, err = ivr.data.DBClient.DatabaseClient.QueryIpVote().Where(
+			[4]string{"id", "=", strconv.Itoa(ipVote.IpVoteId), "and"},
+		).First(ctx)
+		if err != nil {
+			return nil, errors.Join(fmt.Errorf(
+				"ipVoteRepo: UpdateIpVote: query ipVote by id error: %v: %v",
+				ipVote, err))
+		}
 	}
 	if &ipVote.Ip != nil {
 		dbIpVote.Ip = ipVote.Ip

@@ -77,19 +77,21 @@ func (ivs *IpVoteService) CreateIpVote(ctx context.Context, in *pb.CreateIpVoteR
 			fmt.Printf("Recovered in UpdateIpVotes: \n%v\n", r)
 		}
 	}()
-	_, err := ivs.pc.CreateIpVote(ctx, &biz.IpVote{
-		Ip:     in.IpVote.Ip,
-		VoteId: int(in.IpVote.VoteId),
+	iv, err := ivs.pc.CreateIpVote(ctx, &biz.IpVote{
+		Ip:       in.IpVote.Ip,
+		VoteId:   int(in.IpVote.VoteId),
+		Opts:     in.IpVote.Opts,
+		TxtField: in.IpVote.TxtField,
 	})
 	if err != nil {
 		return nil, err
 	}
 	return &pb.IpVote{
-		IpVoteId: in.IpVoteId,
-		Ip:       in.IpVote.Ip,
-		VoteId:   in.IpVote.VoteId,
-		Opts:     in.IpVote.Opts,
-		TxtField: in.IpVote.TxtField,
+		IpVoteId: int32(iv.IpVoteId),
+		Ip:       iv.Ip,
+		VoteId:   int32(iv.VoteId),
+		Opts:     iv.Opts,
+		TxtField: iv.TxtField,
 	}, nil
 }
 

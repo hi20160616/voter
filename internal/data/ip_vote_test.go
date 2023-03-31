@@ -29,6 +29,23 @@ func TestGetIpVote(t *testing.T) {
 	fmt.Println("TxtField: ", x.TxtField)
 }
 
+func TestCreateIpVote(t *testing.T) {
+	tcs := []*biz.IpVote{
+		{Ip: "127.0.0.1", VoteId: 1, Opts: "00010000"},
+		{Ip: "127.0.0.1", VoteId: 1, Opts: "00100000"},
+		{Ip: "127.0.0.1", VoteId: 2, Opts: "01000000"},
+		{Ip: "127.0.0.1", VoteId: 3, Opts: "11110000"},
+	}
+
+	for _, tc := range tcs {
+		x, err := repo3.CreateIpVote(context.Background(), tc)
+		if err != nil {
+			t.Fatal(err)
+		}
+		fmt.Println(x)
+	}
+}
+
 func TestUpdateIpVote(t *testing.T) {
 	x, err := repo3.UpdateIpVote(context.Background(), &biz.IpVote{
 		IpVoteId: 1,
