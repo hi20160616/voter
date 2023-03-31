@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"net/http"
+	"strconv"
 
 	pb "github.com/hi20160616/voter/api/voter/v1"
 	"github.com/hi20160616/voter/internal/server/web/render"
@@ -16,6 +17,7 @@ func newVoteHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 }
 
 func saveVoteHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+	id := r.URL.Query().Get("id")
 	vs, err := service.NewVoteService()
 	if err != nil {
 		log.Println(err)
@@ -29,27 +31,58 @@ func saveVoteHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	if v := r.FormValue("HasTxtField"); v == "Yes" {
 		hasTxtField = 1
 	}
-
-	_, err = vs.CreateVote(context.Background(), &pb.CreateVoteRequest{
-		Vote: &pb.Vote{
-			Title:       r.FormValue("VoteTitle"),
-			IsRadio:     int32(isRadio),
-			A:           r.FormValue("A"),
-			B:           r.FormValue("B"),
-			C:           r.FormValue("C"),
-			D:           r.FormValue("D"),
-			E:           r.FormValue("E"),
-			F:           r.FormValue("F"),
-			G:           r.FormValue("G"),
-			H:           r.FormValue("H"),
-			HasTxtField: int32(hasTxtField),
-		},
-	})
-	if err != nil {
-		log.Println(err)
+	if id == "" {
+		v, err := vs.CreateVote(context.Background(), &pb.CreateVoteRequest{
+			Vote: &pb.Vote{
+				Title:       r.FormValue("VoteTitle"),
+				IsRadio:     int32(isRadio),
+				A:           r.FormValue("A"),
+				B:           r.FormValue("B"),
+				C:           r.FormValue("C"),
+				D:           r.FormValue("D"),
+				E:           r.FormValue("E"),
+				F:           r.FormValue("F"),
+				G:           r.FormValue("G"),
+				H:           r.FormValue("H"),
+				HasTxtField: int32(hasTxtField),
+			},
+		})
+		if err != nil {
+			log.Println(err)
+		}
+		p.Data = struct{ Vote *pb.Vote }{Vote: v}
+		p.Title = "Continute add vote"
+		render.Derive(w, "newvote", p)
+	} else {
+		// update a vote
+		vid, err := strconv.Atoi(id)
+		if err != nil {
+			log.Println(err)
+		}
+		v, err := vs.UpdateVote(context.Background(), &pb.UpdateVoteRequest{
+			Vote: &pb.Vote{
+				VoteId:      int32(vid),
+				Title:       r.FormValue("VoteTitle"),
+				IsRadio:     int32(isRadio),
+				A:           r.FormValue("A"),
+				B:           r.FormValue("B"),
+				C:           r.FormValue("C"),
+				D:           r.FormValue("D"),
+				E:           r.FormValue("E"),
+				F:           r.FormValue("F"),
+				G:           r.FormValue("G"),
+				H:           r.FormValue("H"),
+				HasTxtField: int32(hasTxtField),
+			},
+		})
+		if err != nil {
+			log.Println(err)
+		}
+		p.Data = struct{ Vote *pb.Vote }{Vote: v}
+		p.Title = "Updated vote done."
+		render.Derive(w, "vote", p)
 	}
-	p.Title = "Continute add vote"
-	render.Derive(w, "newvote", p)
+
 }
 
 func listVotesHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {

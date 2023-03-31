@@ -1,0 +1,57 @@
+{{template "header" .}}
+<div class="container">
+    <form action="/votes/save/v?id={{.Data.Vote.VoteId}}" method="post" accept-charset="utf-8">
+	<div class="form-group">
+	    <label for="VoteTitle">Vote Title</label>
+	    <input type="text" class="form-control" id="VoteTitle" name="VoteTitle" aria-describedby="vote title" value="{{.Data.Vote.Title}}">
+	    <small id="emailHelp" class="form-text text-muted">Vote Title is just ask for sth.</small>
+	</div>
+	<div class="form-group">
+	    <label for="VoteType" style="display: block;">Vote Type</label>
+	    <div class="btn-group btn-group-sm mb-2" role="group" id="VoteType" aria-label="Basic radio toggle button group" style="user-select: auto;">
+		<input type="radio" class="btn-check" name="VoteType" id="btnradio1" value="Radio" autocomplete="off" style="user-select: auto;" {{typeRadio .Data.Vote.IsRadio}}>
+		<label class="btn btn-outline-dark" for="btnradio1" style="user-select: auto;">Radio</label>
+		<input type="radio" class="btn-check" name="VoteType" id="btnradio2" value="CheckBox" autocomplete="off" style="user-select: auto;"{{typeCheckbox .Data.Vote.IsRadio}}>
+		<label class="btn btn-outline-dark" for="btnradio2" style="user-select: auto;">CheckBox</label>
+	    </div>
+	</div>
+	<div class="input-group mb-3">
+	    <span class="input-group-text" id="basic-addon1">A</span>
+	    <input type="text" class="form-control" name="A" placeholder="Input content or leave blank" aria-label="A" aria-describedby="basic-addon1" value="{{.Data.Vote.A}}">
+	</div>
+	<div class="input-group mb-3">
+	    <span class="input-group-text" id="basic-addon2">B</span>
+	    <input type="text" class="form-control" name="B" placeholder="Input content or leave blank" aria-label="B" aria-describedby="basic-addon2" value="{{.Data.Vote.B}}">
+	</div>
+	<div class="input-group mb-3">
+	    <span class="input-group-text" id="basic-addon3">C</span>
+	    <input type="text" class="form-control" name="C" placeholder="Input content or leave blank" aria-label="C" aria-describedby="basic-addon3" value="{{.Data.Vote.C}}">
+	</div>
+	<div class="input-group mb-3">
+	    <span class="input-group-text" id="basic-addon4">D</span>
+	    <input type="text" class="form-control" name="D" placeholder="Input content or leave blank" aria-label="D" aria-describedby="basic-addon4" value="{{.Data.Vote.D}}">
+	</div>
+	<div class="input-group mb-3">
+	    <span class="input-group-text" id="basic-addon5">E</span>
+	    <input type="text" class="form-control" name="E" placeholder="Input content or leave blank" aria-label="E" aria-describedby="basic-addon5" value="{{.Data.Vote.E}}">
+	</div>
+	<div class="input-group mb-3">
+	    <span class="input-group-text" id="basic-addon6">F</span>
+	    <input type="text" class="form-control" name="F" placeholder="Input content or leave blank" aria-label="F" aria-describedby="basic-addon6" value="{{.Data.Vote.F}}">
+	</div>
+	<div class="input-group mb-3">
+	    <span class="input-group-text" id="basic-addon7">G</span>
+	    <input type="text" class="form-control" name="G" placeholder="Input content or leave blank" aria-label="G" aria-describedby="basic-addon7" value="{{.Data.Vote.G}}">
+	</div>
+	<div class="input-group mb-3">
+	    <span class="input-group-text" id="basic-addon7">H</span>
+	    <input type="text" class="form-control" name="H" placeholder="Input content or leave blank" aria-label="H" aria-describedby="basic-addon7" value="{{.Data.Vote.H}}">
+	</div>
+	<div class="form-check form-switch mb-3">
+	    <input class="form-check-input" type="checkbox" name="HasTxtField" value="Yes" role="switch" id="HasTxtField">
+	    <label class="form-check-label" for="flexSwitchCheckDefault">Add Text input option</label>
+	</div>
+	<button type="submit" class="btn btn-dark">Commit</button>
+    </form>
+</div>
+{{template "footer" .}}

@@ -110,15 +110,13 @@ func savePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 		render.Derive(w, "post", p) // template name: post
 	} else {
 		// update a post
-		post, err := ps.GetPost(context.Background(), &pb.GetPostRequest{
-			Name: "posts/" + id,
-		})
+		pid, err := strconv.Atoi(id)
 		if err != nil {
 			log.Println(err)
 		}
-		post, err = ps.UpdatePost(context.Background(), &pb.UpdatePostRequest{
+		post, err := ps.UpdatePost(context.Background(), &pb.UpdatePostRequest{
 			Post: &pb.Post{
-				PostId:   post.PostId,
+				PostId:   int32(pid),
 				Title:    title,
 				IsClosed: int32(isClosed),
 				Detail:   detail,
