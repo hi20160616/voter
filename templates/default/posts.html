@@ -19,10 +19,12 @@
 	    <tr>
 		<th scope="row">{{plusOne $i}}</th>
 		<td>
-			<a href="/posts/v?id={{$data.PostId}}" class="text-decoration-none {{isClosed $data.IsClosed}}" >{{$data.Title}}</a>
-		    <a href="/posts/edit/v?id={{$data.PostId}}" class="btn badge rounded-pill bg-primary">Edit</a>
+		    <a href="/posts/v?id={{$data.PostId}}" class="text-decoration-none {{isClosed $data.IsClosed}}" >{{$data.Title}}</a>
+		    <a href="/posts/edit/v?id={{$data.PostId}}" class="btn badge bg-primary">Edit</a>
 		    {{if eq (isClosed $data.IsClosed) "Closed"}}
-		    <span class="badge rounded-pill bg-danger">{{isClosed $data.IsClosed}}</span>
+		    <span class="badge bg-danger">{{isClosed $data.IsClosed}}</span>
+		    {{else}}
+		    <a href="/posts/report/v?id={{$data.PostId}}" class="btn badge bg-success">View Report</a>
 		    {{end}}
 		</td>
 		<td><span class="badge bg-dark">{{smartDate $data.UpdateTime $data.Title}}</span><span class="badge bg-light text-dark">{{smartTime $data.UpdateTime $data.Title}}</span></td>

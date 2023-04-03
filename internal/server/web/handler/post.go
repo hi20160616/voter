@@ -360,3 +360,16 @@ func votePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 		}
 	}
 }
+
+func postReportHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+	pid := r.URL.Query().Get("id")
+	ps, err := service.NewPostService()
+	if err != nil {
+		log.Println(err)
+	}
+	post, err := ps.GetPost(context.Background(), &pb.GetPostRequest{
+		Name: "posts/" + pid,
+	})
+	p.Data = struct{ Post *pb.Post }{Post: post}
+	render.Derive(w, "post_report", p)
+}
