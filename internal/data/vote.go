@@ -31,9 +31,7 @@ func NewVoteRepo(data *Data, logger *log.Logger) biz.VoteRepo {
 	}
 }
 
-// parent=categories/*/votes
-// TODO parent=tags/*/votes
-// parent=votes/*/votes
+// parent=pid/*/votes
 func (vr *voteRepo) ListVotes(ctx context.Context, parent string) (*biz.Votes, error) {
 	ctx, cancel := context.WithTimeout(ctx, 50*time.Second)
 	defer cancel()
@@ -54,13 +52,6 @@ func (vr *voteRepo) ListVotes(ctx context.Context, parent string) (*biz.Votes, e
 		clause := [4]string{}
 		clauses := [][4]string{}
 		switch x[1] {
-		// reserved cases
-		// case "departments":
-		//         clause = [4]string{"department_id", "=", x[2], "and"}
-		// case "roles":
-		//         clause = [4]string{"role_id", "=", x[2], "and"}
-		// case "votegroups":
-		//         clause = [4]string{"votegroup_id", "=", x[2], "and"}
 		case "pid":
 			clause = [4]string{"post_id", "=", x[2], "or"}
 			pvs, err := vr.data.DBClient.DatabaseClient.QueryPostVote().

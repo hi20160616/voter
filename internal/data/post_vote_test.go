@@ -38,3 +38,13 @@ func TestListVidsByPid(t *testing.T) {
 		fmt.Println(e)
 	}
 }
+
+func TestListPostVotes(t *testing.T) {
+	pvs, err := repo2.ListPostVotes(context.Background(), "pid/1/post_votes")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, e := range pvs.Collection {
+		fmt.Println("pv: ", e)
+	}
+}

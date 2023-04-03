@@ -12,6 +12,9 @@ service PostVotesAPI {
   rpc ListPostVotes(ListPostVotesRequest) returns (ListPostVotesResponse) {
     option (google.api.http) = {
       get: "/v1/{parent=posts_votes}"
+      additional_bindings {
+        get: "/v1/{parent=pid/*}/votes"
+      }
     };
   }
   rpc GetByPidVid(GetByPidVidRequest) returns (PostVote) {

@@ -292,55 +292,72 @@ func editPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 }
 
 func votePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
-	id := r.URL.Query().Get("id")
-	iid, err := strconv.Atoi(id)
-	if err != nil {
-		log.Println(err)
-	}
-	err = r.ParseForm()
+	pid := r.URL.Query().Get("id")
+	err := r.ParseForm()
 	if err != nil {
 		log.Println(err)
 	}
 
-	sv := r.Form["vote1"]
-	optsArr := []byte{'0', '0', '0', '0', '0', '0', '0', '0'}
-	for _, e := range sv {
-		switch e {
-		case "A":
-			optsArr[0] = '1'
-		case "B":
-			optsArr[1] = '1'
-		case "C":
-			optsArr[2] = '1'
-		case "D":
-			optsArr[3] = '1'
-		case "E":
-			optsArr[4] = '1'
-		case "F":
-			optsArr[5] = '1'
-		case "G":
-			optsArr[6] = '1'
-		case "H":
-			optsArr[7] = '1'
+	// get vids in the post
+	pvs, err := service.NewPostVoteService()
+	if err != nil {
+		log.Println(err)
+	}
+
+	ds, err := pvs.ListPostVotes(context.Background(),
+		&pb.ListPostVotesRequest{Parent: "pid/" + pid + "/votes"})
+	if err != nil {
+		log.Println(err)
+	}
+	vids := []int32{}
+	for _, e := range ds.PostVotes {
+		vids = append(vids, e.VoteId)
+	}
+
+	ipvotes := &pb.IpVotes{}
+	for _, e := range vids {
+		sv := r.Form["vote"+strconv.Itoa(int(e))]
+		optsArr := []byte{'0', '0', '0', '0', '0', '0', '0', '0'}
+		for _, e := range sv {
+			switch e {
+			case "A":
+				optsArr[0] = '1'
+			case "B":
+				optsArr[1] = '1'
+			case "C":
+				optsArr[2] = '1'
+			case "D":
+				optsArr[3] = '1'
+			case "E":
+				optsArr[4] = '1'
+			case "F":
+				optsArr[5] = '1'
+			case "G":
+				optsArr[6] = '1'
+			case "H":
+				optsArr[7] = '1'
+			}
 		}
+		iv := &pb.IpVote{
+			Ip:     RemoteIp(r),
+			VoteId: e,
+			Opts:   bytes.NewBuffer(optsArr).String(),
+		}
+		ipvotes.IpVotes = append(ipvotes.IpVotes, iv)
 	}
-	iv := &pb.IpVote{
-		Ip:     RemoteIp(r),
-		VoteId: int32(iid),
-		Opts:   bytes.NewBuffer(optsArr).String(),
-	}
-
 	ivs, err := service.NewIpVoteService()
 	if err != nil {
 		log.Println(err)
 	}
 
-	// prejudge exist of ip and vote at data/ip_vote.go
-	// insert row or update if exist
-	x, err := ivs.CreateIpVote(context.Background(), &pb.CreateIpVoteRequest{
-		IpVote: iv})
-	if err != nil {
-		log.Println(err)
+	for _, e := range ipvotes.IpVotes {
+		// prejudge exist of ip and vote at data/ip_vote.go
+		// insert row or update if exist
+		x, err := ivs.CreateIpVote(context.Background(), &pb.CreateIpVoteRequest{
+			IpVote: e})
+		if err != nil {
+			log.Println(err)
+		}
+		fmt.Println(x)
 	}
-	fmt.Println(x)
 }
