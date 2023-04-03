@@ -305,7 +305,7 @@ func votePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	}
 
 	ds, err := pvs.ListPostVotes(context.Background(),
-		&pb.ListPostVotesRequest{Parent: "pid/" + pid + "/votes"})
+		&pb.ListPostVotesRequest{Parent: "pid/" + pid + "/post_votes"})
 	if err != nil {
 		log.Println(err)
 	}
@@ -353,11 +353,10 @@ func votePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	for _, e := range ipvotes.IpVotes {
 		// prejudge exist of ip and vote at data/ip_vote.go
 		// insert row or update if exist
-		x, err := ivs.CreateIpVote(context.Background(), &pb.CreateIpVoteRequest{
+		_, err := ivs.CreateIpVote(context.Background(), &pb.CreateIpVoteRequest{
 			IpVote: e})
 		if err != nil {
 			log.Println(err)
 		}
-		fmt.Println(x)
 	}
 }
