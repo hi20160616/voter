@@ -70,6 +70,7 @@ func listPostsHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 
 func getPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	id := r.URL.Query().Get("id")
+	// TODO: prejudge ip and post is not exist, otherwise, return warning page.
 	ps, err := service.NewPostService()
 	if err != nil {
 		log.Println(err)

@@ -1,8 +1,5 @@
 {{template "header" .}}
 <div class="container">
-    {{if eq (isClosed .Data.Post.IsClosed) "Closed"}}
-        <h1>The Post is closed.</h1>
-    {{else}}
     <h1>{{.Data.Post.Title}}</h1>
     {{markdown .Data.Post.Detail | unescapeHTML}}
     <form action="/posts/vote/v?id={{.Data.Post.PostId}}" method="post" accept-charset="utf-8">

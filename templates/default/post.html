@@ -1,9 +1,10 @@
 {{template "header" .}}
 <div class="container">
-    <!-- {{unescapeHTML (markdown .Data.Post.Detail)}} -->
+    {{if eq (isClosed .Data.Post.IsClosed) "Closed"}}
+        <h1>The Post is closed.</h1>
+    {{else}}
     <h1>{{.Data.Post.Title}}</h1>
     {{markdown .Data.Post.Detail | unescapeHTML}}
-    {{isClosed .Data.Post.IsClosed}}
     <form action="/posts/vote/v?id={{.Data.Post.PostId}}" method="post" accept-charset="utf-8">
     <div class="form-group">
 	<ul class="list-group list-group-flush">
@@ -69,5 +70,6 @@
     <button class="btn btn-dark my-3" type="submit">Vote</button>
     <a href="/posts/edit/v?id={{.Data.Post.PostId}}" class="btn btn-primary my-3">Edit</a>
     </form>
+    {{end}}
 </div>
 {{template "footer" .}}
