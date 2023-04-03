@@ -102,9 +102,9 @@ func plusOne(x int) int {
 
 func isClosed(x int32) string {
 	if x == 1 {
-		return "**Closed!**"
+		return "Closed"
 	}
-	return "Is Open!"
+	return "IsOpen"
 }
 
 func if1Checked(x int32) string {

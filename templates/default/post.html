@@ -13,27 +13,51 @@
 	    	    <h5 class="card-title">{{$vote.Title}}</h5>
 		    <p class="card-text">
 			{{if $vote.A}}
-			<label class="list-group-item border-top-0 border-end-0 border-start-0 bg-light">
+			<label class="list-group-item border-0 bg-light">
 			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="A">
 			    {{$vote.A}}
 			</label>
 			{{end}}
 			{{if $vote.B}}
-			<label class="list-group-item border-top-0 border-end-0 border-start-0 bg-light">
+			<label class="list-group-item border-0 bg-light">
 			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="B">
 			    {{$vote.B}}
 			</label>
 			{{end}}
 			{{if $vote.C}}
-			<label class="list-group-item border-top-0 border-end-0 border-start-0 bg-light">
+			<label class="list-group-item border-0 bg-light">
 			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="C">
 			    {{$vote.C}}
 			</label>
 			{{end}}
 			{{if $vote.D}}
-			<label class="list-group-item border-top-0 border-end-0 border-start-0 bg-light">
+			<label class="list-group-item border-0 bg-light">
 			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="D">
 			    {{$vote.D}}
+			</label>
+			{{end}}
+			{{if $vote.E}}
+			<label class="list-group-item border-0 bg-light">
+			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="E">
+			    {{$vote.E}}
+			</label>
+			{{end}}
+			{{if $vote.F}}
+			<label class="list-group-item border-0 bg-light">
+			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="F">
+			    {{$vote.F}}
+			</label>
+			{{end}}
+			{{if $vote.G}}
+			<label class="list-group-item border-0 bg-light">
+			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="G">
+			    {{$vote.G}}
+			</label>
+			{{end}}
+			{{if $vote.H}}
+			<label class="list-group-item border-0 bg-light">
+			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="H">
+			    {{$vote.H}}
 			</label>
 			{{end}}
 		    </p>
