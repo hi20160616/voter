@@ -203,4 +203,14 @@ mysql> CREATE TABLE IF NOT EXISTS ip_posts (
   post_id int(10),
   PRIMARY KEY (id)
 );
+
+mysql> desc ip_posts;
++---------+--------------+------+-----+---------+----------------+
+| Field   | Type         | Null | Key | Default | Extra          |
++---------+--------------+------+-----+---------+----------------+
+| id      | int          | NO   | PRI | NULL    | auto_increment |
+| ip      | int unsigned | YES  |     | NULL    |                |
+| post_id | int          | YES  |     | NULL    |                |
++---------+--------------+------+-----+---------+----------------+
+3 rows in set (0.29 sec)
 ```

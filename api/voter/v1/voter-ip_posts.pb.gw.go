@@ -475,7 +475,7 @@ func RegisterIpPostsAPIHandlerServer(ctx context.Context, mux *runtime.ServeMux,
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/postr.ip_posts.v1.IpPostsAPI/ListIpPosts", runtime.WithHTTPPathPattern("/v1/{parent=ips_posts}"))
+		annotatedContext, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/postr.ip_posts.v1.IpPostsAPI/ListIpPosts", runtime.WithHTTPPathPattern("/v1/{parent=ip_posts}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -664,7 +664,7 @@ func RegisterIpPostsAPIHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
 		var annotatedContext context.Context
-		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/postr.ip_posts.v1.IpPostsAPI/ListIpPosts", runtime.WithHTTPPathPattern("/v1/{parent=ips_posts}"))
+		annotatedContext, err = runtime.AnnotateContext(ctx, mux, req, "/postr.ip_posts.v1.IpPostsAPI/ListIpPosts", runtime.WithHTTPPathPattern("/v1/{parent=ip_posts}"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -794,7 +794,7 @@ func RegisterIpPostsAPIHandlerClient(ctx context.Context, mux *runtime.ServeMux,
 }
 
 var (
-	pattern_IpPostsAPI_ListIpPosts_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 4, 1, 5, 2}, []string{"v1", "ips_posts", "parent"}, ""))
+	pattern_IpPostsAPI_ListIpPosts_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 4, 1, 5, 2}, []string{"v1", "ip_posts", "parent"}, ""))
 
 	pattern_IpPostsAPI_ListIpPosts_1 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 1, 0, 4, 2, 5, 2, 2, 3}, []string{"v1", "ip", "parent", "ip_posts"}, ""))
 

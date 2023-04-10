@@ -36,17 +36,14 @@ func TestInsertIpPost(t *testing.T) {
 		{
 			Ip:     "127.0.0.1",
 			PostId: 1,
-			Opts:   "01100000",
 		},
 		{
 			Ip:     "127.0.0.2",
 			PostId: 2,
-			Opts:   "10010000",
 		},
 		{
 			Ip:     "127.0.0.3",
 			PostId: 3,
-			Opts:   "11010000",
 		},
 	}
 	for _, tc := range tcs {
@@ -66,8 +63,9 @@ func TestUpdateIpPost(t *testing.T) {
 		t.Fatal(err)
 	}
 	ipIpPost := &IpPost{
-		Id: ipPostid,
-		Ip: "123.123.123.124",
+		Id:     ipPostid,
+		Ip:     "123.123.123.124",
+		PostId: 4,
 	}
 	getIpPost := func() *IpPost {
 		ps := [4]string{"id", "=", strconv.Itoa(ipIpPost.Id), "or"}

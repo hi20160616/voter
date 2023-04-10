@@ -52,7 +52,6 @@ func (dc *DatabaseClient) UpdateIpVote(ctx context.Context, ipVote *IpVote) erro
 	return err
 }
 
-// DeleteIpVote2 is true delete from database instead of DeleteIpVote just update the row
 func (dc *DatabaseClient) DeleteIpVote(ctx context.Context, id int) error {
 	q := `DELETE FROM ip_votes WHERE id=?`
 	ivq := &IpVoteQuery{db: dc.db, query: q}

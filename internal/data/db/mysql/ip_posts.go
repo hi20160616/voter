@@ -12,8 +12,8 @@ import (
 )
 
 type IpPost struct {
-	Id, PostId         int
-	Ip, Opts, TxtField string
+	Id, PostId int
+	Ip         string
 }
 
 type IpPosts struct {
@@ -32,12 +32,12 @@ type IpPostQuery struct {
 }
 
 func (dc *DatabaseClient) InsertIpPost(ctx context.Context, ipPost *IpPost) (int64, error) {
-	q := `INSERT INTO ip_posts(ip, post_id, opts, txt_field) VALUES (INET_ATON(?), ?, ?, ?)
-		ON DUPLICATE KEY UPDATE ip=INET_ATON(?), post_id=?, opts=?, txt_field=?`
+	q := `INSERT INTO ip_posts(ip, post_id) VALUES (INET_ATON(?), ?)
+		ON DUPLICATE KEY UPDATE ip=INET_ATON(?), post_id=?`
 	ivq := &IpPostQuery{db: dc.db, query: q}
 	x, err := ivq.db.Exec(
-		ivq.query, ipPost.Ip, ipPost.PostId, ipPost.Opts, ipPost.TxtField,
-		ipPost.Ip, ipPost.PostId, ipPost.Opts, ipPost.TxtField)
+		ivq.query, ipPost.Ip, ipPost.PostId,
+		ipPost.Ip, ipPost.PostId)
 	if err != nil {
 		return 0, errors.WithMessage(err, "mysql: ipPosts: Insert error")
 	}
@@ -45,14 +45,12 @@ func (dc *DatabaseClient) InsertIpPost(ctx context.Context, ipPost *IpPost) (int
 }
 
 func (dc *DatabaseClient) UpdateIpPost(ctx context.Context, ipPost *IpPost) error {
-	q := `UPDATE ip_posts SET ip=INET_ATON(?), post_id=?, opts=?, txt_field=? WHERE id=?`
+	q := `UPDATE ip_posts SET ip=INET_ATON(?), post_id=? WHERE id=?`
 	uq := &IpPostQuery{db: dc.db, query: q}
-	_, err := uq.db.Exec(uq.query, ipPost.Ip, ipPost.PostId, ipPost.Opts,
-		ipPost.TxtField, ipPost.Id)
+	_, err := uq.db.Exec(uq.query, ipPost.Ip, ipPost.PostId, ipPost.Id)
 	return err
 }
 
-// DeleteIpPost2 is true delete from database instead of DeleteIpPost just update the row
 func (dc *DatabaseClient) DeleteIpPost(ctx context.Context, id int) error {
 	q := `DELETE FROM ip_posts WHERE id=?`
 	ivq := &IpPostQuery{db: dc.db, query: q}
@@ -153,15 +151,14 @@ func (ivq *IpPostQuery) prepareQuery(ctx context.Context) error {
 
 func mkIpPost(rows *sql.Rows) (*IpPosts, error) {
 	var id, post_id int
-	var ip, opts, txtField sql.NullString
+	var ip sql.NullString
 	var ipPosts = &IpPosts{}
 	for rows.Next() {
-		if err := rows.Scan(&id, &ip, &post_id, &opts, &txtField); err != nil {
+		if err := rows.Scan(&id, &ip, &post_id); err != nil {
 			return nil, errors.WithMessage(err, "mkIpPost rows.Scan error")
 		}
 		ipPosts.Collection = append(ipPosts.Collection, &IpPost{
-			Id: id, Ip: ip.String, PostId: post_id, Opts: opts.String,
-			TxtField: txtField.String})
+			Id: id, Ip: ip.String, PostId: post_id})
 	}
 	// TODO: to confirm code below can make sence.
 	if err := rows.Err(); err != nil {
