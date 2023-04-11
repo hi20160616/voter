@@ -35,12 +35,20 @@ func TestCreateIpVote(t *testing.T) {
 }
 
 func TestListIpVotes(t *testing.T) {
-	ivs, err := ivs.ListIpVotes(context.Background(), &v1.ListIpVotesRequest{})
+	x, err := ivs.ListIpVotes(context.Background(), &v1.ListIpVotesRequest{})
+	y, err := ivs.ListIpVotes(context.Background(), &v1.ListIpVotesRequest{
+		Parent: "vote_id/2/ip_votes",
+	})
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	for _, a := range ivs.IpVotes {
+	fmt.Println("vote_id=nil:::::::::::::::::::")
+	for _, a := range x.IpVotes {
+		fmt.Println(a)
+	}
+	fmt.Println("vote_id=2:::::::::::::::::::")
+	for _, a := range y.IpVotes {
 		fmt.Println(a)
 	}
 }

@@ -21,15 +21,19 @@ type Config struct {
 	API         struct {
 		GRPC api `json:"grpc"`
 		HTTP api `json:"http"`
-	} `json:"api"`
+	} `json:"Api"`
 	Database struct {
 		Driver string `json:"Driver"`
 		Source string `json:"Source"`
-	} `json:"database"`
+	} `json:"Database"`
 	Web struct {
 		Addr string `json:"Addr"`
 		Tmpl string `json:"Tmpl"`
-	} `json:"web"`
+	} `json:"Web"`
+	Manager struct {
+		Admin  []string `json:"Admin"`
+		Leader []string `json:"Leader"`
+	} `json:"Manager"`
 	Err error
 }
 

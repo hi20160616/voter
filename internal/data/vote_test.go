@@ -18,6 +18,14 @@ var repoTestVotes = func() biz.VoteRepo {
 	return NewVoteRepo(&Data{DBClient: dc}, log.Default())
 }()
 
+func TestGetVote(t *testing.T) {
+	v, err := repoTestVotes.GetVote(context.Background(), "votes/6")
+	if err != nil {
+		t.Fatal(err)
+	}
+	fmt.Println(v)
+}
+
 func TestListVotes(t *testing.T) {
 	votes, err := repoTestVotes.ListVotes(context.Background(), "pid/6/votes")
 	if err != nil {

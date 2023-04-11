@@ -13,15 +13,6 @@ service VotesAPI {
   rpc ListVotes(ListVotesRequest) returns (ListVotesResponse) {
     option (google.api.http) = {
       get: "/v1/{parent=rols/*}/votes"
-      additional_bindings {
-        get: "/v1/{parent=votegroups/*}/votes"
-      }
-      additional_bindings {
-        get: "/v1/{parent=departments/*}/votes"
-      }
-      additional_bindings {
-        get: "/v1/{parent=pid/*}/votes"
-      }
     };
   }
   rpc GetVote(GetVoteRequest) returns (Vote) {

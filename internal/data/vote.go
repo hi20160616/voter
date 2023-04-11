@@ -154,7 +154,7 @@ func (vr *voteRepo) GetVote(ctx context.Context, name string) (*biz.Vote, error)
 	re := regexp.MustCompile(`^votes/([\d.]+)$`)
 	x := re.FindStringSubmatch(name)
 	if len(x) != 2 {
-		return nil, errors.New("name cannot match regex express")
+		return nil, errors.New("data: GetVote: name cannot match regex express")
 	}
 	id := x[1]
 	clause := [4]string{"id", "=", id, "and"}

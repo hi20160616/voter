@@ -2,7 +2,7 @@
   "Debug": true,
   "Verbose": false,
   "LogName":"log.txt",
-  "api": {
+  "Api": {
     "grpc": {
       "Network": "tcp",
       "Addr": "0.0.0.0:8000",
@@ -13,13 +13,22 @@
       "Timeout": "1s"
     }
   },
-  "database":{
+  "Database":{
     "Driver": "mysql",
     "Source": "voter_db_user:voter_db_pwd@(127.0.0.1:3306)/voter?loc=Asia%2FShanghai&parseTime=true"
   },
-  "web":{
+  "Web":{
     "Addr": ":8080",
     "Tmpl": "templates"
+  },
+  "Manager":{
+  "Admin":[
+    "127.0.0.1",
+    "192.168.1.111"
+  ],
+  "Leader":[
+    "127.0.0.1",
+    "192.168.1.111"
+  ]
   }
-
 }

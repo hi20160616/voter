@@ -18,6 +18,19 @@ var repo3 = func() biz.IpVoteRepo {
 	return NewIpVoteRepo(&Data{DBClient: dc}, log.Default())
 }()
 
+func TestListIpVotes(t *testing.T) {
+	x, err := repo3.ListIpVotes(context.Background(), "vote_id/2/ip_votes")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, e := range x.Collection {
+		fmt.Println("Ip: ", e.Ip)
+		fmt.Println("IpVoteId: ", e.IpVoteId)
+		fmt.Println("Opts: ", e.Opts)
+		fmt.Println("TxtField: ", e.TxtField)
+	}
+}
+
 func TestGetIpVote(t *testing.T) {
 	x, err := repo3.GetIpVote(context.Background(), "ip_votes/3")
 	if err != nil {
@@ -63,14 +76,3 @@ func TestUpdateIpVote(t *testing.T) {
 	fmt.Println("Opts: ", x.Opts)
 	fmt.Println("TxtField: ", x.TxtField)
 }
-
-// func TestListVidsByPid(t *testing.T) {
-//         vids, err := repo2.ListVidsByPid(context.Background(), "post_votes/1/list")
-//         if err != nil {
-//                 t.Fatal(err)
-//         }
-//         fmt.Println("pid:", vids.Pid)
-//         for _, e := range vids.Vids {
-//                 fmt.Println(e)
-//         }
-// }

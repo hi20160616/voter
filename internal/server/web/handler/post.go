@@ -20,6 +20,12 @@ const (
 	XRealIP       = "X-Real-IP"
 )
 
+type PostReport struct {
+	VoteId                 string
+	Vote                   *pb.Vote
+	A, B, C, D, E, F, G, H int
+}
+
 // RemoteIp 返回远程客户端的 IP，如 192.168.1.1
 func RemoteIp(req *http.Request) string {
 	remoteAddr := req.RemoteAddr
@@ -70,31 +76,133 @@ func listPostsHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 
 func getPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	id := r.URL.Query().Get("id")
-	// TODO: prejudge ip and post is not exist, otherwise, return warning page.
+
+	// Prejudge ip and post is not exist, otherwise, return warning page.
+	ips, err := service.NewIpPostService()
+	if err != nil {
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println(err)
+	}
+
+	// Get posts by ip
+	ip := RemoteIp(r)
+	posts, err := ips.ListIpPosts(context.Background(), &pb.ListIpPostsRequest{
+		Parent: "ip/" + ip + "/ip_posts",
+	})
+	if err != nil {
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println(err)
+	}
+
+	// Prejudge if the ip voted?
+	voted := false
+	for _, e := range posts.IpPosts {
+		x, err := strconv.Atoi(id)
+		if err != nil {
+			// http.Error(w, err.Error(), http.StatusInternalServerError)
+			log.Println(err)
+		}
+		if e.PostId == int32(x) {
+			// Voted, redirect to post_report
+			voted = true
+		}
+	}
+
 	ps, err := service.NewPostService()
 	if err != nil {
 		log.Println(err)
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
 	post, err := ps.GetPost(context.Background(), &pb.GetPostRequest{
 		Name: "posts/" + id})
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println(err)
 	}
 
 	vs, err := service.NewVoteService()
+	if err != nil {
+		log.Println(err)
+	}
 	votes, err := vs.ListVotes(context.Background(), &pb.ListVotesRequest{
 		Parent: "pid/" + id + "/votes"})
-
-	p.Data = struct {
-		Post  *pb.Post
-		Votes []*pb.Vote
-	}{
-		Post:  post,
-		Votes: votes.Votes,
+	if err != nil {
+		log.Println(err)
 	}
-	p.Title = post.Title
-	render.Derive(w, "post", p) // template name: post
+
+	prs := []*PostReport{}
+	for _, e := range votes.Votes {
+		pr := &PostReport{
+			VoteId: strconv.Itoa(int(e.VoteId)),
+			Vote:   e,
+		}
+		prs = append(prs, pr)
+	}
+
+	ivs, err := service.NewIpVoteService()
+	if err != nil {
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
+		log.Println(err)
+	}
+
+	for _, e := range prs {
+		ipvotes, err := ivs.ListIpVotes(context.Background(), &pb.ListIpVotesRequest{
+			Parent: "vote_id/" + e.VoteId + "/ip_votes",
+		})
+		if err != nil {
+			log.Println(err)
+			// http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		for _, e1 := range ipvotes.IpVotes {
+			if e1.Opts[0] == '1' {
+				e.A++
+			}
+			if e1.Opts[1] == '1' {
+				e.B++
+			}
+			if e1.Opts[2] == '1' {
+				e.C++
+			}
+			if e1.Opts[3] == '1' {
+				e.D++
+			}
+			if e1.Opts[4] == '1' {
+				e.E++
+			}
+			if e1.Opts[5] == '1' {
+				e.F++
+			}
+			if e1.Opts[6] == '1' {
+				e.G++
+			}
+			if e1.Opts[7] == '1' {
+				e.H++
+			}
+		}
+	}
+
+	if voted {
+		p.Data = struct {
+			Post        *pb.Post
+			PostReports []*PostReport
+		}{
+			Post:        post,
+			PostReports: prs,
+		}
+		p.Title = "Voted post!"
+		render.Derive(w, "post_report", p)
+	} else {
+		p.Data = struct {
+			Post  *pb.Post
+			Votes []*pb.Vote
+		}{
+			Post:  post,
+			Votes: votes.Votes,
+		}
+		p.Title = post.Title
+		render.Derive(w, "post", p) // template name: post
+	}
 }
 
 // func searchPostsHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
@@ -299,22 +407,23 @@ func votePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 		log.Println(err)
 	}
 
-	// get vids in the post
+	// get vids in the post for options collect.
 	pvs, err := service.NewPostVoteService()
 	if err != nil {
 		log.Println(err)
 	}
 
-	ds, err := pvs.ListPostVotes(context.Background(),
+	postVotes, err := pvs.ListPostVotes(context.Background(),
 		&pb.ListPostVotesRequest{Parent: "pid/" + pid + "/post_votes"})
 	if err != nil {
 		log.Println(err)
 	}
 	vids := []int32{}
-	for _, e := range ds.PostVotes {
+	for _, e := range postVotes.PostVotes {
 		vids = append(vids, e.VoteId)
 	}
 
+	// collect votes
 	ipvotes := &pb.IpVotes{}
 	for _, e := range vids {
 		sv := r.Form["vote"+strconv.Itoa(int(e))]
@@ -346,11 +455,13 @@ func votePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 		}
 		ipvotes.IpVotes = append(ipvotes.IpVotes, iv)
 	}
+
+	// insert or update ip_vote
 	ivs, err := service.NewIpVoteService()
 	if err != nil {
 		log.Println(err)
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-
 	for _, e := range ipvotes.IpVotes {
 		// prejudge exist of ip and vote at data/ip_vote.go
 		// insert row or update if exist
@@ -360,17 +471,182 @@ func votePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 			log.Println(err)
 		}
 	}
+
+	// insert or update ip_posts while vote success
+	ips, err := service.NewIpPostService()
+	if err != nil {
+		log.Println(err)
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	postid, err := strconv.Atoi(pid)
+	if err != nil {
+		log.Println(err)
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	_, err = ips.CreateIpPost(context.Background(), &pb.CreateIpPostRequest{
+		IpPost: &pb.IpPost{
+			Ip:     RemoteIp(r),
+			PostId: int32(postid),
+		},
+	})
+	if err != nil {
+		log.Println(err)
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	// get post info for page display
+	ps, err := service.NewPostService()
+	if err != nil {
+		log.Println(err)
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	post, err := ps.GetPost(context.Background(), &pb.GetPostRequest{
+		Name: "posts/" + pid})
+	if err != nil {
+		log.Println(err)
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	vs, err := service.NewVoteService()
+	votes, err := vs.ListVotes(context.Background(), &pb.ListVotesRequest{
+		Parent: "pid/" + pid + "/votes"})
+	if err != nil {
+		log.Println(err)
+	}
+	prs := []*PostReport{}
+	for _, e := range votes.Votes {
+		pr := &PostReport{
+			VoteId: strconv.Itoa(int(e.VoteId)),
+			Vote:   e,
+		}
+		prs = append(prs, pr)
+	}
+
+	for _, e := range prs {
+		ipvotes, err := ivs.ListIpVotes(context.Background(), &pb.ListIpVotesRequest{
+			Parent: "vote_id/" + e.VoteId + "/ip_votes",
+		})
+		if err != nil {
+			log.Println(err)
+			// http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		for _, e1 := range ipvotes.IpVotes {
+			if e1.Opts[0] == '1' {
+				e.A++
+			}
+			if e1.Opts[1] == '1' {
+				e.B++
+			}
+			if e1.Opts[2] == '1' {
+				e.C++
+			}
+			if e1.Opts[3] == '1' {
+				e.D++
+			}
+			if e1.Opts[4] == '1' {
+				e.E++
+			}
+			if e1.Opts[5] == '1' {
+				e.F++
+			}
+			if e1.Opts[6] == '1' {
+				e.G++
+			}
+			if e1.Opts[7] == '1' {
+				e.H++
+			}
+		}
+	}
+	p.Data = struct {
+		Post        *pb.Post
+		PostReports []*PostReport
+	}{
+		Post:        post,
+		PostReports: prs,
+	}
+	p.Title = "Voted post!"
+	render.Derive(w, "post_report", p)
 }
 
 func postReportHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	pid := r.URL.Query().Get("id")
+	// get post info for page display
 	ps, err := service.NewPostService()
 	if err != nil {
 		log.Println(err)
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+
 	post, err := ps.GetPost(context.Background(), &pb.GetPostRequest{
-		Name: "posts/" + pid,
-	})
-	p.Data = struct{ Post *pb.Post }{Post: post}
+		Name: "posts/" + pid})
+	if err != nil {
+		log.Println(err)
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	vs, err := service.NewVoteService()
+	votes, err := vs.ListVotes(context.Background(), &pb.ListVotesRequest{
+		Parent: "pid/" + pid + "/votes"})
+	if err != nil {
+		log.Println(err)
+	}
+	prs := []*PostReport{}
+	for _, e := range votes.Votes {
+		pr := &PostReport{
+			VoteId: strconv.Itoa(int(e.VoteId)),
+			Vote:   e,
+		}
+		prs = append(prs, pr)
+	}
+
+	ivs, err := service.NewIpVoteService()
+	if err != nil {
+		log.Println(err)
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	for _, e := range prs {
+		ipvotes, err := ivs.ListIpVotes(context.Background(), &pb.ListIpVotesRequest{
+			Parent: "vote_id/" + e.VoteId + "/ip_votes",
+		})
+		if err != nil {
+			log.Println(err)
+			// http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		for _, e1 := range ipvotes.IpVotes {
+			if e1.Opts[0] == '1' {
+				e.A++
+			}
+			if e1.Opts[1] == '1' {
+				e.B++
+			}
+			if e1.Opts[2] == '1' {
+				e.C++
+			}
+			if e1.Opts[3] == '1' {
+				e.D++
+			}
+			if e1.Opts[4] == '1' {
+				e.E++
+			}
+			if e1.Opts[5] == '1' {
+				e.F++
+			}
+			if e1.Opts[6] == '1' {
+				e.G++
+			}
+			if e1.Opts[7] == '1' {
+				e.H++
+			}
+		}
+	}
+	p.Data = struct {
+		Post        *pb.Post
+		PostReports []*PostReport
+	}{
+		Post:        post,
+		PostReports: prs,
+	}
+	p.Title = "Post Report"
 	render.Derive(w, "post_report", p)
 }

@@ -37,11 +37,15 @@ func (ivr *ipVoteRepo) ListIpVotes(ctx context.Context, parent string) (*biz.IpV
 	bizivs := &biz.IpVotes{}
 	var err error
 
-	re := regexp.MustCompile(`^(categories|tags)/(.+)/ip_votes$`)
+	re := regexp.MustCompile(`^(vote_id)/(.+)/ip_votes$`)
 	x := re.FindStringSubmatch(parent)
 	if len(x) != 3 {
 		ivs, err = ivr.data.DBClient.DatabaseClient.QueryIpVote().All(ctx)
+	} else {
+		ivs, err = ivr.data.DBClient.DatabaseClient.QueryIpVote().
+			Where([4]string{"vote_id", "=", x[2]}).All(ctx)
 	}
+
 	if err != nil {
 		return nil, err
 	}
