@@ -11,6 +11,7 @@ import (
 	"strconv"
 
 	pb "github.com/hi20160616/voter/api/voter/v1"
+	"github.com/hi20160616/voter/configs"
 	"github.com/hi20160616/voter/internal/server/web/render"
 	"github.com/hi20160616/voter/internal/service"
 )
@@ -58,12 +59,43 @@ func Ip2long(ipstr string) uint32 {
 	return binary.BigEndian.Uint32(ip)
 }
 
+func IsAdminIp(r *http.Request, cfg *configs.Config) bool {
+	ip := RemoteIp(r)
+	for _, e := range cfg.Manager.Admin {
+		if e == ip {
+			return true
+		}
+	}
+	return false
+}
+
+func IsLeaderIp(r *http.Request, cfg *configs.Config) bool {
+	ip := RemoteIp(r)
+	for _, e := range cfg.Manager.Leader {
+		if e == ip {
+			return true
+		}
+	}
+	return false
+}
+
 func newPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+	if !IsAdminIp(r, p.Cfg) {
+		p.Title = "404"
+		render.Derive(w, "404", p)
+		return
+	}
 	p.Title = "New Post"
 	render.Derive(w, "newpost", p)
 }
 
 func listPostsHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+	// prejudge ip is allowed
+	if !IsAdminIp(r, p.Cfg) {
+		p.Title = "404"
+		render.Derive(w, "404", p)
+		return
+	}
 	ps, err := service.NewPostService()
 	if err != nil {
 		log.Println(err)
@@ -230,6 +262,12 @@ func getPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 // }
 
 func savePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+	// prejudge ip is allowed
+	if !IsAdminIp(r, p.Cfg) {
+		p.Title = "404"
+		render.Derive(w, "404", p)
+		return
+	}
 	id := r.URL.Query().Get("id")
 	ps, err := service.NewPostService()
 	if err != nil {
@@ -375,6 +413,12 @@ func savePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 }
 
 func editPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+	// prejudge ip is allowed
+	if !IsAdminIp(r, p.Cfg) {
+		p.Title = "404"
+		render.Derive(w, "404", p)
+		return
+	}
 	id := r.URL.Query().Get("id")
 	ps, err := service.NewPostService()
 	if err != nil {

@@ -12,11 +12,23 @@ import (
 )
 
 func newVoteHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+	// prejudge ip is allowed
+	if !IsAdminIp(r, p.Cfg) {
+		p.Title = "404"
+		render.Derive(w, "404", p)
+		return
+	}
 	p.Title = "New Vote"
 	render.Derive(w, "newvote", p)
 }
 
 func saveVoteHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+	// prejudge ip is allowed
+	if !IsAdminIp(r, p.Cfg) {
+		p.Title = "404"
+		render.Derive(w, "404", p)
+		return
+	}
 	id := r.URL.Query().Get("id")
 	vs, err := service.NewVoteService()
 	if err != nil {
@@ -86,6 +98,12 @@ func saveVoteHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 }
 
 func listVotesHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+	// prejudge ip is allowed
+	if !IsAdminIp(r, p.Cfg) {
+		p.Title = "404"
+		render.Derive(w, "404", p)
+		return
+	}
 	vs, err := service.NewVoteService()
 	if err != nil {
 		log.Println(err)
@@ -117,6 +135,12 @@ func getVoteHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 }
 
 func editVoteHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+	// prejudge ip is allowed
+	if !IsAdminIp(r, p.Cfg) {
+		p.Title = "404"
+		render.Derive(w, "404", p)
+		return
+	}
 	id := r.URL.Query().Get("id")
 	vs, err := service.NewVoteService()
 	if err != nil {
@@ -134,6 +158,12 @@ func editVoteHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 }
 
 func delVoteHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+	// prejudge ip is allowed
+	if !IsAdminIp(r, p.Cfg) {
+		p.Title = "404"
+		render.Derive(w, "404", p)
+		return
+	}
 	id := r.URL.Query().Get("id")
 	vs, err := service.NewVoteService()
 	if err != nil {
