@@ -24,6 +24,10 @@ type PostReport struct {
 	VoteId                 string
 	Vote                   *pb.Vote
 	A, B, C, D, E, F, G, H int
+	PercentA, PercentB     float32
+	PercentC, PercentD     float32
+	PercentE, PercentF     float32
+	PercentG, PercentH     float32
 }
 
 // RemoteIp 返回远程客户端的 IP，如 192.168.1.1
@@ -180,6 +184,15 @@ func getPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 				e.H++
 			}
 		}
+		dividend := float32(e.A + e.B + e.C + e.D + e.E + e.F + e.G + e.H)
+		e.PercentA = float32(e.A) * 100 / dividend
+		e.PercentB = float32(e.B) * 100 / dividend
+		e.PercentC = float32(e.C) * 100 / dividend
+		e.PercentD = float32(e.D) * 100 / dividend
+		e.PercentE = float32(e.E) * 100 / dividend
+		e.PercentF = float32(e.F) * 100 / dividend
+		e.PercentG = float32(e.G) * 100 / dividend
+		e.PercentH = float32(e.H) * 100 / dividend
 	}
 
 	if voted {
@@ -557,6 +570,15 @@ func votePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 				e.H++
 			}
 		}
+		dividend := float32(e.A + e.B + e.C + e.D + e.E + e.F + e.G + e.H)
+		e.PercentA = float32(e.A) * 100 / dividend
+		e.PercentB = float32(e.B) * 100 / dividend
+		e.PercentC = float32(e.C) * 100 / dividend
+		e.PercentD = float32(e.D) * 100 / dividend
+		e.PercentE = float32(e.E) * 100 / dividend
+		e.PercentF = float32(e.F) * 100 / dividend
+		e.PercentG = float32(e.G) * 100 / dividend
+		e.PercentH = float32(e.H) * 100 / dividend
 	}
 	p.Data = struct {
 		Post        *pb.Post
@@ -639,6 +661,15 @@ func postReportHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 				e.H++
 			}
 		}
+		dividend := float32(e.A + e.B + e.C + e.D + e.E + e.F + e.G + e.H)
+		e.PercentA = float32(e.A) * 100 / dividend
+		e.PercentB = float32(e.B) * 100 / dividend
+		e.PercentC = float32(e.C) * 100 / dividend
+		e.PercentD = float32(e.D) * 100 / dividend
+		e.PercentE = float32(e.E) * 100 / dividend
+		e.PercentF = float32(e.F) * 100 / dividend
+		e.PercentG = float32(e.G) * 100 / dividend
+		e.PercentH = float32(e.H) * 100 / dividend
 	}
 	p.Data = struct {
 		Post        *pb.Post

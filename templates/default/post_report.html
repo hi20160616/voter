@@ -8,48 +8,70 @@
 	    <div class="card mt-3 bg-light">
 		<div class="card-body">
 		    <h5 class="card-title">{{$pr.Vote.Title}}</h5>
-		    <p class="card-text">
 		    {{if $pr.Vote.A}}
 		    <label class="list-group-item border-0 bg-light">
-			{{$pr.Vote.A}}: {{$pr.A}}
+			{{$pr.Vote.A}} Voted {{$pr.A}}  time(s)!
 		    </label>
+		    <div class="progress" role="progressbar" aria-label="Default striped example" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">
+			<div class="progress-bar progress-bar-striped" style="width: {{$pr.PercentA}}%">{{$pr.PercentA}}%</div>
+		    </div>
 		    {{end}}
 		    {{if $pr.Vote.B}}
 		    <label class="list-group-item border-0 bg-light">
-			{{$pr.Vote.B}}: {{$pr.B}}
+			{{$pr.Vote.B}} Voted {{$pr.B}} time(s)!
 		    </label>
+		    <div class="progress" role="progressbar" aria-label="Default striped example" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">
+			<div class="progress-bar progress-bar-striped" style="width: {{$pr.PercentB}}%">{{$pr.PercentB}}%</div>
+		    </div>
 		    {{end}}
 		    {{if $pr.Vote.C}}
 		    <label class="list-group-item border-0 bg-light">
-			{{$pr.Vote.C}}: {{$pr.C}}
+			{{$pr.Vote.C}} Voted {{$pr.C}} time(s)!
 		    </label>
+		    <div class="progress" role="progressbar" aria-label="Default striped example" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">
+			<div class="progress-bar progress-bar-striped" style="width: {{$pr.PercentC}}%">{{$pr.PercentC}}%</div>
+		    </div>
 		    {{end}}
 		    {{if $pr.Vote.D}}
 		    <label class="list-group-item border-0 bg-light">
-			{{$pr.Vote.D}}: {{$pr.D}}
+			{{$pr.Vote.D}} Voted {{$pr.D}} time(s)!
 		    </label>
+		    <div class="progress" role="progressbar" aria-label="Default striped example" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">
+			<div class="progress-bar progress-bar-striped" style="width: {{$pr.PercentD}}%">{{$pr.PercentD}}%</div>
+		    </div>
 		    {{end}}
 		    {{if $pr.Vote.E}}
 		    <label class="list-group-item border-0 bg-light">
-			{{$pr.Vote.E}}: {{$pr.E}}
+			{{$pr.Vote.E}} Voted {{$pr.E}} time(s)!
 		    </label>
+		    <div class="progress" role="progressbar" aria-label="Default striped example" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">
+			<div class="progress-bar progress-bar-striped" style="width: {{$pr.PercentE}}%">{{$pr.PercentE}}%</div>
+		    </div>
 		    {{end}}
 		    {{if $pr.Vote.F}}
 		    <label class="list-group-item border-0 bg-light">
-			{{$pr.Vote.F}}: {{$pr.F}}
+			{{$pr.Vote.F}} Voted {{$pr.F}} time(s)!
 		    </label>
+		    <div class="progress" role="progressbar" aria-label="Default striped example" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">
+			<div class="progress-bar progress-bar-striped" style="width: {{$pr.PercentF}}%">{{$pr.PercentF}}%</div>
+		    </div>
 		    {{end}}
 		    {{if $pr.Vote.G}}
 		    <label class="list-group-item border-0 bg-light">
-			{{$pr.Vote.G}}: {{$pr.G}}
+			{{$pr.Vote.G}} Voted {{$pr.G}} time(s)!
 		    </label>
+		    <div class="progress" role="progressbar" aria-label="Default striped example" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">
+			<div class="progress-bar progress-bar-striped" style="width: {{$pr.PercentG}}%">{{$pr.PercentG}}%</div>
+		    </div>
 		    {{end}}
 		    {{if $pr.Vote.H}}
 		    <label class="list-group-item border-0 bg-light">
-			{{$pr.Vote.H}}: {{$pr.H}}
+			{{$pr.Vote.H}} Voted {{$pr.H}} time(s)!
 		    </label>
+		    <div class="progress" role="progressbar" aria-label="Default striped example" aria-valuenow="10" aria-valuemin="0" aria-valuemax="100">
+			<div class="progress-bar progress-bar-striped" style="width: {{$pr.PercentH}}%">{{$pr.PercentH}}%</div>
+		    </div>
 		    {{end}}
-		    </p>
 		</div>
 	    </div>
 	    {{end}}
