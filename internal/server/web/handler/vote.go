@@ -13,7 +13,8 @@ import (
 
 func newVoteHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	// prejudge ip is allowed
-	if !IsAdminIp(r, p.Cfg) {
+	p.ClientIP = RemoteIp(r)
+	if !IsAdminIp(p.ClientIP, p.Cfg) {
 		p.Title = "404"
 		render.Derive(w, "404", p)
 		return
@@ -24,7 +25,8 @@ func newVoteHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 
 func saveVoteHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	// prejudge ip is allowed
-	if !IsAdminIp(r, p.Cfg) {
+	p.ClientIP = RemoteIp(r)
+	if !IsAdminIp(p.ClientIP, p.Cfg) {
 		p.Title = "404"
 		render.Derive(w, "404", p)
 		return
@@ -99,7 +101,8 @@ func saveVoteHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 
 func listVotesHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	// prejudge ip is allowed
-	if !IsAdminIp(r, p.Cfg) {
+	p.ClientIP = RemoteIp(r)
+	if !IsAdminIp(p.ClientIP, p.Cfg) {
 		p.Title = "404"
 		render.Derive(w, "404", p)
 		return
@@ -136,7 +139,8 @@ func getVoteHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 
 func editVoteHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	// prejudge ip is allowed
-	if !IsAdminIp(r, p.Cfg) {
+	p.ClientIP = RemoteIp(r)
+	if !IsAdminIp(p.ClientIP, p.Cfg) {
 		p.Title = "404"
 		render.Derive(w, "404", p)
 		return
@@ -159,7 +163,8 @@ func editVoteHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 
 func delVoteHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	// prejudge ip is allowed
-	if !IsAdminIp(r, p.Cfg) {
+	p.ClientIP = RemoteIp(r)
+	if !IsAdminIp(p.ClientIP, p.Cfg) {
 		p.Title = "404"
 		render.Derive(w, "404", p)
 		return

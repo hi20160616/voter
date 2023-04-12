@@ -7,21 +7,25 @@
 	</button>
 	<div class="collapse navbar-collapse" id="navbarSupportedContent">
 	    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+	    {{if isAdminIp .ClientIP}}
 		<li class="nav-item">
 		    <a class="nav-link" aria-current="page" href="/posts/">Posts</a>
 		</li>
 		<li class="nav-item">
 		    <a class="nav-link" aria-current="page" href="/votes/">Votes</a>
 		</li>
+	    {{end}}
 	    </ul>
 	    <form class="d-flex" action="/posts/s" method="GET">
 		<input class="form-control me-2" type="search" name="v" placeholder="Search" aria-label="Search">
 		<button class="btn btn-outline-success" type="submit">Search</button>
 	    </form>
+	    {{if isAdminIp .ClientIP}}
 	    <form class="d-flex">
-			<a class="btn btn-outline-dark mx-2" href="/posts/new">New Post</a>
-			<a class="btn btn-outline-dark" href="/votes/new">New Vote</a>
+		<a class="btn btn-outline-dark mx-2" href="/posts/new">New Post</a>
+		<a class="btn btn-outline-dark" href="/votes/new">New Vote</a>
 	    </form>
+	    {{end}}
 	</div>
     </div>
 </nav>

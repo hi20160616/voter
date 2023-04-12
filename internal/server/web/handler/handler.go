@@ -101,5 +101,12 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
-	render.Derive(w, "home", &render.Page{Title: "Home", Data: ds.Posts})
+	p := &render.Page{
+		Title:    "home",
+		ClientIP: RemoteIp(r),
+		Data: &struct {
+			Posts []*pb.Post
+		}{ds.Posts},
+	}
+	render.Derive(w, "home", p)
 }

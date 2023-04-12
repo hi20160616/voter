@@ -68,7 +68,9 @@
 	</ul>
     </div>
     <button class="btn btn-dark my-3" type="submit">Vote</button>
+    {{if isAdminIp .ClientIP}}
     <a href="/posts/edit/v?id={{.Data.Post.PostId}}" class="btn btn-primary my-3">Edit</a>
+    {{end}}
     </form>
     {{end}}
 </div>

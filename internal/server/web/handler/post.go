@@ -59,8 +59,7 @@ func Ip2long(ipstr string) uint32 {
 	return binary.BigEndian.Uint32(ip)
 }
 
-func IsAdminIp(r *http.Request, cfg *configs.Config) bool {
-	ip := RemoteIp(r)
+func IsAdminIp(ip string, cfg *configs.Config) bool {
 	for _, e := range cfg.Manager.Admin {
 		if e == ip {
 			return true
@@ -69,8 +68,7 @@ func IsAdminIp(r *http.Request, cfg *configs.Config) bool {
 	return false
 }
 
-func IsLeaderIp(r *http.Request, cfg *configs.Config) bool {
-	ip := RemoteIp(r)
+func IsLeaderIp(ip string, cfg *configs.Config) bool {
 	for _, e := range cfg.Manager.Leader {
 		if e == ip {
 			return true
@@ -80,7 +78,8 @@ func IsLeaderIp(r *http.Request, cfg *configs.Config) bool {
 }
 
 func newPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
-	if !IsAdminIp(r, p.Cfg) {
+	p.ClientIP = RemoteIp(r)
+	if !IsAdminIp(p.ClientIP, p.Cfg) {
 		p.Title = "404"
 		render.Derive(w, "404", p)
 		return
@@ -91,7 +90,8 @@ func newPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 
 func listPostsHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	// prejudge ip is allowed
-	if !IsAdminIp(r, p.Cfg) {
+	p.ClientIP = RemoteIp(r)
+	if !IsAdminIp(p.ClientIP, p.Cfg) {
 		p.Title = "404"
 		render.Derive(w, "404", p)
 		return
@@ -106,6 +106,13 @@ func listPostsHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 		log.Println(err)
 	}
 	p.Data = ds.Posts
+	p.Data = &struct {
+		Posts []*pb.Post
+		Ip    string
+	}{
+		Posts: ds.Posts,
+		Ip:    RemoteIp(r),
+	}
 	p.Title = "Posts"
 	render.Derive(w, "posts", p)
 }
@@ -262,8 +269,8 @@ func getPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 // }
 
 func savePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
-	// prejudge ip is allowed
-	if !IsAdminIp(r, p.Cfg) {
+	p.ClientIP = RemoteIp(r)
+	if !IsAdminIp(p.ClientIP, p.Cfg) {
 		p.Title = "404"
 		render.Derive(w, "404", p)
 		return
@@ -414,7 +421,8 @@ func savePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 
 func editPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	// prejudge ip is allowed
-	if !IsAdminIp(r, p.Cfg) {
+	p.ClientIP = RemoteIp(r)
+	if !IsAdminIp(p.ClientIP, p.Cfg) {
 		p.Title = "404"
 		render.Derive(w, "404", p)
 		return

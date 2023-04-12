@@ -14,12 +14,13 @@ import (
 )
 
 type Page struct {
-	Title string
-	Data  interface{}
-	Cfg   *configs.Config
+	Title, ClientIP string
+	Data            interface{}
+	Cfg             *configs.Config
 }
 
 var tmpl = template.New("")
+var cfg = configs.NewConfig("voter")
 
 func init() {
 	tmpl.Funcs(template.FuncMap{
@@ -35,6 +36,8 @@ func init() {
 		"isRadio":      isRadio,
 		"typeCheckbox": typeCheckbox,
 		"typeRadio":    typeRadio,
+		"isAdminIp":    isAdminIp,
+		"isLeaderIp":   isLeaderIp,
 	})
 	// templates = template.Must(templates.ParseFS(tmpl.FS, "default/*.html"))
 	pattern := filepath.Join("templates", "default", "*.html")
@@ -142,4 +145,22 @@ func typeCheckbox(x int32) string {
 		return "checked"
 	}
 	return ""
+}
+
+func isAdminIp(ip string) bool {
+	for _, e := range cfg.Manager.Admin {
+		if ip == e {
+			return true
+		}
+	}
+	return false
+}
+
+func isLeaderIp(ip string) bool {
+	for _, e := range cfg.Manager.Leader {
+		if ip == e {
+			return true
+		}
+	}
+	return false
 }
