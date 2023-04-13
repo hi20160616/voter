@@ -157,6 +157,9 @@ func isAdminIp(ip string) bool {
 }
 
 func isLeaderIp(ip string) bool {
+	if isAdminIp(ip) {
+		return true
+	}
 	for _, e := range cfg.Manager.Leader {
 		if ip == e {
 			return true

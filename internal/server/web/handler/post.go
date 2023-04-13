@@ -91,7 +91,7 @@ func newPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 func listPostsHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	// prejudge ip is allowed
 	p.ClientIP = RemoteIp(r)
-	if !IsAdminIp(p.ClientIP, p.Cfg) {
+	if !IsAdminIp(p.ClientIP, p.Cfg) && !IsLeaderIp(p.ClientIP, p.Cfg) {
 		p.Title = "404"
 		render.Derive(w, "404", p)
 		return
@@ -108,10 +108,8 @@ func listPostsHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	p.Data = ds.Posts
 	p.Data = &struct {
 		Posts []*pb.Post
-		Ip    string
 	}{
 		Posts: ds.Posts,
-		Ip:    RemoteIp(r),
 	}
 	p.Title = "Posts"
 	render.Derive(w, "posts", p)
@@ -119,6 +117,7 @@ func listPostsHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 
 func getPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	id := r.URL.Query().Get("id")
+	p.ClientIP = RemoteIp(r)
 
 	// Prejudge ip and post is not exist, otherwise, return warning page.
 	ips, err := service.NewIpPostService()
@@ -467,6 +466,7 @@ func editPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 
 func votePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	pid := r.URL.Query().Get("id")
+	p.ClientIP = RemoteIp(r)
 	err := r.ParseForm()
 	if err != nil {
 		log.Println(err)
@@ -645,6 +645,7 @@ func votePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 
 func postReportHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	pid := r.URL.Query().Get("id")
+	p.ClientIP = RemoteIp(r)
 	// get post info for page display
 	ps, err := service.NewPostService()
 	if err != nil {

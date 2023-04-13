@@ -15,12 +15,13 @@
 	    </tr>
 	</thead>
 	<tbody>
+	    {{$ip := .ClientIP}}
 	    {{range $i, $data := .Data.Posts}}
 	    <tr>
 		<th scope="row">{{plusOne $i}}</th>
 		<td>
 		    <a href="/posts/v?id={{$data.PostId}}" class="text-decoration-none {{isClosed $data.IsClosed}}" >{{$data.Title}}</a>
-                    {{if isAdminIp .ClientIP}}
+		    {{if isAdminIp $ip}}
 		    <a href="/posts/edit/v?id={{$data.PostId}}" class="btn badge bg-primary">Edit</a>
 		    <a href="/posts/del/v?id={{$data.PostId}}" class="btn badge bg-danger">Delete</a>
 		    {{end}}
