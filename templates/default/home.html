@@ -7,6 +7,7 @@
 <div class="container w-50">
     <div class="row row-cols-1 g-3" style="user-select: auto;">
 	{{range $i, $data := .Data.Posts}}
+	{{if ne (isClosed $data.IsClosed) "Closed"}}
 	<div class="col" style="user-select: auto;">
 	    <div class="card shadow-sm">
 		<div class="card-body" style="user-select: auto;">
@@ -15,11 +16,10 @@
 			{{$data.Title}}
 		    </a>
 		    <span class="badge bg-dark" style="vertical-align: super;">{{smartDate $data.UpdateTime $data.Title}}</span><span class="badge bg-light text-dark" style="vertical-align: super;">{{smartTime $data.UpdateTime $data.Title}}</span>
-		    <div>
-		    </div>
 		</div>
 	    </div>
 	</div>
+	{{end}}
 	{{end}}
     </div>
 </div>

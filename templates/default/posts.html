@@ -21,15 +21,14 @@
 		<th scope="row">{{plusOne $i}}</th>
 		<td>
 		    <a href="/posts/v?id={{$data.PostId}}" class="text-decoration-none {{isClosed $data.IsClosed}}" >{{$data.Title}}</a>
+		    {{if eq (isClosed $data.IsClosed) "Closed"}}
+		    <span class="badge bg-secondary">{{isClosed $data.IsClosed}}</span>
+		    {{end}}
 		    {{if isAdminIp $ip}}
 		    <a href="/posts/edit/v?id={{$data.PostId}}" class="btn badge bg-primary">Edit</a>
 		    <a href="/posts/del/v?id={{$data.PostId}}" class="btn badge bg-danger">Delete</a>
 		    {{end}}
-		    {{if eq (isClosed $data.IsClosed) "Closed"}}
-		    <span class="badge bg-danger">{{isClosed $data.IsClosed}}</span>
-		    {{else}}
 		    <a href="/posts/report/v?id={{$data.PostId}}" class="btn badge bg-success">View Report</a>
-		    {{end}}
 		</td>
 		<td><span class="badge bg-dark">{{smartDate $data.UpdateTime $data.Title}}</span><span class="badge bg-light text-dark">{{smartTime $data.UpdateTime $data.Title}}</span></td>
 		<td><span class="badge bg-dark">{{smartDate $data.CreateTime $data.Title}}</span><span class="badge bg-light text-dark">{{smartTime $data.CreateTime $data.Title}}</span></td>
