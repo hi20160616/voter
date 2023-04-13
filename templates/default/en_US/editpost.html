@@ -21,7 +21,7 @@
 		{{$vids := .Data.PostVids}}
 		{{range $vote := .Data.Votes}}
 		<label class="list-group-item">
-			<input class="form-check-input me-1" type="checkbox" name="SelectedVotes" value="{{$vote.VoteId}}" id="vote_{{$vote.VoteId}}" {{ifHasCheckIt $vote.VoteId $vids}}>
+		    <input class="form-check-input me-1" type="checkbox" name="SelectedVotes" value="{{$vote.VoteId}}" id="vote_{{$vote.VoteId}}" {{ifHasCheckIt $vote.VoteId $vids}}>
 		    {{$vote.Title}}
 		    <a href="/votes/v?id={{$vote.VoteId}}" class="text-decoration-none">
 			<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-up-right" viewBox="0 0 16 16" style="vertical-align: baseline;">
@@ -33,7 +33,10 @@
 		{{end}}
 	    </div>
 	</div>
-	<button type="submit" class="btn btn-primary mt-3">Commit</button>
+	{{if isAdminIp .ClientIP}}
+	<button class="btn btn-primary my-3" type="submit">Commit</button>
+	<a href="/posts/del/v?id={{.Data.Post.PostId}}" class="btn btn-danger my-3">Delete</a>
+	{{end}}
     </form>
 </div>
 {{template "footer" .}}
