@@ -1,0 +1,28 @@
+{{template "header" .}}
+<div class="pricing-header px-3 py-3 pt-md-5 pb-md-4 mx-auto text-center" style="user-select: auto;">
+    <h1 class="display-4" style="user-select: auto;">欢迎欢迎！热烈欢迎！</h1>
+    <!-- <h1 class="display-4" style="user-select: auto;">{{.Title}}</h1> -->
+    <!-- <p class="lead" style="user-select: auto;">Quickly build an effective pricing table for your potential customers with this Bootstrap example. It’s built with default Bootstrap components and utilities with little customization.</p> -->
+</div>
+
+<div class="container w-50">
+    <div class="row row-cols-1 g-3" style="user-select: auto;">
+	{{range $i, $data := .Data.Posts}}
+	{{if ne (isClosed $data.IsClosed) "Closed"}}
+	<div class="col w-50" style="user-select: auto;">
+	    <div class="card shadow-sm">
+		<div class="card-body" style="user-select: auto;">
+		    <a class="fs-3 text-decoration-none" href="/posts/v?id={{$data.PostId}}">
+			<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.3.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --><path d="M256 512c141.4 0 256-114.6 256-256S397.4 0 256 0S0 114.6 0 256S114.6 512 256 512zm0-160c-53 0-96-43-96-96s43-96 96-96s96 43 96 96s-43 96-96 96z"/></svg>
+			{{$data.Title}}
+		    </a>
+		    <br>
+		    <span class="badge bg-dark" style="vertical-align: super;">{{smartDate $data.UpdateTime $data.Title}}</span><span class="badge bg-light text-dark" style="vertical-align: super;">{{smartTime $data.UpdateTime $data.Title}}</span>
+		</div>
+	    </div>
+	</div>
+	{{end}}
+	{{end}}
+    </div>
+</div>
+{{template "footer" .}}

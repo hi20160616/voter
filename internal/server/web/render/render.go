@@ -40,7 +40,7 @@ func init() {
 		"isLeaderIp":   isLeaderIp,
 	})
 	// templates = template.Must(templates.ParseFS(tmpl.FS, "default/*.html"))
-	pattern := filepath.Join("templates", "default", "*.html")
+	pattern := filepath.Join("templates", "default", cfg.Language, "*.html")
 	tmpl = template.Must(tmpl.ParseGlob(pattern))
 }
 

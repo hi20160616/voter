@@ -34,7 +34,8 @@ type Config struct {
 		Admin  []string `json:"Admin"`
 		Leader []string `json:"Leader"`
 	} `json:"Manager"`
-	Err error
+	Language string
+	Err      error
 }
 
 type api struct {

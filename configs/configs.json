@@ -1,34 +1,35 @@
 {
-  "Debug": true,
-  "Verbose": false,
-  "LogName":"log.txt",
-  "Api": {
-    "grpc": {
-      "Network": "tcp",
-      "Addr": "0.0.0.0:8000",
-      "Timeout": "1s"
+    "Debug": true,
+    "Verbose": false,
+    "LogName":"log.txt",
+    "Api": {
+	"grpc": {
+	    "Network": "tcp",
+	    "Addr": "0.0.0.0:8000",
+	    "Timeout": "1s"
+	},
+	"http": {
+	    "Addr": "0.0.0.0:9000",
+	    "Timeout": "1s"
+	}
     },
-    "http": {
-      "Addr": "0.0.0.0:9000",
-      "Timeout": "1s"
-    }
-  },
-  "Database":{
-    "Driver": "mysql",
-    "Source": "voter_db_user:voter_db_pwd@(127.0.0.1:3306)/voter?loc=Asia%2FShanghai&parseTime=true"
-  },
-  "Web":{
-    "Addr": ":8080",
-    "Tmpl": "templates"
-  },
-  "Manager":{
-  "Admin":[
-    "127.0.0.1",
-    "192.161.1.111"
-  ],
-  "Leader":[
-    "127.0.1.1",
-    "192.168.1.111"
-  ]
-  }
+    "Database":{
+	"Driver": "mysql",
+	"Source": "voter_db_user:voter_db_pwd@(127.0.0.1:3306)/voter?loc=Asia%2FShanghai&parseTime=true"
+    },
+    "Web":{
+	"Addr": ":8080",
+	"Tmpl": "templates"
+    },
+    "Manager":{
+	"Admin":[
+	    "127.0.0.1",
+	    "192.161.1.111"
+	],
+	"Leader":[
+	    "127.0.1.1",
+	    "192.168.1.111"
+	]
+    },
+    "Language": "zh_CN"
 }

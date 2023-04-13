@@ -1,0 +1,16 @@
+{{template "header" .}}
+<div class="container">
+    <form action="/posts/save" method="post" accept-charset="utf-8">
+	<div class="form-group">
+	    <label for="PostTitle">投票主题</label>
+	    <input type="text" class="form-control" name="PostTitle" id="PostTitle" aria-describedby="post title">
+	    <small id="TitleHelp" class="form-text text-muted">投票主题是在首页面给大家看到的投票列表的标题。</small>
+	</div>
+	<div class="form-group">
+	    <label for="PostDetail" class="form-label">投票描述</label>
+	    <textarea class="form-control" name="PostDetail" id="PostDetail" rows="3"></textarea>
+	</div>
+	<button type="submit" class="btn btn-primary mt-3">提交</button>
+    </form>
+</div>
+{{template "footer" .}}

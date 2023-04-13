@@ -1,0 +1,77 @@
+{{template "header" .}}
+<div class="container w-50">
+    {{if eq (isClosed .Data.Post.IsClosed) "Closed"}}
+        <h1>抱歉，这个投票主题关闭了，你可以联系发起人重新开启这个投票主题。</h1>
+    {{else}}
+    <h1>{{.Data.Post.Title}}</h1>
+    {{markdown .Data.Post.Detail | unescapeHTML}}
+    <form action="/posts/vote/v?id={{.Data.Post.PostId}}" method="post" accept-charset="utf-8">
+    <div class="form-group">
+	<ul class="list-group list-group-flush">
+	    {{range $vote := .Data.Votes}}
+	    <div class="card mt-3 bg-light">
+	    	<div class="card-body">
+	    	    <h5 class="card-title">{{$vote.Title}}</h5>
+		    <p class="card-text">
+			{{if $vote.A}}
+			<label class="list-group-item border-0 bg-light">
+			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="A">
+			    {{$vote.A}}
+			</label>
+			{{end}}
+			{{if $vote.B}}
+			<label class="list-group-item border-0 bg-light">
+			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="B">
+			    {{$vote.B}}
+			</label>
+			{{end}}
+			{{if $vote.C}}
+			<label class="list-group-item border-0 bg-light">
+			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="C">
+			    {{$vote.C}}
+			</label>
+			{{end}}
+			{{if $vote.D}}
+			<label class="list-group-item border-0 bg-light">
+			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="D">
+			    {{$vote.D}}
+			</label>
+			{{end}}
+			{{if $vote.E}}
+			<label class="list-group-item border-0 bg-light">
+			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="E">
+			    {{$vote.E}}
+			</label>
+			{{end}}
+			{{if $vote.F}}
+			<label class="list-group-item border-0 bg-light">
+			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="F">
+			    {{$vote.F}}
+			</label>
+			{{end}}
+			{{if $vote.G}}
+			<label class="list-group-item border-0 bg-light">
+			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="G">
+			    {{$vote.G}}
+			</label>
+			{{end}}
+			{{if $vote.H}}
+			<label class="list-group-item border-0 bg-light">
+			    <input class="form-check-input me-1" type="{{isRadio $vote.IsRadio}}" name="vote{{$vote.VoteId}}" value="H">
+			    {{$vote.H}}
+			</label>
+			{{end}}
+		    </p>
+	    	</div>
+	    </div>
+	    {{end}}
+	</ul>
+    </div>
+    <button class="btn btn-dark my-3" type="submit">投票</button>
+    {{if isAdminIp .ClientIP}}
+    <a href="/posts/edit/v?id={{.Data.Post.PostId}}" class="btn btn-primary my-3">编辑</a>
+    {{end}}
+    </form>
+    {{end}}
+</div>
+{{template "footer" .}}

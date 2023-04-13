@@ -1,0 +1,53 @@
+{{template "header" .}}
+<div class="container">
+    <form action="/votes/save" method="post" accept-charset="utf-8">
+	<div class="form-group">
+	    <label for="VoteTitle">投票题目标题</label>
+	    <input type="text" class="form-control" id="VoteTitle" name="VoteTitle" aria-describedby="vote title">
+	    <small id="emailHelp" class="form-text text-muted">投票题目标题就是投票题目的标题了</small>
+	</div>
+	<div class="form-group">
+	    <label for="VoteType" style="display: block;">投票类型，单选还是多选？</label>
+	    <div class="btn-group btn-group-sm mb-2" role="group" id="VoteType" aria-label="Basic radio toggle button group" style="user-select: auto;">
+		<input type="radio" class="btn-check" name="VoteType" id="btnradio1" value="Radio" autocomplete="off" checked="" style="user-select: auto;">
+		<label class="btn btn-outline-dark" for="btnradio1" style="user-select: auto;">单选</label>
+		<input type="radio" class="btn-check" name="VoteType" id="btnradio2" value="CheckBox" autocomplete="off" style="user-select: auto;">
+		<label class="btn btn-outline-dark" for="btnradio2" style="user-select: auto;">多选</label>
+	    </div>
+	</div>
+	<div class="input-group mb-3">
+	    <span class="input-group-text" id="basic-addon1">A</span>
+	    <input type="text" class="form-control" name="A" placeholder="Input content or leave blank" aria-label="A" aria-describedby="basic-addon1">
+	</div>
+	<div class="input-group mb-3">
+	    <span class="input-group-text" id="basic-addon2">B</span>
+	    <input type="text" class="form-control" name="B" placeholder="Input content or leave blank" aria-label="B" aria-describedby="basic-addon2">
+	</div>
+	<div class="input-group mb-3">
+	    <span class="input-group-text" id="basic-addon3">C</span>
+	    <input type="text" class="form-control" name="C" placeholder="Input content or leave blank" aria-label="C" aria-describedby="basic-addon3">
+	</div>
+	<div class="input-group mb-3">
+	    <span class="input-group-text" id="basic-addon4">D</span>
+	    <input type="text" class="form-control" name="D" placeholder="Input content or leave blank" aria-label="D" aria-describedby="basic-addon4">
+	</div>
+	<div class="input-group mb-3">
+	    <span class="input-group-text" id="basic-addon5">E</span>
+	    <input type="text" class="form-control" name="E" placeholder="Input content or leave blank" aria-label="E" aria-describedby="basic-addon5">
+	</div>
+	<div class="input-group mb-3">
+	    <span class="input-group-text" id="basic-addon6">F</span>
+	    <input type="text" class="form-control" name="F" placeholder="Input content or leave blank" aria-label="F" aria-describedby="basic-addon6">
+	</div>
+	<div class="input-group mb-3">
+	    <span class="input-group-text" id="basic-addon7">G</span>
+	    <input type="text" class="form-control" name="G" placeholder="Input content or leave blank" aria-label="G" aria-describedby="basic-addon7">
+	</div>
+	<div class="form-check form-switch mb-3">
+	    <input class="form-check-input" type="checkbox" name="HasTxtField" value="Yes" role="switch" id="HasTxtField">
+	    <label class="form-check-label" for="flexSwitchCheckDefault">添加文本输入选项</label>
+	</div>
+	<button type="submit" class="btn btn-dark">提交</button>
+    </form>
+</div>
+{{template "footer" .}}
