@@ -48,7 +48,7 @@
 	    <input type="text" class="form-control" name="H" placeholder="Input content or leave blank" aria-label="H" aria-describedby="basic-addon7" value="{{.Data.Vote.H}}">
 	</div>
 	<div class="form-check form-switch mb-3">
-	    <input class="form-check-input" type="checkbox" name="HasTxtField" value="Yes" role="switch" id="HasTxtField">
+	    <input class="form-check-input" type="checkbox" name="HasTxtField" value="Yes" role="switch" id="HasTxtField" {{if1Checked .Data.Vote.HasTxtField}}>
 	    <label class="form-check-label" for="flexSwitchCheckDefault">Add Text input option</label>
 	</div>
 	<button type="submit" class="btn btn-dark">Commit</button>

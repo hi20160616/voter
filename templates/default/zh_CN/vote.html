@@ -52,6 +52,12 @@
 		{{.Data.Vote.H}}
 	    </label>
 	    {{end}}
+	    {{if .Data.Vote.HasTxtField}}
+	    <label class="list-group-item border-0 bg-light">
+		还想说点什么吗？
+		<textarea class="form-control" name="TxtField" id="TxtField" rows="3"></textarea>
+	    </label>
+	    {{end}}
 	    </p>
 	</div>
     </div>

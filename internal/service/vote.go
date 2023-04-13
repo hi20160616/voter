@@ -43,19 +43,20 @@ func (vs *VoteService) ListVotes(ctx context.Context, in *pb.ListVotesRequest) (
 	resp := []*pb.Vote{}
 	for _, u := range bizvs.Collection {
 		resp = append(resp, &pb.Vote{
-			VoteId:     int32(u.VoteId),
-			Title:      u.Title,
-			A:          u.A,
-			B:          u.B,
-			C:          u.C,
-			D:          u.D,
-			E:          u.E,
-			F:          u.F,
-			G:          u.G,
-			H:          u.H,
-			IsRadio:    int32(u.IsRadio),
-			CreateTime: timestamppb.New(u.CreateTime),
-			UpdateTime: timestamppb.New(u.UpdateTime),
+			VoteId:      int32(u.VoteId),
+			Title:       u.Title,
+			A:           u.A,
+			B:           u.B,
+			C:           u.C,
+			D:           u.D,
+			E:           u.E,
+			F:           u.F,
+			G:           u.G,
+			H:           u.H,
+			IsRadio:     int32(u.IsRadio),
+			HasTxtField: int32(u.HasTxtField),
+			CreateTime:  timestamppb.New(u.CreateTime),
+			UpdateTime:  timestamppb.New(u.UpdateTime),
 		})
 	}
 	return &pb.ListVotesResponse{Votes: resp}, nil

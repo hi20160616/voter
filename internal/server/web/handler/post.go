@@ -9,6 +9,7 @@ import (
 	"net"
 	"net/http"
 	"strconv"
+	"strings"
 
 	pb "github.com/hi20160616/voter/api/voter/v1"
 	"github.com/hi20160616/voter/configs"
@@ -29,6 +30,7 @@ type PostReport struct {
 	PercentC, PercentD     float32
 	PercentE, PercentF     float32
 	PercentG, PercentH     float32
+	TxtFields              []string
 }
 
 // RemoteIp 返回远程客户端的 IP，如 192.168.1.1
@@ -422,9 +424,10 @@ func votePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 			}
 		}
 		iv := &pb.IpVote{
-			Ip:     RemoteIp(r),
-			VoteId: e,
-			Opts:   bytes.NewBuffer(optsArr).String(),
+			Ip:       RemoteIp(r),
+			VoteId:   e,
+			Opts:     bytes.NewBuffer(optsArr).String(),
+			TxtField: r.FormValue("TxtField"),
 		}
 		ipvotes.IpVotes = append(ipvotes.IpVotes, iv)
 	}
@@ -515,6 +518,7 @@ func postReportHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 			log.Println(err)
 			// http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
+		// e.TxtFields = append(e.TxtFields, ipvotes.IpVotes)
 		for _, e1 := range ipvotes.IpVotes {
 			if e1.Opts[0] == '1' {
 				e.A++
@@ -539,6 +543,9 @@ func postReportHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 			}
 			if e1.Opts[7] == '1' {
 				e.H++
+			}
+			if strings.TrimSpace(e1.TxtField) != "" {
+				e.TxtFields = append(e.TxtFields, e1.TxtField)
 			}
 		}
 		dividend := float32(e.A + e.B + e.C + e.D + e.E + e.F + e.G + e.H)

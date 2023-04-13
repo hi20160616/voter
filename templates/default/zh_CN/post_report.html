@@ -72,6 +72,16 @@
 			<div class="progress-bar progress-bar-striped" style="width: {{$pr.PercentH}}%">{{$pr.PercentH}}%</div>
 		    </div>
 		    {{end}}
+		    {{if $pr.Vote.HasTxtField}}
+		    <h5 class="card-title mt-4">文本输入选项内容：</h5>
+		    <ol class="list-group list-group-numbered">
+			{{range $txtField :=$pr.TxtFields }}
+			<li class="list-group-item">
+			    {{$txtField}}
+			</li>
+			{{end}}
+		    </ol>
+		    {{end}}
 		</div>
 	    </div>
 	    {{end}}
