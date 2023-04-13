@@ -173,76 +173,8 @@ func getPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 		log.Println(err)
 	}
 
-	prs := []*PostReport{}
-	for _, e := range votes.Votes {
-		pr := &PostReport{
-			VoteId: strconv.Itoa(int(e.VoteId)),
-			Vote:   e,
-		}
-		prs = append(prs, pr)
-	}
-
-	ivs, err := service.NewIpVoteService()
-	if err != nil {
-		// http.Error(w, err.Error(), http.StatusInternalServerError)
-		log.Println(err)
-	}
-
-	for _, e := range prs {
-		ipvotes, err := ivs.ListIpVotes(context.Background(), &pb.ListIpVotesRequest{
-			Parent: "vote_id/" + e.VoteId + "/ip_votes",
-		})
-		if err != nil {
-			log.Println(err)
-			// http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-		for _, e1 := range ipvotes.IpVotes {
-			if e1.Opts[0] == '1' {
-				e.A++
-			}
-			if e1.Opts[1] == '1' {
-				e.B++
-			}
-			if e1.Opts[2] == '1' {
-				e.C++
-			}
-			if e1.Opts[3] == '1' {
-				e.D++
-			}
-			if e1.Opts[4] == '1' {
-				e.E++
-			}
-			if e1.Opts[5] == '1' {
-				e.F++
-			}
-			if e1.Opts[6] == '1' {
-				e.G++
-			}
-			if e1.Opts[7] == '1' {
-				e.H++
-			}
-		}
-		dividend := float32(e.A + e.B + e.C + e.D + e.E + e.F + e.G + e.H)
-		e.PercentA = float32(e.A) * 100 / dividend
-		e.PercentB = float32(e.B) * 100 / dividend
-		e.PercentC = float32(e.C) * 100 / dividend
-		e.PercentD = float32(e.D) * 100 / dividend
-		e.PercentE = float32(e.E) * 100 / dividend
-		e.PercentF = float32(e.F) * 100 / dividend
-		e.PercentG = float32(e.G) * 100 / dividend
-		e.PercentH = float32(e.H) * 100 / dividend
-	}
-
 	if voted {
-		p.Data = struct {
-			Post        *pb.Post
-			PostReports []*PostReport
-		}{
-			Post:        post,
-			PostReports: prs,
-		}
-		p.Title = "Voted post!"
-		render.Derive(w, "post_report", p)
+		http.Redirect(w, r, "/posts/report/v?id="+id, 302)
 	} else {
 		p.Data = struct {
 			Post  *pb.Post
@@ -298,19 +230,7 @@ func savePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 		if err != nil {
 			log.Println(err)
 		}
-		vs, err := service.NewVoteService()
-		votes, err := vs.ListVotes(context.Background(),
-			&pb.ListVotesRequest{Parent: "pid/" +
-				strconv.Itoa(int(post.PostId)) + "/votes"})
-		p.Data = struct {
-			Post  *pb.Post
-			Votes []*pb.Vote
-		}{
-			Post:  post,
-			Votes: votes.Votes,
-		}
-		p.Title = post.Title
-		render.Derive(w, "post", p) // template name: post
+		http.Redirect(w, r, fmt.Sprintf("/posts/v?id=%d", post.PostId), 302)
 	} else {
 		// update a post
 		pid, err := strconv.Atoi(id)
@@ -402,19 +322,7 @@ func savePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 				log.Println(err)
 			}
 		}
-		vs, err := service.NewVoteService()
-		votes, err := vs.ListVotes(context.Background(),
-			&pb.ListVotesRequest{Parent: "pid/" +
-				strconv.Itoa(int(post.PostId)) + "/votes"})
-		p.Data = struct {
-			Post  *pb.Post
-			Votes []*pb.Vote
-		}{
-			Post:  post,
-			Votes: votes.Votes,
-		}
-		p.Title = post.Title
-		render.Derive(w, "post", p) // template name: post
+		http.Redirect(w, r, fmt.Sprintf("/posts/v?id=%d", post.PostId), 302)
 	}
 }
 
@@ -559,88 +467,7 @@ func votePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 		// http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	// get post info for page display
-	ps, err := service.NewPostService()
-	if err != nil {
-		log.Println(err)
-		// http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-
-	post, err := ps.GetPost(context.Background(), &pb.GetPostRequest{
-		Name: "posts/" + pid})
-	if err != nil {
-		log.Println(err)
-		// http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-
-	vs, err := service.NewVoteService()
-	votes, err := vs.ListVotes(context.Background(), &pb.ListVotesRequest{
-		Parent: "pid/" + pid + "/votes"})
-	if err != nil {
-		log.Println(err)
-	}
-	prs := []*PostReport{}
-	for _, e := range votes.Votes {
-		pr := &PostReport{
-			VoteId: strconv.Itoa(int(e.VoteId)),
-			Vote:   e,
-		}
-		prs = append(prs, pr)
-	}
-
-	for _, e := range prs {
-		ipvotes, err := ivs.ListIpVotes(context.Background(), &pb.ListIpVotesRequest{
-			Parent: "vote_id/" + e.VoteId + "/ip_votes",
-		})
-		if err != nil {
-			log.Println(err)
-			// http.Error(w, err.Error(), http.StatusInternalServerError)
-		}
-		for _, e1 := range ipvotes.IpVotes {
-			if e1.Opts[0] == '1' {
-				e.A++
-			}
-			if e1.Opts[1] == '1' {
-				e.B++
-			}
-			if e1.Opts[2] == '1' {
-				e.C++
-			}
-			if e1.Opts[3] == '1' {
-				e.D++
-			}
-			if e1.Opts[4] == '1' {
-				e.E++
-			}
-			if e1.Opts[5] == '1' {
-				e.F++
-			}
-			if e1.Opts[6] == '1' {
-				e.G++
-			}
-			if e1.Opts[7] == '1' {
-				e.H++
-			}
-		}
-		dividend := float32(e.A + e.B + e.C + e.D + e.E + e.F + e.G + e.H)
-		e.PercentA = float32(e.A) * 100 / dividend
-		e.PercentB = float32(e.B) * 100 / dividend
-		e.PercentC = float32(e.C) * 100 / dividend
-		e.PercentD = float32(e.D) * 100 / dividend
-		e.PercentE = float32(e.E) * 100 / dividend
-		e.PercentF = float32(e.F) * 100 / dividend
-		e.PercentG = float32(e.G) * 100 / dividend
-		e.PercentH = float32(e.H) * 100 / dividend
-	}
-	p.Data = struct {
-		Post        *pb.Post
-		PostReports []*PostReport
-	}{
-		Post:        post,
-		PostReports: prs,
-	}
-	p.Title = "Voted post!"
-	render.Derive(w, "post_report", p)
+	http.Redirect(w, r, "/posts/report/v?id="+pid, 302)
 }
 
 func postReportHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
