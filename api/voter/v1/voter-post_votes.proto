@@ -11,9 +11,12 @@ option go_package = "github.com/hi20160616/voter/api/voter/v1;v1";
 service PostVotesAPI {
   rpc ListPostVotes(ListPostVotesRequest) returns (ListPostVotesResponse) {
     option (google.api.http) = {
-      get: "/v1/{parent=posts_votes}"
+      get: "/v1/{parent=post_votes}"
       additional_bindings {
-        get: "/v1/{parent=pid/*}/votes"
+        get: "/v1/{parent=pid/*}/post_votes"
+      }
+      additional_bindings {
+        get: "/v1/{parent=vid/*}/post_votes"
       }
     };
   }

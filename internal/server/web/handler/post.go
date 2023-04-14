@@ -568,3 +568,147 @@ func postReportHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	p.Title = "Post Report"
 	render.Derive(w, "post_report", p)
 }
+
+func delPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
+	// # 0. prejudge ip is allowed
+	p.ClientIP = RemoteIp(r)
+	if !IsAdminIp(p.ClientIP, p.Cfg) {
+		p.Title = "404"
+		render.Derive(w, "404", p)
+		return
+	}
+	pid := r.URL.Query().Get("id")
+
+	// # 1. Delete post
+	ps, err := service.NewPostService()
+	if err != nil {
+		log.Println(err)
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	_, err = ps.DeletePost(context.Background(), &pb.DeletePostRequest{
+		Name: "posts/" + pid + "/delete",
+	})
+	if err != nil {
+		log.Println(err)
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	// # 2. Delete from ip_posts by pid
+	ips, err := service.NewIpPostService()
+	if err != nil {
+		log.Println(err)
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	a, err := ips.ListIpPosts(context.Background(), &pb.ListIpPostsRequest{
+		Parent: fmt.Sprintf("ip_posts/%s", pid),
+	})
+	if err != nil {
+		log.Println(err)
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	for _, e := range a.IpPosts {
+		_, err = ips.DeleteIpPost(context.Background(), &pb.DeleteIpPostRequest{
+			Name: fmt.Sprintf("ip_posts/%d/delete", e.IpPostId),
+		})
+		if err != nil {
+			log.Println(err)
+			// http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	}
+
+	// # 3. Gether vids by pid from post_votes
+	pvs, err := service.NewPostVoteService()
+	if err != nil {
+		log.Println(err)
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	postvotes, err := pvs.ListPostVotes(context.Background(), &pb.ListPostVotesRequest{
+		Parent: "pid/" + pid + "/post_votes",
+	})
+	if err != nil {
+		log.Println(err)
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	vids := []string{}
+	for _, e := range postvotes.PostVotes {
+		vids = append(vids, strconv.Itoa(int(e.VoteId)))
+	}
+	ivs, err := service.NewIpVoteService()
+	if err != nil {
+		log.Println(err)
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	// # 4. Delete from post_votes
+	// ## 4.1. by pid
+	y, err := pvs.ListPostVotes(context.Background(), &pb.ListPostVotesRequest{
+		Parent: fmt.Sprintf("pid/%s/post_votes", pid),
+	})
+	if err != nil {
+		log.Println(err)
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	for _, e := range y.PostVotes {
+		_, err = pvs.DeletePostVote(context.Background(), &pb.DeletePostVoteRequest{
+			Name: fmt.Sprintf("post_votes/%d/delete", e.PostVoteId),
+		})
+		if err != nil {
+			log.Println(err)
+			// http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	}
+	// ## 4.2. by vids
+	for _, e := range vids {
+		z, err := pvs.ListPostVotes(context.Background(), &pb.ListPostVotesRequest{
+			Parent: fmt.Sprintf("vid/%s/post_votes", e),
+		})
+		if err != nil {
+			log.Println(err)
+			// http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		for _, e := range z.PostVotes {
+			_, err := pvs.DeletePostVote(context.Background(),
+				&pb.DeletePostVoteRequest{
+					Name: fmt.Sprintf("post_votes/%d/delete",
+						e.PostVoteId),
+				})
+			if err != nil {
+				log.Println(err)
+				// http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+		}
+	}
+	// # 5. Delete from ip_votes by vids
+	for _, e := range vids {
+		x, err := ivs.ListIpVotes(context.Background(), &pb.ListIpVotesRequest{
+			Parent: "vote_id/" + e + "/ip_votes",
+		})
+		for _, e := range x.IpVotes {
+			_, err = ivs.DeleteIpVote(context.Background(),
+				&pb.DeleteIpVoteRequest{
+					Name: fmt.Sprintf("ip_votes/%d/delete", e.IpVoteId),
+				})
+			if err != nil {
+				log.Println(err)
+				// http.Error(w, err.Error(), http.StatusInternalServerError)
+			}
+
+		}
+	}
+	// # 6. Delete from votes by vids
+	for _, e := range vids {
+		vs, err := service.NewVoteService()
+		if err != nil {
+			log.Println(err)
+			// http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		_, err = vs.DeleteVote(context.Background(), &pb.DeleteVoteRequest{
+			Name: fmt.Sprintf("votes/%s/delete", e),
+		})
+		if err != nil {
+			log.Println(err)
+			// http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+	}
+	http.Redirect(w, r, "/posts/", 302)
+}

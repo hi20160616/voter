@@ -35,15 +35,20 @@ func (pvr *postVoteRepo) ListPostVotes(ctx context.Context, parent string) (*biz
 	pvs := &mysql.PostVotes{}
 	bizpvs := &biz.PostVotes{}
 	var err error
-	// re := regexp.MustCompile(`^(categories|tags)/(.+)/post_votes$`)
-	re := regexp.MustCompile(`^(pid)/(.+)/post_votes$`)
+	re := regexp.MustCompile(`^(pid|vid)/(.+)/post_votes$`)
 	x := re.FindStringSubmatch(parent)
 	if len(x) != 3 {
 		pvs, err = pvr.data.DBClient.DatabaseClient.QueryPostVote().All(ctx)
 	} else {
-		pid := x[2]
+		clause := [4]string{}
+		if x[1] == "pid" {
+			clause = [4]string{"post_id", "=", x[2], "and"}
+		}
+		if x[1] == "vid" {
+			clause = [4]string{"vote_id", "=", x[2], "and"}
+		}
 		pvs, err = pvr.data.DBClient.DatabaseClient.QueryPostVote().
-			Where([4]string{"post_id", "=", pid}).All(ctx)
+			Where(clause).All(ctx)
 	}
 	if err != nil {
 		return nil, err
