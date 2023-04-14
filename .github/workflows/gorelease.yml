@@ -22,10 +22,11 @@ jobs:
       -
         name: Install GoReleaser
         uses: goreleaser/goreleaser-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAP_GITHUB_TOKEN: ${{ secrets.TAP_GITHUB_TOKEN }}
         with:
           install-only: true
       -
         name: GoReleaser Release
         run: goreleaser --clean
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
