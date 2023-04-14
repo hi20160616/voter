@@ -7,6 +7,16 @@ docker run -p 3306:3306 --name=voter -e MYSQL_ROOT_PASSWORD='rootpassword' -d my
 docker exec -it voter mysql -uroot -prootpassword
 ```
 
+## Backup
+Method 1: use mysqldump
+```
+$ mysqldump -u root -p voter > backup_voter.sql
+```
+Method 2: docker
+```
+$ docker exec docker_img_name sh -c 'exec mysqldump -uroot -p"password" database_name' > ./backup_voter.sql
+```
+
 ## SQL
 ### Database
 ```
