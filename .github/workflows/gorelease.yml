@@ -22,10 +22,10 @@ jobs:
       -
         name: Install GoReleaser
         uses: goreleaser/goreleaser-action@v4
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
         with:
           install-only: true
       -
         name: GoReleaser Release
         run: goreleaser --clean
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
