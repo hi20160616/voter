@@ -28,4 +28,4 @@ jobs:
         name: GoReleaser Release
         run: goreleaser --clean
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
