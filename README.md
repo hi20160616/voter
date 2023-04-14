@@ -18,4 +18,6 @@ Set language in configs.json at configs folder, can change the view of language.
 For example, `en_US` while use template folder `templates/default/en_US`, similarly, change `Language` option to `zh_CN`, the web will use `templates/default/zh_CN`.
 
 # Release
-
+Set goreleaser config file and run `goreleaser release`  
+If token not found error occur, view the page: https://goreleaser.com/errors/multiple-tokens/  
+Also, we need generate token, at github: `Settings/Developer settings` -> `Personal access tokens (classic)`, generate a key and copy to the file:`~/.config/goreleaser/github_token`  
