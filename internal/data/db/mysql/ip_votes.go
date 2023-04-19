@@ -12,7 +12,7 @@ import (
 )
 
 type IpVote struct {
-	Id, VoteId         int
+	Id, VoteId, PostId int
 	Ip, Opts, TxtField string
 }
 
@@ -32,12 +32,12 @@ type IpVoteQuery struct {
 }
 
 func (dc *DatabaseClient) InsertIpVote(ctx context.Context, ipVote *IpVote) (int64, error) {
-	q := `INSERT INTO ip_votes(ip, vote_id, opts, txt_field) VALUES (INET_ATON(?), ?, ?, ?)
-		ON DUPLICATE KEY UPDATE ip=INET_ATON(?), vote_id=?, opts=?, txt_field=?`
+	q := `INSERT INTO ip_votes(ip, vote_id, opts, txt_field, post_id) VALUES (INET_ATON(?), ?, ?, ?, ?)
+		ON DUPLICATE KEY UPDATE ip=INET_ATON(?), vote_id=?, opts=?, txt_field=?, post_id=?`
 	ivq := &IpVoteQuery{db: dc.db, query: q}
 	x, err := ivq.db.Exec(
-		ivq.query, ipVote.Ip, ipVote.VoteId, ipVote.Opts, ipVote.TxtField,
-		ipVote.Ip, ipVote.VoteId, ipVote.Opts, ipVote.TxtField)
+		ivq.query, ipVote.Ip, ipVote.VoteId, ipVote.Opts, ipVote.TxtField, ipVote.PostId,
+		ipVote.Ip, ipVote.VoteId, ipVote.Opts, ipVote.TxtField, ipVote.PostId)
 	if err != nil {
 		return 0, errors.WithMessage(err, "mysql: ipVotes: Insert error")
 	}
@@ -45,10 +45,10 @@ func (dc *DatabaseClient) InsertIpVote(ctx context.Context, ipVote *IpVote) (int
 }
 
 func (dc *DatabaseClient) UpdateIpVote(ctx context.Context, ipVote *IpVote) error {
-	q := `UPDATE ip_votes SET ip=INET_ATON(?), vote_id=?, opts=?, txt_field=? WHERE id=?`
+	q := `UPDATE ip_votes SET ip=INET_ATON(?), vote_id=?, opts=?, txt_field=?, post_id=? WHERE id=?`
 	uq := &IpVoteQuery{db: dc.db, query: q}
 	_, err := uq.db.Exec(uq.query, ipVote.Ip, ipVote.VoteId, ipVote.Opts,
-		ipVote.TxtField, ipVote.Id)
+		ipVote.TxtField, ipVote.PostId, ipVote.Id)
 	return err
 }
 
@@ -74,7 +74,8 @@ func (ivq *IpVoteQuery) All(ctx context.Context) (*IpVotes, error) {
 	// rows, err := ivq.db.Query("SELECT * FROM ipVotes WHERE title like ?", "%%test%%")
 	rows, err := ivq.db.Query(ivq.query, ivq.args...)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithMessagef(err,
+			"IpVoteQuery.All: query: \"%s\"", ivq.query)
 	}
 	return mkIpVote(rows)
 }
@@ -82,7 +83,8 @@ func (ivq *IpVoteQuery) All(ctx context.Context) (*IpVotes, error) {
 func (ivq *IpVoteQuery) First(ctx context.Context) (*IpVote, error) {
 	nodes, err := ivq.Limit(1).All(ctx)
 	if err != nil {
-		return nil, err
+		return nil, errors.WithMessagef(err,
+			"IpVoteQuery.First: query: \"%s\"", ivq.query)
 	}
 	if len(nodes.Collection) == 0 {
 		return nil, ErrNotFound
@@ -151,16 +153,16 @@ func (ivq *IpVoteQuery) prepareQuery(ctx context.Context) error {
 }
 
 func mkIpVote(rows *sql.Rows) (*IpVotes, error) {
-	var id, vote_id int
+	var id, vote_id, post_id int
 	var ip, opts, txtField sql.NullString
 	var ipVotes = &IpVotes{}
 	for rows.Next() {
-		if err := rows.Scan(&id, &ip, &vote_id, &opts, &txtField); err != nil {
+		if err := rows.Scan(&id, &ip, &vote_id, &opts, &txtField, &post_id); err != nil {
 			return nil, errors.WithMessage(err, "mkIpVote rows.Scan error")
 		}
 		ipVotes.Collection = append(ipVotes.Collection, &IpVote{
 			Id: id, Ip: ip.String, VoteId: vote_id, Opts: opts.String,
-			TxtField: txtField.String})
+			TxtField: txtField.String, PostId: post_id})
 	}
 	// TODO: to confirm code below can make sence.
 	if err := rows.Err(); err != nil {

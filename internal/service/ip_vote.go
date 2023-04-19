@@ -47,6 +47,7 @@ func (ivs *IpVoteService) ListIpVotes(ctx context.Context, in *pb.ListIpVotesReq
 			VoteId:   int32(p.VoteId),
 			Opts:     p.Opts,
 			TxtField: p.TxtField,
+			PostId:   int32(p.PostId),
 		})
 	}
 	return &pb.ListIpVotesResponse{IpVotes: resp}, nil
@@ -68,6 +69,7 @@ func (ivs *IpVoteService) GetIpVote(ctx context.Context, in *pb.GetIpVoteRequest
 		VoteId:   int32(bizpv.VoteId),
 		Opts:     bizpv.Opts,
 		TxtField: bizpv.TxtField,
+		PostId:   int32(bizpv.PostId),
 	}, nil
 }
 
@@ -82,6 +84,7 @@ func (ivs *IpVoteService) CreateIpVote(ctx context.Context, in *pb.CreateIpVoteR
 		VoteId:   int(in.IpVote.VoteId),
 		Opts:     in.IpVote.Opts,
 		TxtField: in.IpVote.TxtField,
+		PostId:   int(in.IpVote.PostId),
 	})
 	if err != nil {
 		return nil, err
@@ -92,6 +95,7 @@ func (ivs *IpVoteService) CreateIpVote(ctx context.Context, in *pb.CreateIpVoteR
 		VoteId:   int32(iv.VoteId),
 		Opts:     iv.Opts,
 		TxtField: iv.TxtField,
+		PostId:   int32(iv.PostId),
 	}, nil
 }
 
@@ -107,6 +111,7 @@ func (ivs *IpVoteService) UpdateIpVote(ctx context.Context, in *pb.UpdateIpVoteR
 		VoteId:   int(in.IpVote.VoteId),
 		Opts:     in.IpVote.Opts,
 		TxtField: in.IpVote.TxtField,
+		PostId:   int(in.IpVote.PostId),
 	})
 	if err != nil {
 		return nil, err
@@ -117,6 +122,7 @@ func (ivs *IpVoteService) UpdateIpVote(ctx context.Context, in *pb.UpdateIpVoteR
 		VoteId:   int32(p.VoteId),
 		Opts:     p.Opts,
 		TxtField: p.TxtField,
+		PostId:   int32(p.PostId),
 	}, nil
 }
 

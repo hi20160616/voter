@@ -15,6 +15,12 @@ service IpVotesAPI {
       additional_bindings {
 	get: "/v1/{parent=vote_id/*}/ip_votes"
       }
+      additional_bindings {
+	get: "/v1/{parent=post_id/*}/ip_votes"
+      }
+      additional_bindings {
+	get: "/v1/{parent=post_id/*/vote_id/*}/ip_votes"
+      }
     };
   }
   rpc GetIpVote(GetIpVoteRequest) returns (IpVote) {
@@ -85,6 +91,7 @@ message IpVote{
   int32 vote_id = 4;
   string opts = 5;
   string txtField = 6;
+  int32 post_id = 7;
 }
 
 message IpVotes{

@@ -19,7 +19,7 @@ var repo3 = func() biz.IpVoteRepo {
 }()
 
 func TestListIpVotes(t *testing.T) {
-	x, err := repo3.ListIpVotes(context.Background(), "vote_id/2/ip_votes")
+	x, err := repo3.ListIpVotes(context.Background(), "ip_votes")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -28,6 +28,7 @@ func TestListIpVotes(t *testing.T) {
 		fmt.Println("IpVoteId: ", e.IpVoteId)
 		fmt.Println("Opts: ", e.Opts)
 		fmt.Println("TxtField: ", e.TxtField)
+		fmt.Println("PostId: ", e.PostId)
 	}
 }
 

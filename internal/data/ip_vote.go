@@ -36,16 +36,30 @@ func (ivr *ipVoteRepo) ListIpVotes(ctx context.Context, parent string) (*biz.IpV
 	ivs := &mysql.IpVotes{}
 	bizivs := &biz.IpVotes{}
 	var err error
-
-	re := regexp.MustCompile(`^(vote_id)/(.+)/ip_votes$`)
-	x := re.FindStringSubmatch(parent)
-	if len(x) != 3 {
+	if parent == "ip_votes" {
 		ivs, err = ivr.data.DBClient.DatabaseClient.QueryIpVote().All(ctx)
 	} else {
+		re := regexp.MustCompile(
+			`^((vote_id|post_id|post_id/(\d+)/vote_id)/(\d+)/ip_votes)$`)
+		x := re.FindStringSubmatch(parent)
+		if len(x) != 5 {
+			return nil, errors.New(
+				"ListIpVotes: parent cannot match regex express: " + parent)
+		}
+		clauses := [][4]string{}
+		if x[2] == "post_id" || x[2] == "vote_id" {
+			// x[4] is post_id or vote_id's value
+			clauses = append(clauses, [4]string{x[2], "=", x[4], "and"})
+		}
+		re = regexp.MustCompile(`post_id/\d+/vote_id`)
+		if re.MatchString(x[2]) {
+			// x[3] is post_id's value, x[4] is vote_id's value
+			clauses = append(clauses, [4]string{"post_id", "=", x[3], "and"})
+			clauses = append(clauses, [4]string{"vote_id", "=", x[4], "and"})
+		}
 		ivs, err = ivr.data.DBClient.DatabaseClient.QueryIpVote().
-			Where([4]string{"vote_id", "=", x[2]}).All(ctx)
+			Where(clauses...).All(ctx)
 	}
-
 	if err != nil {
 		return nil, err
 	}
@@ -57,6 +71,7 @@ func (ivr *ipVoteRepo) ListIpVotes(ctx context.Context, parent string) (*biz.IpV
 			VoteId:   p.VoteId,
 			Opts:     p.Opts,
 			TxtField: p.TxtField,
+			PostId:   p.PostId,
 		})
 	}
 	return bizivs, nil
@@ -83,6 +98,7 @@ func (ivr *ipVoteRepo) GetIpVote(ctx context.Context, name string) (*biz.IpVote,
 		VoteId:   p.VoteId,
 		Opts:     p.Opts,
 		TxtField: p.TxtField,
+		PostId:   p.PostId,
 	}, nil
 }
 
@@ -109,6 +125,7 @@ func (ivr *ipVoteRepo) CreateIpVote(ctx context.Context, ipVote *biz.IpVote) (*b
 	clauses := [][4]string{
 		{"ip", "=", ip, "and"},
 		{"vote_id", "=", strconv.Itoa(ipVote.VoteId), "and"},
+		{"post_id", "=", strconv.Itoa(ipVote.PostId), "and"},
 	}
 
 	_, err := ivr.data.DBClient.DatabaseClient.QueryIpVote().
@@ -121,6 +138,7 @@ func (ivr *ipVoteRepo) CreateIpVote(ctx context.Context, ipVote *biz.IpVote) (*b
 					VoteId:   ipVote.VoteId,
 					Opts:     ipVote.Opts,
 					TxtField: ipVote.TxtField,
+					PostId:   ipVote.PostId,
 				})
 			if err != nil {
 				return nil, err
@@ -148,11 +166,13 @@ func (ivr *ipVoteRepo) UpdateIpVote(ctx context.Context, ipVote *biz.IpVote) (*b
 			[][4]string{
 				{"ip", "=", ip, "and"},
 				{"vote_id", "=", strconv.Itoa(ipVote.VoteId), "and"},
+				{"post_id", "=", strconv.Itoa(ipVote.PostId), "and"},
 			}...).First(ctx)
 		if err != nil {
 			return nil, errors.Join(fmt.Errorf(
 				"ipVoteRepo: UpdateIpVote: query ipVote by ip"+
-					"and vote_id error: %v: %v", ipVote, err))
+					"vote_id and post_id error: %v: %v",
+				ipVote, err))
 		}
 	} else {
 		dbIpVote, err = ivr.data.DBClient.DatabaseClient.QueryIpVote().Where(
@@ -176,6 +196,9 @@ func (ivr *ipVoteRepo) UpdateIpVote(ctx context.Context, ipVote *biz.IpVote) (*b
 	if &ipVote.TxtField != nil {
 		dbIpVote.TxtField = ipVote.TxtField
 	}
+	if &ipVote.PostId != nil {
+		dbIpVote.PostId = ipVote.PostId
+	}
 	if err := ivr.data.DBClient.DatabaseClient.UpdateIpVote(ctx,
 		dbIpVote); err != nil {
 		return nil, err
@@ -186,6 +209,7 @@ func (ivr *ipVoteRepo) UpdateIpVote(ctx context.Context, ipVote *biz.IpVote) (*b
 		VoteId:   dbIpVote.VoteId,
 		Opts:     dbIpVote.Opts,
 		TxtField: dbIpVote.TxtField,
+		PostId:   dbIpVote.PostId,
 	}, nil
 }
 

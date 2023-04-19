@@ -376,8 +376,13 @@ func editPostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 
 func votePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	pid := r.URL.Query().Get("id")
+	postid, err := strconv.Atoi(pid)
+	if err != nil {
+		log.Println(err)
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 	p.ClientIP = RemoteIp(r)
-	err := r.ParseForm()
+	err = r.ParseForm()
 	if err != nil {
 		log.Println(err)
 	}
@@ -386,12 +391,14 @@ func votePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	pvs, err := service.NewPostVoteService()
 	if err != nil {
 		log.Println(err)
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
 	postVotes, err := pvs.ListPostVotes(context.Background(),
 		&pb.ListPostVotesRequest{Parent: "pid/" + pid + "/post_votes"})
 	if err != nil {
 		log.Println(err)
+		// http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	vids := []int32{}
 	for _, e := range postVotes.PostVotes {
@@ -428,6 +435,7 @@ func votePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 			VoteId:   e,
 			Opts:     bytes.NewBuffer(optsArr).String(),
 			TxtField: r.FormValue("TxtField"),
+			PostId:   int32(postid),
 		}
 		ipvotes.IpVotes = append(ipvotes.IpVotes, iv)
 	}
@@ -439,7 +447,7 @@ func votePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 		// http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	for _, e := range ipvotes.IpVotes {
-		// prejudge exist of ip and vote at data/ip_vote.go
+		// prejudge if exist of ip, post_id and vote_id at data/ip_vote.go
 		// insert row or update if exist
 		_, err := ivs.CreateIpVote(context.Background(), &pb.CreateIpVoteRequest{
 			IpVote: e})
@@ -450,11 +458,6 @@ func votePostHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 
 	// insert or update ip_posts while vote success
 	ips, err := service.NewIpPostService()
-	if err != nil {
-		log.Println(err)
-		// http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-	postid, err := strconv.Atoi(pid)
 	if err != nil {
 		log.Println(err)
 		// http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -494,7 +497,7 @@ func postReportHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 	votes, err := vs.ListVotes(context.Background(), &pb.ListVotesRequest{
 		Parent: "pid/" + pid + "/votes"})
 	if err != nil {
-		log.Println(err)
+		log.Println("postReportHandler: vs.ListVotes: ", err)
 	}
 	prs := []*PostReport{}
 	for _, e := range votes.Votes {
@@ -507,15 +510,22 @@ func postReportHandler(w http.ResponseWriter, r *http.Request, p *render.Page) {
 
 	ivs, err := service.NewIpVoteService()
 	if err != nil {
-		log.Println(err)
+		log.Println("postReportHandler: NewIpVoteService: ", err)
 		// http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	for _, e := range prs {
-		ipvotes, err := ivs.ListIpVotes(context.Background(), &pb.ListIpVotesRequest{
-			Parent: "vote_id/" + e.VoteId + "/ip_votes",
-		})
+		ipvotes, err := ivs.ListIpVotes(context.Background(),
+			&pb.ListIpVotesRequest{Parent: fmt.Sprintf(
+				"post_id/%s/vote_id/%s/ip_votes",
+				pid, e.VoteId),
+			})
 		if err != nil {
-			log.Println(err)
+			log.Println("postReportHandler: ivs.ListIpVotes: ", err)
+			// http.Error(w, err.Error(), http.StatusInternalServerError)
+		}
+		if len(ipvotes.IpVotes) == 0 {
+			log.Println("postReportHandler: ivs.ListIpVotes err: "+
+				"len(ipvotes.IpVotes) == 0: ", err)
 			// http.Error(w, err.Error(), http.StatusInternalServerError)
 		}
 		// e.TxtFields = append(e.TxtFields, ipvotes.IpVotes)

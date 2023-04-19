@@ -162,6 +162,7 @@ mysql> desc posts;
 ```
 
 ### PostVotes
+> 1 post with many votes
 ```
 mysql> CREATE TABLE IF NOT EXISTS post_votes (
   id int(10) NOT NULL AUTO_INCREMENT,
@@ -182,6 +183,7 @@ mysql> desc post_votes;
 ```
 
 ### IpVotes
+> 1 IP can vote 1 post many votes.
 ```
 mysql> CREATE TABLE IF NOT EXISTS ip_votes (
   id int(10) NOT NULL AUTO_INCREMENT,
@@ -189,6 +191,7 @@ mysql> CREATE TABLE IF NOT EXISTS ip_votes (
   vote_id int(10),
   opts VARCHAR(8),
   txt_field VARCHAR(255),
+  post_id int(10),
   PRIMARY KEY (id)
 );
 
@@ -201,11 +204,13 @@ mysql> desc ip_votes;
 | vote_id   | int          | YES  |     | NULL    |                |
 | opts      | varchar(8)   | YES  |     | NULL    |                |
 | txt_field | varchar(255) | YES  |     | NULL    |                |
+| post_id   | int          | YES  |     | NULL    |                |
 +-----------+--------------+------+-----+---------+----------------+
 5 rows in set (0.00 sec)
 ```
 
 ### IpPosts
+> 1 IP can only vote any post one time.
 ```
 mysql> CREATE TABLE IF NOT EXISTS ip_posts (
   id int(10) NOT NULL AUTO_INCREMENT,

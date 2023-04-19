@@ -8,8 +8,8 @@ import (
 )
 
 type IpVote struct {
-	IpVoteId, VoteId   int
-	Ip, Opts, TxtField string
+	IpVoteId, VoteId, PostId int
+	Ip, Opts, TxtField       string
 }
 
 type IpVotes struct {
