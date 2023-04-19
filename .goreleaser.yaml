@@ -33,7 +33,7 @@ archives:
     files:
       - configs/configs.json
       - templates/**/**/*
-      - internal/data/db/mysql/backup-voter.sql
+      - internal/data/db/mysql/backup_voter.sql
       - internal/data/db/mysql/README.md
       - api/README.md
       - README.md
